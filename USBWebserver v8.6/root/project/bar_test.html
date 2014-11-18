@@ -9,6 +9,7 @@
 	padding: 3px;
 	margin: 1px;
 	color: white;
+	}
   
 	.chart rect {
 	fill: steelblue;
@@ -33,27 +34,41 @@ var width = 420;
 var barHeight = 20;
 
 var chart = d3.select(".chart").attr("width", width);
-	
-d3.tsv("cities-data.txt", type, function(error, data) 
+
+//var data = [4, 8, 15, 16, 23, 42];
+var population = [];
+
+/*
+var x = d3.scale.linear()
+    .domain([0, d3.max(data)])
+    .range([0, 420]); */
+		
+d3.tsv("cities-data.txt", type, function(error, cityData) 
 {
-	for( i = 0; i < data.length; i++ )
+	
+		
+	for( i = 0; i < cityData.length; i++ )
 	{
-		console.log(data[i]);
-		console.log("space");
+		population[i] = cityData[i].AANT_INW;
+		//console.log(population[i]);
 		//console.log("Sander is awesome " + i + " " +  data[i].AANT_INW);
 	}
 	
-	data.forEach(function(d) { 
+	var x = d3.scale.linear()
+		.domain([0, d3.max(population)])
+		.range([0, 20]);
 		
-	});
-	console.log(data[19].AANT_MAN);
+	d3.select(".chart")
+		.selectAll("div")
+		.data(population)
+		.enter().append("div")
+		.style("width", function(d) { return x(d) + "px"; })
+		.text(function(d) { return d; });
 });
 
 function type(d) {
   d.value = +d.value; // coerce to number
   return d;
 };
-
-
 
 </script>

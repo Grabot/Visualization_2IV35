@@ -7,6 +7,11 @@
 	  stroke-width: 1px;
 	  fill: white;
 	}
+
+	path:hover {
+  		fill: red;
+	}
+
 </style>
 
 <body>
@@ -42,24 +47,51 @@
 		 
 		var g = svg.append("g");
 
+
 		queue()
 		   .defer(d3.json, "cities-geometry.json")
 		   .defer(d3.tsv, "cities-data.txt", function(d) { cityData.set(d.Code, +d.AUTO_TOT); })
 		   .await(dataLoaded);
 
+
 		function dataLoaded(error, mapData) 
 		{
 			var maxValue = d3.max(cityData.values());
 			//console.log("The maximum value is " + maxValue);			
-			linearColorScale.domain([0.0, maxValue]);
+			linearColorScale.domain([0.0, maxValue]); 
+
 			g.selectAll("path")
 			.data(mapData.features).enter()
 			.append("path")
 			.attr("d", path)
 			.style("fill", function(d) { return linearColorScale(cityData.get(d.gm_code)); })
+			.on("mouseover", function(){d3.select(this)
+				.style("fill", "green");})
+    		.on("mouseout", function(){d3.select(this)
+    			.style("fill", function(d) { return linearColorScale(cityData.get(d.gm_code)); }); })
+			.on("mousedown", animate)
 			.append("title").text(function(d) {return d.gm_naam + ", " +
 			cityData.get(d.gm_code); });
 		}
+
+		function animate() {
+			console.log("awesome");
+			/*
+    		d3.select(this).transition()
+        	.duration(1000)
+        	.attr("r", 10)
+      		.transition()
+        	.delay(1000)
+        	.attr("r", 40);
+        	*/
+		};
+
+		/*
+		var clicked =  function()
+		{
+		    console.log("naam: "); //considering dot has a title attribute
+		}
+		*/
 	</script>
 </body>
 </html>
