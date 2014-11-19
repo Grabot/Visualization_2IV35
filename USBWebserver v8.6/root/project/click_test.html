@@ -24,10 +24,11 @@
 			height = 800;
 
 		var cityData = d3.map();
+		var ageData = d3.map();
 
 		var linearColorScale = d3.scale.linear()
 			.domain([0.0, 100.0])
-			.range(["white", "red"]);
+			.range(["white", "blue"]);
 
 		var svg = d3.select("body").append("svg")
 			.attr("width", width)
@@ -44,13 +45,18 @@
 			  .translate([width/2,height/2]);
 
 		var path = d3.geo.path().projection(projection);
-		 
+		var population = [];
 		var g = svg.append("g");
-
+		var i = 0;
 
 		queue()
 		   .defer(d3.json, "cities-geometry.json")
-		   .defer(d3.tsv, "cities-data.txt", function(d) { cityData.set(d.Code, +d.AUTO_TOT); })
+		   .defer(d3.tsv, "cities-data.txt", function(d) 
+		   	{
+		   		population[i] = d;
+		   		i++
+		   		cityData.set(d.Code, +d.AUTO_TOT);
+		   	})
 		   .await(dataLoaded);
 
 
@@ -69,13 +75,23 @@
 				.style("fill", "green");})
     		.on("mouseout", function(){d3.select(this)
     			.style("fill", function(d) { return linearColorScale(cityData.get(d.gm_code)); }); })
-			.on("mousedown", animate)
+			.on("mousedown", cityClick)
 			.append("title").text(function(d) {return d.gm_naam + ", " +
 			cityData.get(d.gm_code); });
 		}
 
-		function animate() {
-			console.log("awesome");
+		function cityClick(d) {
+
+
+			for( k = 0; k < population.length; k++ )
+			{
+				if( d.gm_code == population[k].GM_CODE)
+				{
+					console.log( "what the dee says, naam: " + d.gm_naam + " code: " + d.gm_code);
+					console.log( "what the mee says, naam: " + population[k].GM_NAAM + " code: " + population[k].GM_CODE + " extra info: " + population[k].P_00_04_JR );
+				}
+			}
+			
 			/*
     		d3.select(this).transition()
         	.duration(1000)

@@ -69,3 +69,27 @@ Version: '5.6.13'  socket: ''  port: 3307  MySQL Community Server (GPL)
 2014-11-18 20:24:16 10524 [Note] Event Scheduler: Loaded 0 events
 2014-11-18 20:24:16 10524 [Note] D:\Documents\GitHub\2IV35\USBWebserver v8.6/mysql/bin/mysqld_usbwv8.exe: ready for connections.
 Version: '5.6.13'  socket: ''  port: 3307  MySQL Community Server (GPL)
+2014-11-19 09:05:08 7668 [Note] Plugin 'FEDERATED' is disabled.
+2014-11-19 09:05:08 7668 [Note] InnoDB: The InnoDB memory heap is disabled
+2014-11-19 09:05:08 7668 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2014-11-19 09:05:08 7668 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2014-11-19 09:05:08 7668 [Note] InnoDB: Not using CPU crc32 instructions
+2014-11-19 09:05:08 7668 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2014-11-19 09:05:08 7668 [Note] InnoDB: Completed initialization of buffer pool
+2014-11-19 09:05:08 7668 [Note] InnoDB: Highest supported file format is Barracuda.
+2014-11-19 09:05:08 7668 [Note] InnoDB: The log sequence numbers 1626134 and 1626134 in ibdata files do not match the log sequence number 1626666 in the ib_logfiles!
+2014-11-19 09:05:08 7668 [Note] InnoDB: Database was not shutdown normally!
+2014-11-19 09:05:08 7668 [Note] InnoDB: Starting crash recovery.
+2014-11-19 09:05:08 7668 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2014-11-19 09:05:08 7668 [Note] InnoDB: Restoring possible half-written data pages 
+2014-11-19 09:05:08 7668 [Note] InnoDB: from the doublewrite buffer...
+2014-11-19 09:05:08 7668 [Note] InnoDB: 128 rollback segment(s) are active.
+2014-11-19 09:05:08 7668 [Note] InnoDB: Waiting for purge to start
+2014-11-19 09:05:08 7668 [Note] InnoDB: 5.6.13 started; log sequence number 1626666
+2014-11-19 09:05:08 7668 [Note] Server hostname (bind-address): '*'; port: 3307
+2014-11-19 09:05:08 7668 [Note] IPv6 is available.
+2014-11-19 09:05:08 7668 [Note]   - '::' resolves to '::';
+2014-11-19 09:05:08 7668 [Note] Server socket created on IP: '::'.
+2014-11-19 09:05:08 7668 [Note] Event Scheduler: Loaded 0 events
+2014-11-19 09:05:08 7668 [Note] D:\Documents\GitHub\2IV35\USBWebserver v8.6/mysql/bin/mysqld_usbwv8.exe: ready for connections.
+Version: '5.6.13'  socket: ''  port: 3307  MySQL Community Server (GPL)
