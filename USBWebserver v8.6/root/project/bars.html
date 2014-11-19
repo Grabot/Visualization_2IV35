@@ -79,7 +79,8 @@
             x = d3.scale.linear().domain([0, cityData.entries()[10].value.values().length]).range([0, width]);
             y = d3.scale.linear().domain([0, d3.max(cityData.entries()[10].value.values())]).rangeRound([0, height]);
 
-            console.log("Width: " + d3.max(cityData.entries()[10].value.values()));
+
+            console.log("Width: " + width);
 
             //var maxValue = d3.max(cityData.values());
             //console.log("The maximum value is " + maxValue);

@@ -35,7 +35,7 @@ var barHeight = 20;
 
 var chart = d3.select(".chart").attr("width", width);
 
-var testData = [4, 8, 15, 16, 23, 42];
+//var data = [4, 8, 15, 16, 23, 42];
 var population = [];
 
 /*
@@ -43,7 +43,7 @@ var x = d3.scale.linear()
     .domain([0, d3.max(data)])
     .range([0, 420]); */
 		
-d3.tsv("cities-data.txt", type, function(error, cityData) 
+d3.tsv("cities-data.txt", function(error, cityData) 
 {
 	
 		
@@ -55,12 +55,12 @@ d3.tsv("cities-data.txt", type, function(error, cityData)
 	}
 	
 	var x = d3.scale.linear()
-		.domain([0, d3.max(testData)])
-		.range([0, 200]);
+		.domain([0, d3.max(population)])
+		.range([0, 20]);
 		
 	d3.select(".chart")
 		.selectAll("div")
-		.data(testData)
+		.data(population)
 		.enter().append("div")
 		.style("width", function(d) { return x(d) + "px"; })
 		.text(function(d) { return d; });

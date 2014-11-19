@@ -8,30 +8,20 @@
 	  fill: white;
 	}
 
-	.axis {
-        font: 10px sans-serif;
-    }
-
-    .axis path,
-    .axis line {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-    }
+	path:hover {
+  		fill: red;
+	}
 
 </style>
 
 <body>
- <svg class="chart"></svg>
- <div class="log" />
+
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script src="http://d3js.org/queue.v1.min.js"></script>
 	<script src="http://d3js.org/topojson.v1.min.js"></script>
 	<script>
-		var width = 800;
-		var	height = 800;
-
-		var chart = d3.select(".chart").attr("width", width);
+		var width = 800,
+			height = 800;
 
 		var cityData = d3.map();
 		var ageData = d3.map();
@@ -55,20 +45,15 @@
 			  .translate([width/2,height/2]);
 
 		var path = d3.geo.path().projection(projection);
-		var CityDataArray = [];
-		var ageRange = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
-		var testData = [4, 8, 15, 16, 23, 42];
+		var population = [];
 		var g = svg.append("g");
 		var i = 0;
-
-		var x;
-        var y;
 
 		queue()
 		   .defer(d3.json, "cities-geometry.json")
 		   .defer(d3.tsv, "cities-data.txt", function(d) 
 		   	{
-		   		CityDataArray[i] = d;
+		   		population[i] = d;
 		   		i++
 		   		cityData.set(d.Code, +d.AUTO_TOT);
 		   	})
@@ -77,9 +62,6 @@
 
 		function dataLoaded(error, mapData) 
 		{
-
-			
-
 			var maxValue = d3.max(cityData.values());
 			//console.log("The maximum value is " + maxValue);			
 			linearColorScale.domain([0.0, maxValue]); 
@@ -99,61 +81,33 @@
 		}
 
 		function cityClick(d) {
-			
-			for( k = 0; k < CityDataArray.length; k++ )
+
+
+			for( k = 0; k < population.length; k++ )
 			{
-				if( d.gm_code == CityDataArray[k].GM_CODE)
+				if( d.gm_code == population[k].GM_CODE)
 				{
-					//console.log( "what the dee says, naam: " + d.gm_naam + " code: " + d.gm_code);
-					//console.log( "what the mee says, naam: " + CityDataArray[k].GM_NAAM + " code: " + CityDataArray[k].GM_CODE + " extra info: " + CityDataArray[k].P_00_04_JR );
-					
-					ageRange[0] = CityDataArray[k].P_00_04_JR;
-					ageRange[1] = CityDataArray[k].P_05_09_JR;
-					ageRange[2] = CityDataArray[k].P_10_14_JR;
-					ageRange[3] = CityDataArray[k].P_15_19_JR;
-					ageRange[4] = CityDataArray[k].P_20_24_JR;
-					ageRange[5] = CityDataArray[k].P_25_29_JR;
-					ageRange[6] = CityDataArray[k].P_30_34_JR;
-					ageRange[7] = CityDataArray[k].P_35_39_JR;
-					ageRange[8] = CityDataArray[k].P_40_44_JR;
-					ageRange[9] = CityDataArray[k].P_45_49_JR;
-					ageRange[10] = CityDataArray[k].P_50_54_JR;
-					ageRange[11] = CityDataArray[k].P_55_59_JR;
-					ageRange[12] = CityDataArray[k].P_60_65_JR;
-					ageRange[13] = CityDataArray[k].P_65_69_JR;
-					ageRange[14] = CityDataArray[k].P_70_74_JR;
-					ageRange[15] = CityDataArray[k].P_75_79_JR;
-					ageRange[16] = CityDataArray[k].P_80_84_JR;
-					ageRange[17] = CityDataArray[k].P_85_89_JR;
-					ageRange[18] = CityDataArray[k].P_90_94_JR;
-					ageRange[19] = CityDataArray[k].P_95_EO_JR;
-					
+					console.log( "what the dee says, naam: " + d.gm_naam + " code: " + d.gm_code);
+					console.log( "what the mee says, naam: " + population[k].GM_NAAM + " code: " + population[k].GM_CODE + " extra info: " + population[k].P_00_04_JR );
 				}
 			}
-			var width;
-			var barWidth = 40;
-
-			var barHeight = 200;
-
-			width = (barWidth + 10) * ageRange.length;
-            x = d3.scale.linear().domain([0, ageRange.length]).range([0, width]);
-            y = d3.scale.linear().domain([0, d3.max(ageRange)]).rangeRound([0, height]);
-
-			console.log("Width: " + width);
-
-			d3.select(".chart")
-                .attr("width", width)
-                .attr("height", height)
-            	.selectAll("rect")
-            	.data(ageRange)
-            	.enter().append("rect")
-            	.style("fill", "steelblue")
-            	.attr("x", function (data, index) { return x(index); })
-            	.attr("y", function(d) { return height - y(d); })
-            	.attr("width", barWidth)
-            	.attr("height", height);
 			
+			/*
+    		d3.select(this).transition()
+        	.duration(1000)
+        	.attr("r", 10)
+      		.transition()
+        	.delay(1000)
+        	.attr("r", 40);
+        	*/
 		};
+
+		/*
+		var clicked =  function()
+		{
+		    console.log("naam: "); //considering dot has a title attribute
+		}
+		*/
 	</script>
 </body>
 </html>
