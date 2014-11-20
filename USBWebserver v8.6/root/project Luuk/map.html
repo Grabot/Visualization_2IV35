@@ -19,12 +19,12 @@
         fill: brown;
     }
 
-    /*.chart {
+    .chart {
         margin-top: 100px;
         margin-bottom: 100px;
         margin-right: 150px;
         margin-left: 50px;
-    }*/
+    }
 
     .axis {
         font: 10px sans-serif;
@@ -67,7 +67,6 @@
            agevalues.set("P_70_74_JR", d.P_70_74_JR); agevalues.set("P_75_79_JR", d.P_75_79_JR);
            agevalues.set("P_80_84_JR", d.P_80_84_JR); agevalues.set("P_85_89_JR", d.P_85_89_JR);
            agevalues.set("P_90_94_JR", d.P_90_94_JR); agevalues.set("P_95_EO_JR", d.P_95_EO_JR);
-
            cityAgeData.set(d.Code, agevalues);
        })
        .await(dataLoaded);
