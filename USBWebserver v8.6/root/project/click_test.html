@@ -12,10 +12,24 @@
   		fill: red;
 	}
 
+	.axis {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
 </style>
 
 <body>
+    <svg class="chart">
+    </svg>
 
+    <div class="log" />
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script src="http://d3js.org/queue.v1.min.js"></script>
 	<script src="http://d3js.org/topojson.v1.min.js"></script>
@@ -46,6 +60,7 @@
 
 		var path = d3.geo.path().projection(projection);
 		var population = [];
+		var ageRange = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
 		var g = svg.append("g");
 		var i = 0;
 
@@ -87,10 +102,52 @@
 			{
 				if( d.gm_code == population[k].GM_CODE)
 				{
-					console.log( "what the dee says, naam: " + d.gm_naam + " code: " + d.gm_code);
-					console.log( "what the mee says, naam: " + population[k].GM_NAAM + " code: " + population[k].GM_CODE + " extra info: " + population[k].P_00_04_JR );
+					//console.log( "what the dee says, naam: " + d.gm_naam + " code: " + d.gm_code);
+					//console.log( "what the mee says, naam: " + population[k].GM_NAAM + " code: " + population[k].GM_CODE + " extra info: " + population[k].P_00_04_JR );
+					ageRange[0] = population[k].P_00_04_JR;
+					ageRange[1] = population[k].P_05_09_JR;
+					ageRange[2] = population[k].P_10_14_JR;
+					ageRange[3] = population[k].P_15_19_JR;
+					ageRange[4] = population[k].P_20_24_JR;
+					ageRange[5] = population[k].P_25_29_JR;
+					ageRange[6] = population[k].P_30_34_JR;
+					ageRange[7] = population[k].P_35_39_JR;
+					ageRange[8] = population[k].P_40_44_JR;
+					ageRange[9] = population[k].P_45_49_JR;
+					ageRange[10] = population[k].P_50_54_JR;
+					ageRange[11] = population[k].P_55_59_JR;
+					ageRange[12] = population[k].P_60_65_JR;
+					ageRange[13] = population[k].P_65_69_JR;
+					ageRange[14] = population[k].P_70_74_JR;
+					ageRange[15] = population[k].P_75_79_JR;
+					ageRange[16] = population[k].P_80_84_JR;
+					ageRange[17] = population[k].P_85_89_JR;
+					ageRange[18] = population[k].P_90_94_JR;
+					ageRange[19] = population[k].P_95_EO_JR;
+
+
+
+
 				}
 			}
+
+			var barWidth = 40;
+			width = (barWidth + 10) * ageRange.length;
+            x = d3.scale.linear().domain([0, ageRange.length]).range([0, width]);
+            y = d3.scale.linear().domain([0, d3.max(ageRange	)]).rangeRound([0, height]);
+
+			d3.select(".chart")
+                .attr("width", width)
+                .attr("height", height)
+            	.selectAll("rect")
+            	.data(ageRange)
+            	.enter().append("rect")
+            	.style("fill", "steelblue")
+            	.attr("x", function (data, index) { return x(index); })
+            	.attr("y", function(d) { return height - y(d); })
+            	.attr("width", barWidth)
+            	.attr("height", height);
+
 			
 			/*
     		d3.select(this).transition()
