@@ -43,116 +43,42 @@
 
 <body>
 
-    <div class="log" />
+    <svg class="chart" width="1000" height="300"></svg>
 
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://d3js.org/queue.v1.min.js"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="BarChartScript.js"></script>
     <script>
         var cityAgeData = d3.map();
-        var height;
-        var y;
-        var x;
 
         queue()
-           .defer(d3.json, "cities-geometry.json")
-           .defer(d3.tsv, "cities-data.txt", function (d) {
+        .defer(d3.json, "cities-geometry.json")
+        .defer(d3.tsv, "cities-data.txt", function (d) {
 
-               var agevalues = d3.map();
-               agevalues.set("P_00_04_JR", d.P_00_04_JR); agevalues.set("P_05_09_JR", d.P_05_09_JR);
-               agevalues.set("P_10_14_JR", d.P_10_14_JR); agevalues.set("P_15_19_JR", d.P_15_19_JR);
-               agevalues.set("P_20_24_JR", d.P_20_24_JR); agevalues.set("P_25_29_JR", d.P_25_29_JR);
-               agevalues.set("P_30_34_JR", d.P_30_34_JR); agevalues.set("P_35_39_JR", d.P_35_39_JR);
-               agevalues.set("P_40_44_JR", d.P_40_44_JR); agevalues.set("P_45_49_JR", d.P_45_49_JR);
-               agevalues.set("P_50_54_JR", d.P_50_54_JR); agevalues.set("P_55_59_JR", d.P_55_59_JR);
-               agevalues.set("P_60_64_JR", d.P_60_65_JR); agevalues.set("P_65_69_JR", d.P_65_69_JR);
-               agevalues.set("P_70_74_JR", d.P_70_74_JR); agevalues.set("P_75_79_JR", d.P_75_79_JR);
-               agevalues.set("P_80_84_JR", d.P_80_84_JR); agevalues.set("P_85_89_JR", d.P_85_89_JR);
-               agevalues.set("P_90_94_JR", d.P_90_94_JR); agevalues.set("P_95_EO_JR", d.P_95_EO_JR);
+           var agevalues = d3.map();
+           agevalues.set("P_00_04_JR", d.P_00_04_JR); agevalues.set("P_05_09_JR", d.P_05_09_JR);
+           agevalues.set("P_10_14_JR", d.P_10_14_JR); agevalues.set("P_15_19_JR", d.P_15_19_JR);
+           agevalues.set("P_20_24_JR", d.P_20_24_JR); agevalues.set("P_25_29_JR", d.P_25_29_JR);
+           agevalues.set("P_30_34_JR", d.P_30_34_JR); agevalues.set("P_35_39_JR", d.P_35_39_JR);
+           agevalues.set("P_40_44_JR", d.P_40_44_JR); agevalues.set("P_45_49_JR", d.P_45_49_JR);
+           agevalues.set("P_50_54_JR", d.P_50_54_JR); agevalues.set("P_55_59_JR", d.P_55_59_JR);
+           agevalues.set("P_60_64_JR", d.P_60_65_JR); agevalues.set("P_65_69_JR", d.P_65_69_JR);
+           agevalues.set("P_70_74_JR", d.P_70_74_JR); agevalues.set("P_75_79_JR", d.P_75_79_JR);
+           agevalues.set("P_80_84_JR", d.P_80_84_JR); agevalues.set("P_85_89_JR", d.P_85_89_JR);
+           agevalues.set("P_90_94_JR", d.P_90_94_JR); agevalues.set("P_95_EO_JR", d.P_95_EO_JR);
 
-               cityAgeData.set(d.Code, agevalues);
-           })
-           .await(dataLoaded);
+           cityAgeData.set(d.Code, agevalues);
+       })
+       .await(dataLoaded);
 
         function dataLoaded(error, mapData) {
             var selectedCity = d3.map();
             selectedCity = cityAgeData.entries()[10].value;
-            
-            var barWidth = 40;
-            var spacing = 5;
-            var margin = { top: 20, right: 30, bottom: 60, left: 40 };
-            var width = (barWidth + spacing) * selectedCity.values().length; -margin.left - margin.right;
-            height = 200 - margin.top - margin.bottom;
-
-            //console.log(selectedCity.keys());
-            //d3.select("log")
-            //.classed("fill[black]");
-            //.append("path")
-            //.attr("d", path);
-
-            //var x = d3.scale.linear().range([0, width]).domain([0, selectedCity.size()]);
-            x = d3.scale.ordinal().rangeRoundBands([0, width], 1).domain(selectedCity.keys());
-            y = d3.scale.linear().range([height, 0]).domain([0, d3.max(selectedCity.values()) / 100]);
-
-            var xAxis = d3.svg.axis().scale(x).orient("bottom");
-            var yAxis = d3.svg.axis().scale(y).orient("left").ticks(10, "%");
-
-            var svg = d3.select("body").append("svg")
-                .attr("class", "chart")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            svg.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis)
-
-            svg.append("g")
-                .attr("class", "y axis")
-                .call(yAxis)
-                .append("text")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end")
-                .text("Percentage");
-
-            svg.selectAll(".bar")
-                .data(selectedCity.entries())
-                .enter().append("rect")
-                .attr("class", "bar")
-                .attr("x", function (d, index) { return x(d.key) - (0.5 * barWidth); })
-                .attr("y", function (d) { return y(d.value / 100); })
-                .attr("width", barWidth)
-                .attr("height", function (d) { return height - y(d.value / 100); })
-                .on("mousedown", barClick);
-
-            function barClick(d) {
-                alert("De waarde is: " + d.value);
-            };
-
-            
-            animatedBarChartUpdate(cityAgeData.entries()[20].value);
-            //console.log(selectedCity);
-            
-
-            //
-            //.attr("width", x.rangeBand())
-            //.attr("y", function (d) { return y(d.value); })
-            //.attr("height", function (d) { return height - y(d.value); });
-        };
-
-        function animatedBarChartUpdate(selectedCity) {
-            console.log(selectedCity);
-            d3.selectAll(".bar").transition()
-                    .duration(1000)
-                    .attr("y", function (d) { return y(selectedCity.get(d.key) / 100); })
-                    .attr("height", function (d, i, h) { return height - y(selectedCity.get(d.key) / 100); });
-        };
-
+            draw(selectedCity);
+        }
     </script>
 
 </body>
 </html>
+<!--  -->
