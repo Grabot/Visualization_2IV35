@@ -7,6 +7,8 @@ var x;
 
 function draw(selectedCity) {
 
+    this.selectedCity = selectedCity;
+
     if (!isDrawn) {
         var spacing = 5;
         var margin = { top: 20, right: 30, bottom: 80, left: 40 };
