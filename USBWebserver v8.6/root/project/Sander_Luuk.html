@@ -27,7 +27,7 @@
     .chart {
         position:absolute;
         top: 500px;
-        right: 5px;
+        right: 400px;
     }
 
     .axis {
@@ -43,14 +43,15 @@
 </style>
 
 <body>
-    <svg class="chart" width="750" height="300"></svg>
-    
+    <svg class="chart" width="800" height="300"></svg>
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script src="http://d3js.org/queue.v1.min.js"></script>
 	<script src="http://d3js.org/topojson.v1.min.js"></script>
-    <script src="BarChartScript.js"></script>
+    <script src="BarChartScript_Sander.js"></script>
+    <script src="PieChartScript_Sander.js"></script>
 	<script>
-		var width = 1600,
+
+		var width = 800,
 			height = 800;
 
 		var cityData = d3.map();
@@ -68,7 +69,7 @@
 			  .center([5.6, 52.1])
 			  .parallels([50, 53])
 			  .scale(15000)
-			  .translate([width/4,height/2]);
+			  .translate([width/2,height/2]);
 
 		var svg = d3.select("body").append("svg")
 			.attr("width", width)
@@ -83,12 +84,11 @@
 
 		queue()
 		   .defer(d3.json, "cities-geometry.json")
-		   .defer(d3.tsv, "cities-data.txt", function(d) 
+		   .defer(d3.tsv, "cities-data.txt", function(d)
 		   	{
 		   		population[i] = d;
 		   		i++
 		   		cityData.set(d.Code, +d.AUTO_TOT);
-
                 // Added to collect cityAgeData
 		   		var agevalues = d3.map();
 		   		agevalues.set("P_00_04_JR", d.P_00_04_JR); agevalues.set("P_05_09_JR", d.P_05_09_JR);
@@ -123,6 +123,7 @@
 			.on("mousedown", cityClick)
 			.append("title").text(function(d) {return d.gm_naam + ", " +
 			cityData.get(d.gm_code); });
+
 		}
 
 		function cityClick(d) {
