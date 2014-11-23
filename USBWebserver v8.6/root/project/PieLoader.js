@@ -43,7 +43,7 @@ function drawPie( pieData )
   		{
 			load: 
 			{
-				speed: 500
+				speed: 1000
 			},
 			pullOutSegmentOnClick: 
 			{
@@ -57,6 +57,8 @@ function drawPie( pieData )
 	var d = document.getElementById('pie');
 	d.style.position = "absolute";
 	d.style.left =  "700px";
+	d.style.width = "500px";
+	d.style.height = "500px";
 
 	//end piechart
 	return pie;
