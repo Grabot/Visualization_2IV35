@@ -20,9 +20,17 @@
 
 <body>
 
-	<p>
-		For the course 2IV35 we have to visualize data, this is a piechart test for the visualization of certain data
-	</p>
+	<form name="MyForm">
+	<input type="button" value="Select and Click" onclick="checkItem()"><br>
+	<input type="radio" name="item" value="Apple">
+	<label>Apple</label><br>
+	<input type="radio" name="item" value="Orange">
+	<label>Orange</label><br>
+	<input type="radio" name="item" value="Grape">
+	<label>Grape</label><br>
+	<input type="radio" name="item" value="Melon">
+	<label>Melon</label><br>
+	</form>
 
 	<hr size="1" />
 	<div id="pie"></div>
@@ -80,26 +88,26 @@
 	mapsettings.style.position = "absolute";
 
 	var chartData = [
-        {"Age": "00-04", "Metric": "Pink", "Pecentage": 4.9},
-        {"Age": "05-09", "Metric": "Pink", "Pecentage": 6.0},
-        {"Age": "10-14", "Metric": "Pink", "Pecentage": 6.5},
-        {"Age": "15-19", "Metric": "Pink", "Pecentage": 6.6},
-        {"Age": "20-24", "Metric": "Pink", "Pecentage": 4.7},
-        {"Age": "25-29", "Metric": "Pink", "Pecentage": 4.4},
-        {"Age": "30-34", "Metric": "Pink", "Pecentage": 4.5},
-        {"Age": "35-39", "Metric": "Pink", "Pecentage": 5.8},
-        {"Age": "40-44", "Metric": "Pink", "Pecentage": 7.5},
-        {"Age": "45-49", "Metric": "Pink", "Pecentage": 8.0},
-        {"Age": "50-54", "Metric": "Pink", "Pecentage": 7.6},
-        {"Age": "55-59", "Metric": "Pink", "Pecentage": 7.7},
-        {"Age": "60-65", "Metric": "Pink", "Pecentage": 7.3},
-        {"Age": "65-69", "Metric": "Pink", "Pecentage": 7.3},
-        {"Age": "70-74", "Metric": "Pink", "Pecentage": 6.2},
-        {"Age": "75-79", "Metric": "Pink", "Pecentage": 6.2},
-        {"Age": "80-84", "Metric": "Pink", "Pecentage": 4.3},
-        {"Age": "85-89", "Metric": "Pink", "Pecentage": 4.3},
-        {"Age": "90-94", "Metric": "Pink", "Pecentage": 4.3},
-        {"Age": "95-EO", "Metric": "Pink", "Pecentage": 3.3}
+        {"Age": "00-04", "Pecentage": 4.9},
+        {"Age": "05-09", "Pecentage": 6.0},
+        {"Age": "10-14", "Pecentage": 6.5},
+        {"Age": "15-19", "Pecentage": 6.6},
+        {"Age": "20-24", "Pecentage": 4.7},
+        {"Age": "25-29", "Pecentage": 4.4},
+        {"Age": "30-34", "Pecentage": 4.5},
+        {"Age": "35-39", "Pecentage": 5.8},
+        {"Age": "40-44", "Pecentage": 7.5},
+        {"Age": "45-49", "Pecentage": 8.0},
+        {"Age": "50-54", "Pecentage": 7.6},
+        {"Age": "55-59", "Pecentage": 7.7},
+        {"Age": "60-65", "Pecentage": 7.3},
+        {"Age": "65-69", "Pecentage": 7.3},
+        {"Age": "70-74", "Pecentage": 6.2},
+        {"Age": "75-79", "Pecentage": 6.2},
+        {"Age": "80-84", "Pecentage": 4.3},
+        {"Age": "85-89", "Pecentage": 4.3},
+        {"Age": "90-94", "Pecentage": 4.3},
+        {"Age": "95-EO", "Pecentage": 3.3}
     ];
 
     var chart = drawChart( chartData );
@@ -153,26 +161,26 @@
 				//console.log( "what the mee says, naam: " + population[k].GM_NAAM + " code: " + population[k].GM_CODE + " extra info: " + population[k].P_00_04_JR );
 
 				chart.data = [
-			        {"Age": "00-04", "Metric": "Pink", "Pecentage": population[k].P_00_04_JR },
-			        {"Age": "05-09", "Metric": "Pink", "Pecentage": population[k].P_05_09_JR },
-			        {"Age": "10-14", "Metric": "Pink", "Pecentage": population[k].P_10_14_JR },
-			        {"Age": "15-19", "Metric": "Pink", "Pecentage": population[k].P_15_19_JR },
-			        {"Age": "20-24", "Metric": "Pink", "Pecentage": population[k].P_20_24_JR },
-			        {"Age": "25-29", "Metric": "Pink", "Pecentage": population[k].P_25_29_JR },
-			        {"Age": "30-34", "Metric": "Pink", "Pecentage": population[k].P_30_34_JR },
-			        {"Age": "35-39", "Metric": "Pink", "Pecentage": population[k].P_35_39_JR },
-			        {"Age": "40-44", "Metric": "Pink", "Pecentage": population[k].P_40_44_JR },
-			        {"Age": "45-49", "Metric": "Pink", "Pecentage": population[k].P_45_49_JR },
-			        {"Age": "50-54", "Metric": "Pink", "Pecentage": population[k].P_50_54_JR },
-			        {"Age": "55-59", "Metric": "Pink", "Pecentage": population[k].P_55_59_JR },
-			        {"Age": "60-65", "Metric": "Pink", "Pecentage": population[k].P_60_65_JR },
-			        {"Age": "65-69", "Metric": "Pink", "Pecentage": population[k].P_65_69_JR },
-			        {"Age": "70-74", "Metric": "Pink", "Pecentage": population[k].P_70_74_JR },
-			        {"Age": "75-79", "Metric": "Pink", "Pecentage": population[k].P_75_79_JR },
-			        {"Age": "80-84", "Metric": "Pink", "Pecentage": population[k].P_80_84_JR },
-			        {"Age": "85-89", "Metric": "Pink", "Pecentage": population[k].P_85_89_JR },
-			        {"Age": "90-94", "Metric": "Pink", "Pecentage": population[k].P_90_94_JR },
-			        {"Age": "95-EO", "Metric": "Pink", "Pecentage": population[k].P_95_EO_JR }
+			        {"Age": "00-04", "Pecentage": population[k].P_00_04_JR },
+			        {"Age": "05-09", "Pecentage": population[k].P_05_09_JR },
+			        {"Age": "10-14", "Pecentage": population[k].P_10_14_JR },
+			        {"Age": "15-19", "Pecentage": population[k].P_15_19_JR },
+			        {"Age": "20-24", "Pecentage": population[k].P_20_24_JR },
+			        {"Age": "25-29", "Pecentage": population[k].P_25_29_JR },
+			        {"Age": "30-34", "Pecentage": population[k].P_30_34_JR },
+			        {"Age": "35-39", "Pecentage": population[k].P_35_39_JR },
+			        {"Age": "40-44", "Pecentage": population[k].P_40_44_JR },
+			        {"Age": "45-49", "Pecentage": population[k].P_45_49_JR },
+			        {"Age": "50-54", "Pecentage": population[k].P_50_54_JR },
+			        {"Age": "55-59", "Pecentage": population[k].P_55_59_JR },
+			        {"Age": "60-65", "Pecentage": population[k].P_60_65_JR },
+			        {"Age": "65-69", "Pecentage": population[k].P_65_69_JR },
+			        {"Age": "70-74", "Pecentage": population[k].P_70_74_JR },
+			        {"Age": "75-79", "Pecentage": population[k].P_75_79_JR },
+			        {"Age": "80-84", "Pecentage": population[k].P_80_84_JR },
+			        {"Age": "85-89", "Pecentage": population[k].P_85_89_JR },
+			        {"Age": "90-94", "Pecentage": population[k].P_90_94_JR },
+			        {"Age": "95-EO", "Pecentage": population[k].P_95_EO_JR }
 			    ];
 
 			    chart.draw(1000);
@@ -190,6 +198,14 @@
 		pie.updateProp( "header.title.text", pieName );
 	}
 
+	function checkItem()
+	{
+		for(count=0;count<4;count++)
+		{
+			if (MyForm.item[count].checked)
+			alert(MyForm.item[count].value+" is selected");
+		}
+	}
 </script>
 </body>
 </html>

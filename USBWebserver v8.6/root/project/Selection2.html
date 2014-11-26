@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>2IV35 Visualization</title>
+</head>
+<meta charset="utf-8">
+
+<style>
+	path {
+	  stroke: grey;
+	  stroke-width: 1px;
+	}
+
+	html
+	{
+	    -webkit-user-select: none;
+	}
+
+</style>
+
+<body>
+
+	<div id="pie"></div>
+	<form  id="MyForm" name="MyForm">
+	<input type="button" value="Select" onclick="checkItem()"><br>
+	<input type="radio" name="item" value="Marital Status">
+	<label>marriage</label><br>
+	<input type="radio" name="item" value="Man/Female Ratio">
+	<label>ratio</label><br>
+	<input type="radio" name="item" value="Inhabitants comparison">
+	<label>inhabitants</label><br>
+	</form>
+	
+	<div id="mapContainer"></div>
+    <div id="chartContainer"></div>
+    <div id="scatterContainer"></div>
+
+    <form  id="Visualization" name="Visualization">
+	<input type="button" value="Select" onclick="checkItemVis()"><br>
+	<input type="radio" name="item" value="Pie">
+	<label>Pie</label><br>
+	<input type="radio" name="item" value="Bar">
+	<label>Bar</label><br>
+
+	</form>
+	<form  id="Extended" name="Extended information">
+	<input type="button" value="Select" onclick="checkItemExtend()"><br>
+	<input type="radio" name="item" value="Simple">
+	<label>Simple</label><br>
+	<input type="radio" name="item" value="Extended">
+	<label>Extended</label><br>
+	</form>
+
+	</form>
+	<form  id="MapDataSelection" name="Map Data">
+	<input type="button" value="Select" onclick="checkItemMapData()"><br>
+	<input type="radio" name="item" value="Cars">
+	<label>Cars</label><br>
+	<input type="radio" name="item" value="Ratio">
+	<label>Ratio</label><br>
+	</form>
+
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/queue.v1.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+	<script src="d3pie.min.js"></script>
+	<script src="d3pie.js"></script>
+	<script src="dimple.v2.1.0.js"></script>
+	<script src="PieLoader.js"></script>
+	<script src="ChartLoader.js"></script>
+	<script src="scatterplot.js"></script>
+
+
+	<script>
+
+	var f = document.getElementById("MyForm");
+	f.style.position = "absolute";
+	f.style.left = "1200px";
+
+	var g = document.getElementById("Visualization");
+	g.style.position = "absolute";
+	g.style.left = "700px";
+
+	var h = document.getElementById("Extended");
+	h.style.position = "absolute";
+	h.style.left = "1200px";
+
+	var p = document.getElementById("MapDataSelection");
+	p.style.position = "absolute";
+
+	var width = 800,
+		height = 800;
+
+	var pieversion = 0;
+	var chartversion = 0;
+	var chartextended = 1;
+	var cityData = d3.map();
+
+	var linearColorScale = d3.scale.linear()
+		.domain([0.0, 100.0])
+		.range(["#ff2030", "#20f0ff"]);
+
+	var svg = d3.select("#mapContainer").append("svg")
+		.attr("width", width)
+		.attr("height", height);
+
+	var pie = drawPie([
+		{ label: "not married", value: 43, caption: "people who are not married" },
+		{ label: "married", value: 44, caption: "peopel who are married" },
+		{ label: "divorced", value: 7, caption: "people who got divorced" },
+		{ label: "widow", value: 6, caption: "people who are widowed" }
+	]);
+
+	// Setup the map projection for a good depiction of The Netherlands. The
+	// projection is centered on the geographical center of the country, which
+	// happens to be the city of Lunteren.
+	var projection = d3.geo.albers()
+		  .rotate([0, 0])
+		  .center([5.6, 52.1])
+		  .parallels([50, 53])
+		  .scale(15000)
+		  .translate([width/2, height/2]);
+
+	var path = d3.geo.path().projection(projection);
+
+	var population = [];
+	var chartBarData = [];
+	var chartBarDataSimple = [];
+
+	var g = svg.append("g");
+
+	var i = 0;
+
+	var mapsettings = document.getElementById('mapContainer');
+	mapsettings.style.position = "absolute";
+
+	var chartData = [
+        {"Age": "00-04", "City": "Empty", "Pecentage": 0}
+    ];
+
+    var scatterData = [
+   		{"City": "Wernhout", "companyCars":3,"totalCars":19,"inwoners":33}
+    ];
+
+   	var scatter = drawScatter( scatterData );
+
+    var chart = drawChart( chartData );
+
+    var chartsettings = document.getElementById('chartContainer')
+	chartsettings.style.position = "absolute";
+	chartsettings.style.left = "650px";
+	chartsettings.style.top = "200px";
+	
+	var scartsettings = document.getElementById('scatterContainer')
+	scartsettings.style.position = "absolute";
+	scartsettings.style.left = "650px";
+	scartsettings.style.top = "200px";
+
+	var piesettings = document.getElementById('pie');
+	piesettings.style.position = "absolute";
+	piesettings.style.left =  "650px";
+	piesettings.style.width = "600px";
+	piesettings.style.top = "200px";
+
+	var pieDataMarital = [];
+	var pieDataRatio = [];
+	var pieDataInhabitants
+	var pieDataInhabitantsArray = [];
+
+	var chartDataSimple = [];
+	var chartDataExtended = [];
+
+	chartBarData[0] = "Empty";
+	chartBarDataSimple[0] = "Empty";
+	pieDataInhabitantsArray[0] = "Empty";
+	pieDataInhabitantsArray[1] = 0;
+	pieDataInhabitantsArray[2] = "Empty";
+	pieDataInhabitantsArray[3] = 0;
+
+	chartsettings.style.visibility = "hidden";
+	piesettings.style.visibility = "hidden";
+	f.style.visibility = "hidden";
+	h.style.visibility = "hidden";
+
+	var manPerc = 0;
+	var femalePerc = 0;
+	var numberOfFemales = 0;
+
+
+	queue()
+	   .defer(d3.json, "cities-geometry.json")
+	   .defer(d3.tsv, "cities-data.txt", function(d) 
+	   	{
+	   		population[i] = d;
+	   		i++
+	   		manPerc = (d.AANT_MAN / d.AANT_INW);
+	   		femalePerc = (d.AANT_VROUW / d.AANT_INW);
+
+	   		numberOfFemales = ((manPerc -femalePerc)*d.AANT_INW);
+	   		if( d.AUTO_TOT != -99999998.0 )
+	   		{
+	   			cityData.set(d.Code, +numberOfFemales);
+	   		}
+	   	})
+	   .await(dataLoaded);
+
+	function dataLoaded(error, mapData) 
+	{
+		getScatterData();
+		
+		scatter.data = scatterData;
+		scatter.draw();
+
+		var maxValue = d3.max(cityData.values());
+		var minValue = d3.min(cityData.values());
+		
+		console.log("The maximum value is " + maxValue + " the minimum value is " + minValue );			
+		
+		linearColorScale.domain([minValue, maxValue]);
+		
+		g.selectAll("path")
+		.data(mapData.features).enter()
+		.append("path")
+		.attr("d", path)
+		.style("fill", function(d) 
+		{ 
+			return linearColorScale(cityData.get(d.gm_code)); 
+		})
+		.on("mouseover", function(){d3.select(this)
+			.style("fill", "green");})
+		.on("mouseout", function(){d3.select(this)
+			.style("fill", function(d) 
+			{
+					return linearColorScale(cityData.get(d.gm_code)); 
+			}); })
+		.on("mousedown",cityClick)
+		.append("title").text(function(d) {return d.gm_naam + ", " +
+		cityData.get(d.gm_code); });
+
+	}
+
+	function cityClick(d) 
+	{
+		for( k = 0; k < population.length; k++ )
+		{
+			if( d.gm_code == population[k].GM_CODE)
+			{
+				//console.log( "what the dee says, naam: " + d.gm_naam + " code: " + d.gm_code);
+				//console.log( "what the mee says, naam: " + population[k].GM_NAAM + " code: " + population[k].GM_CODE + " extra info: " + population[k].P_00_04_JR );
+				
+
+				chartBarDataSimple[1] = population[k].P_00_14_JR;
+				chartBarDataSimple[2] = population[k].P_15_24_JR;
+				chartBarDataSimple[3] = population[k].P_25_44_JR;
+				chartBarDataSimple[4] = population[k].P_45_64_JR;
+				chartBarDataSimple[5] = population[k].P_65_EO_JR;
+
+				chartBarData[1] = population[k].P_00_04_JR;
+				chartBarData[2] = population[k].P_05_09_JR;
+				chartBarData[3] = population[k].P_10_14_JR;
+				chartBarData[4] = population[k].P_15_19_JR;
+				chartBarData[5] = population[k].P_20_24_JR;
+				chartBarData[6] = population[k].P_25_29_JR;
+				chartBarData[7] = population[k].P_30_34_JR;
+				chartBarData[8] = population[k].P_35_39_JR;
+				chartBarData[9] = population[k].P_40_44_JR;
+				chartBarData[10] = population[k].P_45_49_JR;
+				chartBarData[11] = population[k].P_50_54_JR;
+				chartBarData[12] = population[k].P_55_59_JR;
+				chartBarData[13] = population[k].P_60_65_JR;
+				chartBarData[14] = population[k].P_65_69_JR;
+				chartBarData[15] = population[k].P_70_74_JR;
+				chartBarData[16] = population[k].P_75_79_JR;
+				chartBarData[17] = population[k].P_80_84_JR;
+				chartBarData[18] = population[k].P_85_89_JR;
+				chartBarData[19] = population[k].P_90_94_JR;
+				chartBarData[20] = population[k].P_95_EO_JR;
+
+				if( chartBarData[0] == population[k].GM_NAAM )
+				{
+					chartDataSimple = 
+					[
+				        {"Age": "00-14", "City": population[k].GM_NAAM, "Pecentage": chartBarDataSimple[1] },
+				        {"Age": "15-24", "City": population[k].GM_NAAM, "Pecentage": chartBarDataSimple[2] },
+				        {"Age": "25-44", "City": population[k].GM_NAAM, "Pecentage": chartBarDataSimple[3] },
+				        {"Age": "45-64", "City": population[k].GM_NAAM, "Pecentage": chartBarDataSimple[4] },
+				        {"Age": "65-EO", "City": population[k].GM_NAAM, "Pecentage": chartBarDataSimple[5] }
+				    ];
+				
+					chartDataExtended = 
+					[
+				        {"Age": "00-04", "City": population[k].GM_NAAM, "Pecentage": chartBarData[1] },
+				        {"Age": "05-09", "City": population[k].GM_NAAM, "Pecentage": chartBarData[2] },
+				        {"Age": "10-14", "City": population[k].GM_NAAM, "Pecentage": chartBarData[3] },
+				        {"Age": "15-19", "City": population[k].GM_NAAM, "Pecentage": chartBarData[4] },
+				        {"Age": "20-24", "City": population[k].GM_NAAM, "Pecentage": chartBarData[5] },
+				        {"Age": "25-29", "City": population[k].GM_NAAM, "Pecentage": chartBarData[6] },
+				        {"Age": "30-34", "City": population[k].GM_NAAM, "Pecentage": chartBarData[7] },
+				        {"Age": "35-39", "City": population[k].GM_NAAM, "Pecentage": chartBarData[8] },
+				        {"Age": "40-44", "City": population[k].GM_NAAM, "Pecentage": chartBarData[9] },
+				        {"Age": "45-49", "City": population[k].GM_NAAM, "Pecentage": chartBarData[10] },
+				        {"Age": "50-54", "City": population[k].GM_NAAM, "Pecentage": chartBarData[11] },
+				        {"Age": "55-59", "City": population[k].GM_NAAM, "Pecentage": chartBarData[12] },
+				        {"Age": "60-65", "City": population[k].GM_NAAM, "Pecentage": chartBarData[13] },
+				        {"Age": "65-69", "City": population[k].GM_NAAM, "Pecentage": chartBarData[14] },
+				        {"Age": "70-74", "City": population[k].GM_NAAM, "Pecentage": chartBarData[15] },
+				        {"Age": "75-79", "City": population[k].GM_NAAM, "Pecentage": chartBarData[16] },
+				        {"Age": "80-84", "City": population[k].GM_NAAM, "Pecentage": chartBarData[17] },
+				        {"Age": "85-89", "City": population[k].GM_NAAM, "Pecentage": chartBarData[18] },
+				        {"Age": "90-94", "City": population[k].GM_NAAM, "Pecentage": chartBarData[19] },
+				        {"Age": "95-EO", "City": population[k].GM_NAAM, "Pecentage": chartBarData[20] }
+				    ];
+			    }
+			    else
+			    {
+					chartDataSimple = 
+					[
+						{"Age": "00-14", "City": population[k].GM_NAAM, "Pecentage": chartBarDataSimple[1] },
+				        {"Age": "15-24", "City": population[k].GM_NAAM, "Pecentage": chartBarDataSimple[2] },
+				        {"Age": "25-44", "City": population[k].GM_NAAM, "Pecentage": chartBarDataSimple[3] },
+				        {"Age": "45-64", "City": population[k].GM_NAAM, "Pecentage": chartBarDataSimple[4] },
+				        {"Age": "65-EO", "City": population[k].GM_NAAM, "Pecentage": chartBarDataSimple[5] },
+				        {"Age": "00-14", "City": chartBarDataSimple[0], "Pecentage": chartBarDataSimple[6] },
+				        {"Age": "15-24", "City": chartBarDataSimple[0], "Pecentage": chartBarDataSimple[7] },
+				        {"Age": "25-44", "City": chartBarDataSimple[0], "Pecentage": chartBarDataSimple[8] },
+				        {"Age": "45-64", "City": chartBarDataSimple[0], "Pecentage": chartBarDataSimple[9] },
+				        {"Age": "65-EO", "City": chartBarDataSimple[0], "Pecentage": chartBarDataSimple[10] }
+				    ];
+
+					chartDataExtended = 
+					[
+				        {"Age": "00-04", "City": population[k].GM_NAAM, "Pecentage": chartBarData[1] },
+				        {"Age": "05-09", "City": population[k].GM_NAAM, "Pecentage": chartBarData[2] },
+				        {"Age": "10-14", "City": population[k].GM_NAAM, "Pecentage": chartBarData[3] },
+				        {"Age": "15-19", "City": population[k].GM_NAAM, "Pecentage": chartBarData[4] },
+				        {"Age": "20-24", "City": population[k].GM_NAAM, "Pecentage": chartBarData[5] },
+				        {"Age": "25-29", "City": population[k].GM_NAAM, "Pecentage": chartBarData[6] },
+				        {"Age": "30-34", "City": population[k].GM_NAAM, "Pecentage": chartBarData[7] },
+				        {"Age": "35-39", "City": population[k].GM_NAAM, "Pecentage": chartBarData[8] },
+				        {"Age": "40-44", "City": population[k].GM_NAAM, "Pecentage": chartBarData[9] },
+				        {"Age": "45-49", "City": population[k].GM_NAAM, "Pecentage": chartBarData[10] },
+				        {"Age": "50-54", "City": population[k].GM_NAAM, "Pecentage": chartBarData[11] },
+				        {"Age": "55-59", "City": population[k].GM_NAAM, "Pecentage": chartBarData[12] },
+				        {"Age": "60-65", "City": population[k].GM_NAAM, "Pecentage": chartBarData[13] },
+				        {"Age": "65-69", "City": population[k].GM_NAAM, "Pecentage": chartBarData[14] },
+				        {"Age": "70-74", "City": population[k].GM_NAAM, "Pecentage": chartBarData[15] },
+				        {"Age": "75-79", "City": population[k].GM_NAAM, "Pecentage": chartBarData[16] },
+				        {"Age": "80-84", "City": population[k].GM_NAAM, "Pecentage": chartBarData[17] },
+				        {"Age": "85-89", "City": population[k].GM_NAAM, "Pecentage": chartBarData[18] },
+				        {"Age": "90-94", "City": population[k].GM_NAAM, "Pecentage": chartBarData[19] },
+				        {"Age": "95-EO", "City": population[k].GM_NAAM, "Pecentage": chartBarData[20] },
+				        {"Age": "00-04", "City": chartBarData[0], "Pecentage": chartBarData[22] },
+				        {"Age": "05-09", "City": chartBarData[0], "Pecentage": chartBarData[23] },
+				        {"Age": "10-14", "City": chartBarData[0], "Pecentage": chartBarData[24] },
+				        {"Age": "15-19", "City": chartBarData[0], "Pecentage": chartBarData[25] },
+				        {"Age": "20-24", "City": chartBarData[0], "Pecentage": chartBarData[26] },
+				        {"Age": "25-29", "City": chartBarData[0], "Pecentage": chartBarData[27] },
+				        {"Age": "30-34", "City": chartBarData[0], "Pecentage": chartBarData[28] },
+				        {"Age": "35-39", "City": chartBarData[0], "Pecentage": chartBarData[29] },
+				        {"Age": "40-44", "City": chartBarData[0], "Pecentage": chartBarData[30] },
+				        {"Age": "45-49", "City": chartBarData[0], "Pecentage": chartBarData[31] },
+				        {"Age": "50-54", "City": chartBarData[0], "Pecentage": chartBarData[32] },
+				        {"Age": "55-59", "City": chartBarData[0], "Pecentage": chartBarData[33] },
+				        {"Age": "60-65", "City": chartBarData[0], "Pecentage": chartBarData[34] },
+				        {"Age": "65-69", "City": chartBarData[0], "Pecentage": chartBarData[35] },
+				        {"Age": "70-74", "City": chartBarData[0], "Pecentage": chartBarData[36] },
+				        {"Age": "75-79", "City": chartBarData[0], "Pecentage": chartBarData[37] },
+				        {"Age": "80-84", "City": chartBarData[0], "Pecentage": chartBarData[38] },
+				        {"Age": "85-89", "City": chartBarData[0], "Pecentage": chartBarData[39] },
+				        {"Age": "90-94", "City": chartBarData[0], "Pecentage": chartBarData[40] },
+				        {"Age": "95-EO", "City": chartBarData[0], "Pecentage": chartBarData[41] }
+				    ];
+				}
+				if( chartextended == 0 )
+				{
+					chart.data = chartDataSimple;
+				}
+				else if( chartextended == 1 )
+				{
+					chart.data = chartDataExtended;
+				}
+
+			    chart.draw(1000);
+
+				chartBarDataSimple[0] = population[k].GM_NAAM;
+				chartBarDataSimple[6] = population[k].P_00_14_JR;
+				chartBarDataSimple[7] = population[k].P_15_24_JR;
+				chartBarDataSimple[8] = population[k].P_25_44_JR;
+				chartBarDataSimple[9] = population[k].P_45_64_JR;
+				chartBarDataSimple[10] = population[k].P_65_EO_JR;
+
+				chartBarData[0] = population[k].GM_NAAM;
+				chartBarData[22] = population[k].P_00_04_JR;
+				chartBarData[23] = population[k].P_05_09_JR;
+				chartBarData[24] = population[k].P_10_14_JR;
+				chartBarData[25] = population[k].P_15_19_JR;
+				chartBarData[26] = population[k].P_20_24_JR;
+				chartBarData[27] = population[k].P_25_29_JR;
+				chartBarData[28] = population[k].P_30_34_JR;
+				chartBarData[29] = population[k].P_35_39_JR;
+				chartBarData[30] = population[k].P_40_44_JR;
+				chartBarData[31] = population[k].P_45_49_JR;
+				chartBarData[32] = population[k].P_50_54_JR;
+				chartBarData[33] = population[k].P_55_59_JR;
+				chartBarData[34] = population[k].P_60_65_JR;
+				chartBarData[35] = population[k].P_65_69_JR;
+				chartBarData[36] = population[k].P_70_74_JR;
+				chartBarData[37] = population[k].P_75_79_JR;
+				chartBarData[38] = population[k].P_80_84_JR;
+				chartBarData[39] = population[k].P_85_89_JR;
+				chartBarData[40] = population[k].P_90_94_JR;
+				chartBarData[41] = population[k].P_95_EO_JR;
+
+				pieDataMarital = [
+					{ label: "not married", value: Math.floor( population[k].P_ONGEHUWD), caption: "people who are not married" },
+					{ label: "married", value: Math.floor( population[k].P_GEHUWD), caption: "people who are married" },
+					{ label: "divorced", value: Math.floor( population[k].P_GESCHEID), caption: "people who are divorced" },
+					{ label: "widow", value: Math.floor( population[k].P_VERWEDUW), caption: "people who are widowed" }
+				];
+
+				pieDataRatio = [
+					{ label: "Man", value: Math.floor( population[k].AANT_MAN), caption: "people who are not married" },
+					{ label: "Woman", value: Math.floor( population[k].AANT_VROUW), caption: "people who are married" }
+				];
+
+				pieDataInhabitantsArray[0] = population[k].GM_NAAM;
+				pieDataInhabitantsArray[1] = population[k].AANT_INW;
+
+				pieDataInhabitants = [
+					{ label: pieDataInhabitantsArray[0], value: Math.floor( pieDataInhabitantsArray[1] ), caption: "population of " + pieDataInhabitantsArray[0]},
+					{ label: pieDataInhabitantsArray[2], value: Math.floor( pieDataInhabitantsArray[3] ), caption: "population of " + pieDataInhabitantsArray[2]}
+				];
+
+				pieDataInhabitantsArray[2] = population[k].GM_NAAM;
+				pieDataInhabitantsArray[3] = population[k].AANT_INW;
+
+
+
+				if( pieversion == 0 )
+				{
+					pie.updateProp( "data.content", pieDataMarital );
+				}
+				else if( pieversion == 1 )
+				{
+					pie.updateProp( "data.content", pieDataRatio );
+				}
+				else if( pieversion == 2 )
+				{
+					pie.updateProp( "data.content", pieDataInhabitants );
+				}
+				pieName = population[k].GM_NAAM;
+
+
+			}
+		}
+		pie.updateProp( "header.title.text", pieName );
+	}
+
+	function checkItem()
+	{
+		for(count=0;count<3;count++)
+		{
+			if( MyForm.item[count].checked )
+			{
+				pieversion = count;
+				if( count == 0 )
+				{
+					pie.updateProp( "data.content", pieDataMarital );
+				}
+				else if( count == 1 )
+				{
+					pie.updateProp( "data.content", pieDataRatio );
+				}
+				else if( count == 2 )
+				{
+					pie.updateProp( "data.content", pieDataInhabitants );
+				}
+			}
+		}
+	}
+
+
+	function checkItemVis()
+	{
+		for(count=0;count<2;count++)
+		{
+			if( Visualization.item[count].checked )
+			{
+				if( count == 0 )
+				{
+					chartsettings.style.visibility = "hidden";
+					piesettings.style.visibility = "visible";
+					f.style.visibility = "visible";
+					h.style.visibility = "hidden";
+				}
+				else if( count == 1 )
+				{
+					chartsettings.style.visibility = "visible";
+					piesettings.style.visibility = "hidden";
+					f.style.visibility = "hidden";
+					h.style.visibility = "visible";
+				}
+			}
+		}
+	}
+
+	function checkItemExtend()
+	{
+		for(count=0;count<2;count++)
+		{
+			if( Extended.item[count].checked )
+			{
+				if( count == 0 )
+				{
+					chart.data = chartDataSimple;
+					chart.draw(1000);
+					chartextended = 0;
+				}
+				else if( count == 1 )
+				{
+					chart.data = chartDataExtended;
+					chart.draw(1000);
+					chartextended = 1;
+				}
+			}
+		}
+	}
+
+	function checkItemMapData()
+	{
+		for(count=0;count<2;count++)
+		{
+			if( MapDataSelection.item[count].checked )
+			{
+				if( count == 0 )
+				{
+					console.log("cars");
+				}
+				else if( count == 1 )
+				{
+				}
+			}
+		}
+	}
+
+	function getScatterData()
+	{
+		scatterData;
+			for( x = 0; x < (population.length-1); x++ )
+			{
+				scatterData.push({"City": population[x].GM_NAAM, "companyCars":population[x].BEDR_AUTO,"totalCars":population[x].AUTO_TOT,"inwoners":population[x].AANT_INW});
+				//{"City": population[x].GM_NAAM, "companyCars":population[x].BEDR_AUTO,"totalCars":population[x].AUTO_TOT},
+			}
+	}
+</script>
+</body>
+</html>
+),

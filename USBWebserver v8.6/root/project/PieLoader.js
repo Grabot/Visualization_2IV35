@@ -22,28 +22,32 @@ function drawPie( pieData )
 		{
 			content: pieData
 		},
-		tooltips: 
+		size:
 		{
-		    enabled: true,
-		    type: "placeholder",
-		    string: "{label}: {percentage}%",
-		    styles: 
-		    {
-				fadeInSpeed: 500,
-				backgroundColor: "#111111",
-				backgroundOpacity: 0.8,
-				color: "#ffffff",
-				borderRadius: 4,
-				font: "verdana",
-				fontSize: 20,
-				padding: 20
-		    }
-  		},
+			canvasWidth: 800
+		},
+  		labels: 
+	  	{
+	  		percentage: 
+	  		{
+	  			color: "#ffffff",
+	  			fontSize: 20,
+				decimalPlaces: 2
+			},
+			mainLabel: 
+			{
+				fontSize: 25
+			},
+			innerLabel:
+			{
+				fontSize: 13
+			}
+		},
   		effects:
   		{
 			load: 
 			{
-				speed: 1000
+				speed: 500
 			},
 			pullOutSegmentOnClick: 
 			{
@@ -56,8 +60,8 @@ function drawPie( pieData )
 
 	var d = document.getElementById('pie');
 	d.style.position = "absolute";
-	d.style.left =  "700px";
-	d.style.width = "500px";
+	d.style.left =  "600px";
+	d.style.width = "600px";
 	d.style.height = "500px";
 
 	//end piechart
