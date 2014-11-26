@@ -3,6 +3,7 @@ var pieName;
 
 function drawPie( pieData )
 {
+	//alert("sander is homo")
 
 	//piechart
 	var pieName = "Eemsmond";
@@ -58,11 +59,7 @@ function drawPie( pieData )
 		},
 	});
 
-	var d = document.getElementById('pie');
-	d.style.position = "absolute";
-	d.style.left =  "600px";
-	d.style.width = "600px";
-	d.style.height = "500px";
+	
 
 	//end piechart
 	return pie;
