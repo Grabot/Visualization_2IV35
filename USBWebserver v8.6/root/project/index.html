@@ -1,1 +1,76 @@
-No, it is some other day
+<!DOCTYPE html>
+<html>
+<style>
+body 
+{
+    text-align: center;
+}
+</style>
+<body>
+<div class="Div1", id="panel">
+  <div id="fieldName">Don't know the day</div>
+</div>
+<div class="Div2", id="subtext">
+  <div id="extraInfo">ehm.... Go to church!</div>
+</div>
+<head>
+	<title>Is it Sunday?</title>
+</head>
+<script src="lines.js"></script>
+<script>
+
+var DayText = document.getElementById("fieldName");
+var SubText = document.getElementById("extraInfo");
+DayText.style.position = "center";
+SubText.style.position = "center";
+
+var DivPos1 = document.getElementById("panel");
+DivPos1.style.position = "absolute";
+DivPos1.style.color = "#006699";
+DivPos1.style.top = "40%";
+DivPos1.style.left = "50%";
+DivPos1.style.margin = "-30px 0 0 -400px";
+DivPos1.style.width = "800px";
+DivPos1.style.height = "50px";
+DivPos1.style.fontSize = "70px";
+DivPos1.style.fontWeight = "bold";
+
+var DivPos2 = document.getElementById("subtext");
+DivPos2.style.position = "absolute";
+DivPos2.style.color = "#006699";
+DivPos2.style.top = "60%";
+DivPos2.style.left = "50%";
+DivPos2.style.margin = "-30px 0 0 -400px";
+DivPos2.style.width = "800px";
+DivPos2.style.height = "50px";
+DivPos2.style.fontSize = "40px";
+DivPos2.style.fontWeight = "bold";
+
+document.body.style.backgroundColor="black";
+
+var d = new Date();
+var weekday = new Array(7);
+weekday[0]=  "Sunday";
+weekday[1] = "Monday";
+weekday[2] = "Tuesday";
+weekday[3] = "Wednesday";
+weekday[4] = "Thursday";
+weekday[5] = "Friday";
+weekday[6] = "Saturday";
+
+var n = weekday[d.getDay()];
+
+var random = Math.floor((Math.random() * 6 ));
+if( n == "Sunday" )
+{
+	DayText.innerHTML = "Yes, today it is " + n + "!<br>";
+	SubText.innerHTML = sunday[0];
+}
+else
+{
+	DayText.innerHTML = "No, today is " + n + ".<br>";
+	SubText.innerHTML = notSunday[random];
+}
+
+</script>
+</body>
