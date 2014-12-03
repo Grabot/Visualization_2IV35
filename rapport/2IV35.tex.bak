@@ -1,0 +1,164 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage{a4wide,graphicx,fancyhdr,amsmath,amssymb, enumerate}
+
+%----------------------- Macros and Definitions --------------------------
+
+\setlength\headheight{20pt}
+\addtolength\topmargin{-10pt}
+\addtolength\footskip{20pt}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines,
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\ch}{\mathcal{CH}}
+
+\fancypagestyle{plain}
+\fancyhf{}
+\fancyhead[LO,RE]{\sffamily\bfseries\large Technische Universiteit Eindhoven}
+\fancyhead[RO,LE]{\sffamily\bfseries\large 2IV35 Visualization}
+\fancyfoot[LO,RE]{\sffamily\bfseries\large Department of Mathematics and Computer Science}
+\fancyfoot[RO,LE]{\sffamily\bfseries\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[RO,LE]{\sffamily\bfseries\large Technische Universiteit Eindhoven}
+\fancyhead[LO,RE]{\sffamily\bfseries\large 2IV35 Visualization}
+\fancyfoot[LO,RE]{\sffamily\bfseries\large Department of Mathematics and Computer Science}
+\fancyfoot[RO,LE]{\sffamily\bfseries\thepage}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\begin{document}
+\begin{titlepage}
+
+\center % Center everything on the page
+
+\textsc{\Huge \textbf{Technische Universiteit Eindhoven}}\\[1.5cm] % Name of your university/college
+\textsc{\LARGE \textbf{Visualization}}\\[0.5cm] % Major heading such as course name
+\textsc{\large 2IV35}\\[0.5cm] % Minor heading such as course title
+
+\HRule \\[0.4cm]
+{ \huge \bfseries Awesome Visualization with graphs and shit}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{\textbf{Author:}}\\
+Sander Kools \\
+0848523 \\
+s.w.a.kools@student.tue.nl % Your name
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{\textbf{Author:}}\\
+Luuk Hulten\\
+0720248 \\
+l.a.j.v.hulten@student.tue.nl
+\end{flushright}
+\end{minipage}\\[4cm]
+
+{\large \today}\\[3cm] % Date, change the \today to a set date if you want to be precise
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+\section*{Information Visualization}
+In this report we will describe how we implemented a web application for visualizing a large data set for the course 2IV35. This data set contains information about the population living in the Netherlands.  \newline
+There is a wide variate of data, for instance the living percentage for age ranges or car usage. The data is very large and it is hard to understand the data when viewed in the tabular view as it was provided, therefore we have come up with a better interface to make viewing and understanding the provided data easier. \newline
+In section 1, we will first give a description of the format of the data set. \newline
+In section 2, we will explain our design considerations for the interface. \newline
+In section 3, we will present our actual implementation, with screenshots and motivation. \newline
+In section 4, we will consider the visualization techniques that have not been used and why we choose not to use them but go for these instead. \newline
+Finally in section 5, we will show how our visualization can be usefull. \newline
+\newpage
+\section{Description of the Dataset}
+We have been given a dataset with information about the population living in the Netherlands. The data is provided in a .txt file with 417 rows and 60 columns every column is separated by a tab. Every row represents a city region inside of the Netherlands. This region is also describe inside a json file listing the coordinates of the region so that it can be drawn, all the regions combined represents the Netherlands.
+\subsection{High-level description}
+The dataset originates from http://www.opencbs.nl (in Dutch), and it consists of shape information of Dutch municipalities in GEOJson format (cities-geometry.json), and a
+tab-separated file containing many statistics of these municipalities (cities-data.txt). \newline
+The following statistics are provided: \newline
+GM CODE [string] \newline
+This code provides a numerical identity to a municipality. \newline
+\begin{center}
+    \begin{tabular}{ | p{4.9cm} | p{10cm} |}
+    \hline
+    GM\_NAAM [string] & The official name of the municipality \\ \hline
+    WATER [] & Has no relevance here \\ \hline
+    OAD [number] & Average number of addresses per square kilometer \\ \hline
+    STED [number] & Describes the urban character using the following classification: \newline
+                    1 very strongly urban ≥ 2500 addresses per km2 \newline
+                    2 strongly urban 1500 − 2500 addresses per km2 \newline
+                    3 moderately urban 1000 − 1500 addresses per km2 \newline
+                    4 slightly urban 500 − 1000 addresses per km2 \newline
+                    5 not urban < 500 addresses per km2  \\ \hline
+    AANT INW [number] & Number of inhabitants \\ \hline
+    AANT MAN [number] & Number of inhabitants \\ \hline
+    AANT VROUW [number] & Number of women \\ \hline
+    P 00 14 JR [percentage] & Percentage of inhibations aged 0 to 15 years \\ \hline
+    P 15 24 JR [percentage] & Percentage of inhibations aged 15 to 25 years \\ \hline
+    P 25 44 JR [percentage] & Percentage of inhibations aged 25 to 45 years \\ \hline
+    P 45 64 JR [percentage] & Percentage of inhibations aged 45 to 65 years \\ \hline
+        \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ | p{4.9cm} | p{10cm} |}
+    P 65 EO JR [percentage] & Percentage of inhibations aged 65 years and older \\ \hline
+    P ONGEHUWD [percentage] & Percentage of unmarried people \\ \hline
+    P GEHUWD [percentage] & Percentage of married people \\ \hline
+    P GESCHEID [percentage] & Percentage of divorced people \\ \hline
+    P VERWEDUW [percentage] & Percentage of widows and widowers \\ \hline
+    BEV DICHTH [number] & Number of inhabitants per km2 \\ \hline
+    AANTAL HH [number] & Number of households \\ \hline
+    P EENP HH [percentage] & Percentage of single households \\ \hline
+    P HH Z K [percentage] & Percentage of households without children \\ \hline
+    6P HH M K [percentage] & Percentage of households with children \\ \hline
+    GEM HH GR [number] & Average number of people in all households \\ \hline
+    P WEST AL [percentage] & Percentage of foreigners from Europe, North-America, Oceania, Indonesia, and Japan \\ \hline
+    P N W AL [percentage] & Percentage of foreigners not from Europe, North-America, Oceania, Indonesia, and Japan \\ \hline
+    P MAROKKO [percentage] & Percentage of foreigners from Morocco, Ifni, Spanish Sahara, and Western Sahara \\ \hline
+    P ANT ARU & Percentage of foreigners from the Dutch Antilles and Aruba \\ \hline
+    P SURINAM [percentage] & Percentage of foreigners from Surinam \\ \hline
+    P TURKIJE [percentage] & Percentage of foreigners from Turkey \\ \hline
+    P OVER NW [percentage] & Percentage of foreigners from other countries than mentioned in the above 4 attributes \\ \hline
+    AUTO TOT [number] & Number of cars \\ \hline
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ | p{4.9cm} | p{10cm} |}
+    AUTO HH [number] & Number of cars per household \\ \hline
+    AUTO LAND [number] & Number of cars per km2 \\ \hline
+    BEDR AUTO [number] & Number of company cars (minivans, trucks, etc \\ \hline
+    MOTOR 2W [number] & Number of motorcycles, including scooters \\ \hline
+    OPP TOT [number] & Total land and water area in hectares \\ \hline
+    OPP LAND [number] & Land area in hectares \\ \hline
+    OPP WATER [number] & Water area in hectares \\ \hline
+    P 00 04 JR [percentage] & Percentage of inhibations aged 0 to 5 years \\ \hline
+    P 05 09 JR [percentage] & Percentage of inhibations aged 5 to 10 years \\ \hline
+    P 10 14 JR [percentage] & Percentage of inhibations aged 10 to 15 years \\ \hline
+    P 15 19 JR [percentage] & Percentage of inhibations aged 15 to 20 years \\ \hline
+    P 20 24 JR [percentage] & Percentage of inhibations aged 20 to 25 years \\ \hline
+    P 25 29 JR [percentage] & Percentage of inhibations aged 25 to 30 years \\ \hline
+    P 30 34 JR [percentage] & Percentage of inhibations aged 30 to 35 years \\ \hline
+    P 35 39 JR [percentage] & Percentage of inhibations aged 35 to 40 years \\ \hline
+    P 40 44 JR [percentage] & Percentage of inhibations aged 40 to 45 years \\ \hline
+    P 45 49 JR [percentage] & Percentage of inhibations aged 45 to 50 years \\ \hline
+    P 50 54 JR [percentage] & Percentage of inhibations aged 50 to 55 years \\ \hline
+    P 55 59 JR [percentage] & Percentage of inhibations aged 55 to 60 years \\ \hline
+    P 60 65 JR [percentage] & Percentage of inhibations aged 60 to 65 years \\ \hline
+    P 65 69 JR [percentage] & Percentage of inhibations aged 65 to 70 years \\ \hline
+    P 70 74 JR [percentage] & Percentage of inhibations aged 70 to 75 years \\ \hline
+    P 75 79 JR [percentage] & Percentage of inhibations aged 75 to 80 years \\ \hline
+    P 80 84 JR [percentage] & Percentage of inhibations aged 80 to 85 years \\ \hline
+    P 85 89 JR [percentage] & Percentage of inhibations aged 85 to 90 years \\ \hline
+    P 90 94 JR [percentage] & Percentage of inhibations aged 90 to 95 years \\ \hline
+    P 95 EO JR [percentage] & Percentage of inhibations aged 95 years and older \\ \hline
+    \end{tabular}
+\end{center}
+
+\end{document} 
