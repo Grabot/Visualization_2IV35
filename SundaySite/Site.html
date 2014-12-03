@@ -24,19 +24,29 @@
             font-size: 40px;
         }
     </style>
-    
+
 </head>
 
 <html>
 <body>
+    <div id="fb-root"></div>
+    <script>(function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/nl_NL/sdk.js#xfbml=1&version=v2.0";
+    fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
     <div class="container">
         <div class="title" id="title">
         </div>
         <div class="subtitle" id="subtitle">
         </div>
+        <div style="margin-bottom: 10px" class="fb-like" data-href="http://isitsunday.com/" data-width="100" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
     </div>
 </body>
 
-    <script src="sunday.js"></script>
+<script src="sunday.js"></script>
 </html>
 

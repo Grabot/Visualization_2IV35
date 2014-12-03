@@ -34,8 +34,11 @@ function getSubtitle() {
     notSunday[3] = "Jesus would have wanted you to be in church!";
     notSunday[4] = "What time is it? Church Time!";
     notSunday[5] = "if you go to church now, you might not go to hell!";
+    notSunday[6] = "Jesus did not needed internet to tell him which day it is!";
 
     Sunday[0] = "Time to go to church!";
+    Sunday[1] = "What the hell are you doing on internet go to Church!";
+    Sunday[2] = "It's almost monday, last chance to go to church!";
 
     var day = new Date().getDay();
     if (day == 0) {

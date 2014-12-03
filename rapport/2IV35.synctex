@@ -1,37 +1,37 @@
 SyncTeX Version:1
-Input:1:D:/Documents/GitHub/2IV35/rapport/2IV35.tex
-Input:2:C:\Program Files\MiKTeX 2.9\tex\latex\base\article.cls
-Input:3:C:\Program Files\MiKTeX 2.9\tex\latex\base\size11.clo
-Input:4:C:\Program Files\MiKTeX 2.9\tex\latex\a4wide\a4wide.sty
-Input:5:C:\Program Files\MiKTeX 2.9\tex\latex\ntgclass\a4.sty
-Input:6:C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphicx.sty
-Input:7:C:\Program Files\MiKTeX 2.9\tex\latex\graphics\keyval.sty
-Input:8:C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphics.sty
-Input:9:C:\Program Files\MiKTeX 2.9\tex\latex\graphics\trig.sty
-Input:10:C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg
-Input:11:C:\Program Files\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def
-Input:12:C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty
-Input:13:C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty
-Input:14:C:\Program Files\MiKTeX 2.9\tex\latex\fancyhdr\fancyhdr.sty
-Input:15:C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsmath.sty
-Input:16:C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amstext.sty
-Input:17:C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsgen.sty
-Input:18:C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsbsy.sty
-Input:19:C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsopn.sty
-Input:20:C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\amssymb.sty
-Input:21:C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\amsfonts.sty
-Input:22:C:\Program Files\MiKTeX 2.9\tex\latex\tools\enumerate.sty
-Input:23:D:\Documents\GitHub\2IV35\rapport\2IV35.aux
-Input:24:C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii
-Input:25:C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd
-Input:26:C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd
+Input:1:C:\Users\Luuk\Source\Repos\Visualization_2IV35\rapport\2IV35.tex
+Input:2:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\article.cls
+Input:3:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size11.clo
+Input:4:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\a4wide\a4wide.sty
+Input:5:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ntgclass\a4.sty
+Input:6:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty
+Input:7:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\keyval.sty
+Input:8:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty
+Input:9:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty
+Input:10:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg
+Input:11:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def
+Input:12:C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty
+Input:13:C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty
+Input:14:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\fancyhdr\fancyhdr.sty
+Input:15:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amsmath.sty
+Input:16:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amstext.sty
+Input:17:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amsgen.sty
+Input:18:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amsbsy.sty
+Input:19:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amsopn.sty
+Input:20:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\amssymb.sty
+Input:21:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\amsfonts.sty
+Input:22:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\tools\enumerate.sty
+Input:23:C:\Users\Luuk\Source\Repos\Visualization_2IV35\rapport\2IV35.aux
+Input:24:C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii
+Input:25:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd
+Input:26:C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd
 Output:pdf
 Magnification:1000
 Unit:1
 X Offset:0
 Y Offset:0
 Content:
-!1789
+!1975
 {1
 [1,69:4736286,52027082:29601791,47290796,0
 [1,69:5328321,52027082:29009756,47946156,0
@@ -469,9 +469,9 @@ k1,73:14452048,12918033:217277
 x1,73:14934448,12918033
 k1,73:15151725,12918033:217277
 x1,73:16588959,12918033
-k1,73:16806237,12918033:217278
-x1,73:17444122,12918033
-k1,73:17661399,12918033:217277
+k1,73:16806236,12918033:217277
+x1,73:17444121,12918033
+k1,73:17661399,12918033:217278
 x1,73:18458755,12918033
 x1,73:19457443,12918033
 x1,73:21175745,12918033
@@ -1156,10 +1156,10 @@ k1,83:26488921,16261798:394686
 x1,83:27645087,16261798
 k1,83:28008678,16261798:363591
 x1,83:28487092,16261798
-k1,83:28850682,16261798:363590
-x1,83:29927112,16261798
-x1,83:31254709,16261798
-k1,83:31618300,16261798:363591
+k1,83:28850683,16261798:363591
+x1,83:29927113,16261798
+x1,83:31254710,16261798
+k1,83:31618300,16261798:363590
 x1,83:32196383,16261798
 k1,83:32559974,16261798:363591
 x1,83:33999201,16261798
@@ -5540,8 +5540,8 @@ g1,163:34338077,52027082
 ]
 !70953
 }4
-Input:27:D:\Documents\GitHub\2IV35\rapport\2IV35.aux
-!63
+Input:27:C:\Users\Luuk\Source\Repos\Visualization_2IV35\rapport\2IV35.aux
+!84
 Postamble:
 Count:3735
 !26
