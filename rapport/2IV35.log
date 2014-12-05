@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.7.18)  3 DEC 2014 09:40
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.7.18)  5 DEC 2014 11:17
 entering extended mode
 **D:/Documents/GitHub/2IV35/rapport/2IV35.tex
 (D:/Documents/GitHub/2IV35/rapport/2IV35.tex
@@ -143,7 +143,42 @@ LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 Package: enumerate 1999/03/05 v3.00 enumerate extensions (DPC)
 \@enLab=\toks20
 )
-(D:\Documents\GitHub\2IV35\rapport\2IV35.aux)
+("C:\Program Files\MiKTeX 2.9\tex\latex\caption\caption.sty"
+Package: caption 2013/02/03 v3.3-65 Customizing captions (AR)
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\caption\caption3.sty"
+Package: caption3 2013/02/03 v1.5-62 caption3 kernel (AR)
+\captionmargin=\dimen114
+\captionmargin@=\dimen115
+\captionwidth=\dimen116
+\caption@tempdima=\dimen117
+\caption@indent=\dimen118
+\caption@parindent=\dimen119
+\caption@hangindent=\dimen120
+)
+\c@ContinuedFloat=\count100
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\caption\subcaption.sty"
+Package: subcaption 2013/02/03 v1.1-62 Sub-captions (AR)
+\c@subfigure=\count101
+\c@subtable=\count102
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\wrapfig\wrapfig.sty"
+\wrapoverhang=\dimen121
+\WF@size=\dimen122
+\c@WF@wrappedlines=\count103
+\WF@box=\box28
+\WF@everypar=\toks21
+Package: wrapfig 2003/01/31  v 3.6
+)
+(D:\Documents\GitHub\2IV35\rapport\2IV35.aux
+
+LaTeX Warning: Label `fig:Married' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:Married' multiply defined.
+
+)
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 34.
 LaTeX Font Info:    ... okay on input line 34.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 34.
@@ -156,21 +191,24 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 34.
 LaTeX Font Info:    ... okay on input line 34.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 34.
 LaTeX Font Info:    ... okay on input line 34.
-
-("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+ ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count100
-\scratchdimen=\dimen114
-\scratchbox=\box28
-\nofMPsegments=\count101
-\nofMParguments=\count102
-\everyMPshowfont=\toks21
-\MPscratchCnt=\count103
-\MPscratchDim=\dimen115
-\MPnumerator=\count104
-\makeMPintoPDFobject=\count105
-\everyMPtoPDFconversion=\toks22
+\scratchcounter=\count104
+\scratchdimen=\dimen123
+\scratchbox=\box29
+\nofMPsegments=\count105
+\nofMParguments=\count106
+\everyMPshowfont=\toks22
+\MPscratchCnt=\count107
+\MPscratchDim=\dimen124
+\MPnumerator=\count108
+\makeMPintoPDFobject=\count109
+\everyMPtoPDFconversion=\toks23
 )
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: wrapfig package is loaded.
+Package caption Info: End \AtBeginDocument code.
+
 
 LaTeX Font Warning: Font shape `OT1/cmr/bx/sc' undefined
 (Font)              using `OT1/cmr/bx/n' instead on input line 39.
@@ -186,12 +224,43 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {C:/Users/s138362/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 72--79
+<FullScreen2.png, id=9, 1105.731pt x 514.92375pt>
+File: FullScreen2.png Graphic file (type png)
+ <use FullScreen2.png>
+Package pdftex.def Info: FullScreen2.png used on input line 86.
+(pdftex.def)             Requested size: 442.65375pt x 206.1387pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--90
 
  []
 
-[2]
-Underfull \hbox (badness 10000) in paragraph at lines 83--88
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--90
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--90
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--90
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--90
+
+ []
+
+[2 <D:/Documents/GitHub/2IV35/rapport/FullScreen2.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 94--96
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 97--100
 
  []
 
@@ -208,28 +277,566 @@ Missing character: There is no â in font cmr10!
 Missing character: There is no ˆ in font cmr10!
 Missing character: There is no ’ in font cmr10!
 
-Overfull \hbox (5.29213pt too wide) in paragraph at lines 89--119
+Overfull \hbox (5.29213pt too wide) in paragraph at lines 101--121
  [] 
  []
 
 
-Overfull \hbox (5.29213pt too wide) in paragraph at lines 121--161
+Overfull \hbox (5.29213pt too wide) in paragraph at lines 123--165
  [] 
  []
 
-[3] [4] (D:\Documents\GitHub\2IV35\rapport\2IV35.aux)
+[3]
+Overfull \hbox (5.29213pt too wide) in paragraph at lines 167--179
+ [] 
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [4]
+[5] [6]
+Underfull \hbox (badness 10000) in paragraph at lines 192--194
+
+ []
+
+[7] <Interface/HeatmapInterface.png, id=34, 170.43675pt x 258.9675pt>
+File: Interface/HeatmapInterface.png Graphic file (type png)
+
+<use Interface/HeatmapInterface.png>
+Package pdftex.def Info: Interface/HeatmapInterface.png used on input line 199.
+
+(pdftex.def)             Requested size: 132.79747pt x 201.79228pt.
+
+<Interface/VisualizationInterface.png, id=35, 211.992pt x 48.18pt>
+File: Interface/VisualizationInterface.png Graphic file (type png)
+
+<use Interface/VisualizationInterface.png>
+Package pdftex.def Info: Interface/VisualizationInterface.png used on input lin
+e 204.
+(pdftex.def)             Requested size: 150.50064pt x 34.20581pt.
+
+Overfull \hbox (17.70317pt too wide) in paragraph at lines 198--207
+ []$  
+ []
+
+
+Package wrapfig Warning: Collision between wrapping environments on input line 
+212.
+
+<Interface/ScatterInterface.png, id=36, 83.1105pt x 31.91925pt>
+File: Interface/ScatterInterface.png Graphic file (type png)
+
+<use Interface/ScatterInterface.png>
+Package pdftex.def Info: Interface/ScatterInterface.png used on input line 215.
+
+(pdftex.def)             Requested size: 53.11629pt x 20.3995pt.
+
+<Interface/BarInterface.png, id=37, 71.66776pt x 33.12375pt>
+File: Interface/BarInterface.png Graphic file (type png)
+
+<use Interface/BarInterface.png>
+Package pdftex.def Info: Interface/BarInterface.png used on input line 219.
+(pdftex.def)             Requested size: 53.11629pt x 24.5506pt.
+
+<Interface/PieInterface.png, id=38, 72.87225pt x 55.407pt>
+File: Interface/PieInterface.png Graphic file (type png)
+
+<use Interface/PieInterface.png>
+Package pdftex.def Info: Interface/PieInterface.png used on input line 223.
+(pdftex.def)             Requested size: 53.11629pt x 40.38588pt.
+
+Underfull \hbox (badness 1424) in paragraph at lines 209--227
+\OT1/cmr/m/n/10.95 will be able to visit the vi-su-al-iza-tion eas-ily us-ing t
+heir
+ []
+
+
+Underfull \hbox (badness 2495) in paragraph at lines 209--227
+\OT1/cmr/m/n/10.95 web brower, with-out need-ing to in-stall ad-di-tional soft-
+
+ []
+
+
+Underfull \hbox (badness 1072) in paragraph at lines 209--227
+\OT1/cmr/m/n/10.95 For the vi-su-al-iza-tion of data, we used the d3.js li-brar
+y.
+ []
+
+
+Underfull \hbox (badness 1303) in paragraph at lines 209--227
+\OT1/cmr/m/n/10.95 ful data from the give dataset. For this we used the
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 209--227
+
+ []
+
+
+Package wrapfig Warning: Stationary wrapfigure forced to float on input line 22
+7.
+
+
+Package wrapfig Warning: Stationary wrapfigure forced to float on input line 22
+8.
+
+
+Package wrapfig Warning: Stationary wrapfigure forced to float on input line 22
+9.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--231
+
+ []
+
+
+Package wrapfig Warning: Stationary wrapfigure forced to float on input line 23
+1.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 232--235
+
+ []
+
+[8 <D:/Documents/GitHub/2IV35/rapport/Interface/HeatmapInterface.png> <D:/Docum
+ents/GitHub/2IV35/rapport/Interface/VisualizationInterface.png> <D:/Documents/G
+itHub/2IV35/rapport/Interface/ScatterInterface.png> <D:/Documents/GitHub/2IV35/
+rapport/Interface/BarInterface.png> <D:/Documents/GitHub/2IV35/rapport/Interfac
+e/PieInterface.png>] <Heatmaps/HeatMap1.png, id=47, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap1.png Graphic file (type png)
+
+<use Heatmaps/HeatMap1.png>
+Package pdftex.def Info: Heatmaps/HeatMap1.png used on input line 246.
+(pdftex.def)             Requested size: 53.11629pt x 72.58907pt.
+
+<Heatmaps/HeatMap2.png, id=48, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap2.png Graphic file (type png)
+
+<use Heatmaps/HeatMap2.png>
+Package pdftex.def Info: Heatmaps/HeatMap2.png used on input line 251.
+(pdftex.def)             Requested size: 53.11629pt x 72.58907pt.
+
+<Heatmaps/HeatMap3.png, id=49, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap3.png Graphic file (type png)
+
+<use Heatmaps/HeatMap3.png>
+Package pdftex.def Info: Heatmaps/HeatMap3.png used on input line 256.
+(pdftex.def)             Requested size: 53.11629pt x 72.58907pt.
+
+<Heatmaps/HeatMap4.png, id=50, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap4.png Graphic file (type png)
+
+<use Heatmaps/HeatMap4.png>
+Package pdftex.def Info: Heatmaps/HeatMap4.png used on input line 261.
+(pdftex.def)             Requested size: 53.11629pt x 72.58907pt.
+
+<Heatmaps/HeatMap5.png, id=51, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap5.png Graphic file (type png)
+
+<use Heatmaps/HeatMap5.png>
+Package pdftex.def Info: Heatmaps/HeatMap5.png used on input line 266.
+(pdftex.def)             Requested size: 53.11629pt x 72.58907pt.
+
+<Heatmaps/HeatMap6.png, id=52, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap6.png Graphic file (type png)
+
+<use Heatmaps/HeatMap6.png>
+Package pdftex.def Info: Heatmaps/HeatMap6.png used on input line 271.
+(pdftex.def)             Requested size: 53.11629pt x 72.58907pt.
+
+<Heatmaps/HeatMap7.png, id=53, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap7.png Graphic file (type png)
+
+<use Heatmaps/HeatMap7.png>
+Package pdftex.def Info: Heatmaps/HeatMap7.png used on input line 276.
+(pdftex.def)             Requested size: 53.11629pt x 72.58907pt.
+
+<Heatmaps/HeatMap8.png, id=54, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap8.png Graphic file (type png)
+
+<use Heatmaps/HeatMap8.png>
+Package pdftex.def Info: Heatmaps/HeatMap8.png used on input line 281.
+(pdftex.def)             Requested size: 53.11629pt x 72.58907pt.
+
+<Heatmaps/HeatMap9.png, id=55, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap9.png Graphic file (type png)
+
+<use Heatmaps/HeatMap9.png>
+Package pdftex.def Info: Heatmaps/HeatMap9.png used on input line 286.
+(pdftex.def)             Requested size: 52.23146pt x 71.37585pt.
+
+<Heatmaps/HeatMap10.png, id=56, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap10.png Graphic file (type png)
+
+<use Heatmaps/HeatMap10.png>
+Package pdftex.def Info: Heatmaps/HeatMap10.png used on input line 291.
+(pdftex.def)             Requested size: 52.23146pt x 71.37585pt.
+
+<Heatmaps/HeatMap11.png, id=57, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap11.png Graphic file (type png)
+
+<use Heatmaps/HeatMap11.png>
+Package pdftex.def Info: Heatmaps/HeatMap11.png used on input line 296.
+(pdftex.def)             Requested size: 52.23146pt x 71.37585pt.
+
+<Heatmaps/HeatMap12.png, id=58, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap12.png Graphic file (type png)
+
+<use Heatmaps/HeatMap12.png>
+Package pdftex.def Info: Heatmaps/HeatMap12.png used on input line 301.
+(pdftex.def)             Requested size: 52.23146pt x 71.37585pt.
+
+<Heatmaps/HeatMap13.png, id=59, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap13.png Graphic file (type png)
+
+<use Heatmaps/HeatMap13.png>
+Package pdftex.def Info: Heatmaps/HeatMap13.png used on input line 306.
+(pdftex.def)             Requested size: 52.23146pt x 71.37585pt.
+
+<Heatmaps/HeatMap14.png, id=60, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap14.png Graphic file (type png)
+
+<use Heatmaps/HeatMap14.png>
+Package pdftex.def Info: Heatmaps/HeatMap14.png used on input line 311.
+(pdftex.def)             Requested size: 52.23146pt x 71.37585pt.
+
+<Heatmaps/HeatMap15.png, id=61, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap15.png Graphic file (type png)
+
+<use Heatmaps/HeatMap15.png>
+Package pdftex.def Info: Heatmaps/HeatMap15.png used on input line 316.
+(pdftex.def)             Requested size: 52.23146pt x 71.37585pt.
+
+<Heatmaps/HeatMap16.png, id=62, 361.35pt x 493.845pt>
+File: Heatmaps/HeatMap16.png Graphic file (type png)
+
+<use Heatmaps/HeatMap16.png>
+Package pdftex.def Info: Heatmaps/HeatMap16.png used on input line 321.
+(pdftex.def)             Requested size: 52.23146pt x 71.37585pt.
+
+<Visualization/CompanyCars.png, id=63, 675.7245pt x 363.15675pt>
+File: Visualization/CompanyCars.png Graphic file (type png)
+
+<use Visualization/CompanyCars.png>
+Package pdftex.def Info: Visualization/CompanyCars.png used on input line 333.
+(pdftex.def)             Requested size: 221.32687pt x 118.9444pt.
+
+<Visualization/MotorCycles.png, id=64, 676.32675pt x 369.7815pt>
+File: Visualization/MotorCycles.png Graphic file (type png)
+
+<use Visualization/MotorCycles.png>
+Package pdftex.def Info: Visualization/MotorCycles.png used on input line 338.
+(pdftex.def)             Requested size: 221.32687pt x 121.01263pt.
+
+Overfull \hbox (2.43333pt too wide) in paragraph at lines 332--342
+[][] [] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 328--343
+
+ []
+
+[9 <D:/Documents/GitHub/2IV35/rapport/Heatmaps/HeatMap1.png> <D:/Documents/GitH
+ub/2IV35/rapport/Heatmaps/HeatMap2.png> <D:/Documents/GitHub/2IV35/rapport/Heat
+maps/HeatMap3.png> <D:/Documents/GitHub/2IV35/rapport/Heatmaps/HeatMap4.png> <D
+:/Documents/GitHub/2IV35/rapport/Heatmaps/HeatMap5.png> <D:/Documents/GitHub/2I
+V35/rapport/Heatmaps/HeatMap6.png> <D:/Documents/GitHub/2IV35/rapport/Heatmaps/
+HeatMap7.png> <D:/Documents/GitHub/2IV35/rapport/Heatmaps/HeatMap8.png> <D:/Doc
+uments/GitHub/2IV35/rapport/Heatmaps/HeatMap9.png> <D:/Documents/GitHub/2IV35/r
+apport/Heatmaps/HeatMap10.png> <D:/Documents/GitHub/2IV35/rapport/Heatmaps/Heat
+Map11.png> <D:/Documents/GitHub/2IV35/rapport/Heatmaps/HeatMap12.png> <D:/Docum
+ents/GitHub/2IV35/rapport/Heatmaps/HeatMap13.png> <D:/Documents/GitHub/2IV35/ra
+pport/Heatmaps/HeatMap14.png> <D:/Documents/GitHub/2IV35/rapport/Heatmaps/HeatM
+ap15.png> <D:/Documents/GitHub/2IV35/rapport/Heatmaps/HeatMap16.png>]
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+[] 
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 343--357
+
+ []
+
+<Visualization/BarChartSimpleSingle.png, id=84, 674.52pt x 370.38374pt>
+File: Visualization/BarChartSimpleSingle.png Graphic file (type png)
+
+<use Visualization/BarChartSimpleSingle.png>
+Package pdftex.def Info: Visualization/BarChartSimpleSingle.png used on input l
+ine 362.
+(pdftex.def)             Requested size: 101.80846pt x 55.8999pt.
+
+<Visualization/BarChartSimpleFull.png, id=85, 677.53125pt x 366.77025pt>
+File: Visualization/BarChartSimpleFull.png Graphic file (type png)
+
+<use Visualization/BarChartSimpleFull.png>
+Package pdftex.def Info: Visualization/BarChartSimpleFull.png used on input lin
+e 367.
+(pdftex.def)             Requested size: 101.80846pt x 55.10829pt.
+
+<Visualization/BarChartExtendedSingle.png, id=86, 669.702pt x 360.1455pt>
+File: Visualization/BarChartExtendedSingle.png Graphic file (type png)
+
+<use Visualization/BarChartExtendedSingle.png>
+Package pdftex.def Info: Visualization/BarChartExtendedSingle.png used on input
+ line 372.
+(pdftex.def)             Requested size: 101.80846pt x 54.74487pt.
+
+<Visualization/BarChartExtendedFull.png, id=87, 669.702pt x 357.13425pt>
+File: Visualization/BarChartExtendedFull.png Graphic file (type png)
+
+<use Visualization/BarChartExtendedFull.png>
+Package pdftex.def Info: Visualization/BarChartExtendedFull.png used on input l
+ine 377.
+(pdftex.def)             Requested size: 101.80846pt x 54.28714pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 358--382
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 358--382
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 382--395
+[] 
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 382--395
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 382--395
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 382--395
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 382--395
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 382--395
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 382--395
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 382--395
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 382--395
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 382--395
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 382--395
+
+ []
+
+[10 <D:/Documents/GitHub/2IV35/rapport/Visualization/CompanyCars.png> <D:/Docum
+ents/GitHub/2IV35/rapport/Visualization/MotorCycles.png> <D:/Documents/GitHub/2
+IV35/rapport/Visualization/BarChartSimpleSingle.png> <D:/Documents/GitHub/2IV35
+/rapport/Visualization/BarChartSimpleFull.png> <D:/Documents/GitHub/2IV35/rappo
+rt/Visualization/BarChartExtendedSingle.png> <D:/Documents/GitHub/2IV35/rapport
+/Visualization/BarChartExtendedFull.png>]
+<Visualization/PieChartMarried.png, id=97, 373.395pt x 272.217pt>
+File: Visualization/PieChartMarried.png Graphic file (type png)
+
+<use Visualization/PieChartMarried.png>
+Package pdftex.def Info: Visualization/PieChartMarried.png used on input line 4
+00.
+(pdftex.def)             Requested size: 101.80846pt x 74.2223pt.
+
+<Visualization/PieChartRatio.png, id=98, 360.74776pt x 298.11375pt>
+File: Visualization/PieChartRatio.png Graphic file (type png)
+
+<use Visualization/PieChartRatio.png>
+Package pdftex.def Info: Visualization/PieChartRatio.png used on input line 405
+.
+(pdftex.def)             Requested size: 101.80846pt x 84.13086pt.
+
+<Visualization/PieChartInhabitants.png, id=99, 331.83975pt x 286.671pt>
+File: Visualization/PieChartInhabitants.png Graphic file (type png)
+
+<use Visualization/PieChartInhabitants.png>
+Package pdftex.def Info: Visualization/PieChartInhabitants.png used on input li
+ne 410.
+(pdftex.def)             Requested size: 88.52939pt x 76.47923pt.
+
+<Visualization/PieChartWater.png, id=100, 357.13425pt x 299.31825pt>
+File: Visualization/PieChartWater.png Graphic file (type png)
+
+<use Visualization/PieChartWater.png>
+Package pdftex.def Info: Visualization/PieChartWater.png used on input line 415
+.
+(pdftex.def)             Requested size: 88.52939pt x 74.19453pt.
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+[] 
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+
+ []
+
+
+Overfull \hbox (10.0pt too wide) in paragraph at lines 420--431
+
+ []
+
+
+Overfull \hbox (94.10419pt too wide) in paragraph at lines 431--431
+[]\OT1/cmr/bx/n/12 Hovering
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 432--437
+
+ []
+
+[11 <D:/Documents/GitHub/2IV35/rapport/Visualization/PieChartMarried.png> <D:/D
+ocuments/GitHub/2IV35/rapport/Visualization/PieChartRatio.png> <D:/Documents/Gi
+tHub/2IV35/rapport/Visualization/PieChartInhabitants.png> <D:/Documents/GitHub/
+2IV35/rapport/Visualization/PieChartWater.png>] [12]
+(D:\Documents\GitHub\2IV35\rapport\2IV35.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
+
+LaTeX Warning: There were multiply-defined labels.
+
  ) 
 Here is how much of TeX's memory you used:
- 2202 strings out of 495271
- 27064 string characters out of 3181478
- 97553 words of memory out of 3000000
- 5384 multiletter control sequences out of 15000+200000
+ 3554 strings out of 495271
+ 52735 string characters out of 3181478
+ 121765 words of memory out of 3000000
+ 6688 multiletter control sequences out of 15000+200000
  13829 words of font info for 50 fonts, out of 3000000 for 9000
  54 hyphenation exceptions out of 8191
- 27i,10n,43p,467b,284s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,10n,43p,744b,433s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Pr
 ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Program Files/Mi
@@ -237,9 +844,9 @@ KTeX 2.9/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Program Files/MiKTeX 2.
 9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
 ype1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/publ
 ic/amsfonts/cm/cmssbx10.pfb>
-Output written on 2IV35.pdf (4 pages, 102326 bytes).
+Output written on 2IV35.pdf (12 pages, 3289878 bytes).
 PDF statistics:
- 43 PDF objects out of 1000 (max. 8388607)
+ 134 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 161 words of extra memory for PDF output out of 10000 (max. 10000000)
 

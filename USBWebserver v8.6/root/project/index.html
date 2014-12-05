@@ -1,76 +1,71 @@
 <!DOCTYPE html>
-<html>
-<style>
-body 
-{
-    text-align: center;
-}
-</style>
-<body>
-<div class="Div1", id="panel">
-  <div id="fieldName">Don't know the day</div>
-</div>
-<div class="Div2", id="subtext">
-  <div id="extraInfo">ehm.... Go to church!</div>
-</div>
 <head>
-	<title>Is it Sunday?</title>
+
+    <title>Is it sunday?</title>
+
+    <style>
+        body {
+            text-align: center;
+            background: black;
+        }
+        .container {
+            color: #006699;
+            margin-top: 20%;
+            font-Weight: bold;
+            text-align: center;
+        }
+        .title {
+            font-Size: 80px;
+        }
+        .subtitle {
+            font-size: 50px;
+        }
+        .BibleQuote {
+        	margin-top: 50px;
+        	margin-left: 20%;
+        	margin-right: 20%;
+        	font-size: 20px;
+        }
+    </style>
+
 </head>
-<script src="lines.js"></script>
-<script>
 
-var DayText = document.getElementById("fieldName");
-var SubText = document.getElementById("extraInfo");
-DayText.style.position = "center";
-SubText.style.position = "center";
+<html>
+<body>
+    <div id="fb-root"></div>
 
-var DivPos1 = document.getElementById("panel");
-DivPos1.style.position = "absolute";
-DivPos1.style.color = "#006699";
-DivPos1.style.top = "40%";
-DivPos1.style.left = "50%";
-DivPos1.style.margin = "-30px 0 0 -400px";
-DivPos1.style.width = "800px";
-DivPos1.style.height = "50px";
-DivPos1.style.fontSize = "70px";
-DivPos1.style.fontWeight = "bold";
 
-var DivPos2 = document.getElementById("subtext");
-DivPos2.style.position = "absolute";
-DivPos2.style.color = "#006699";
-DivPos2.style.top = "60%";
-DivPos2.style.left = "50%";
-DivPos2.style.margin = "-30px 0 0 -400px";
-DivPos2.style.width = "800px";
-DivPos2.style.height = "50px";
-DivPos2.style.fontSize = "40px";
-DivPos2.style.fontWeight = "bold";
+    <script>(function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/nl_NL/sdk.js#xfbml=1&version=v2.0";
+    fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
 
-document.body.style.backgroundColor="black";
+    <div class="container">
+        <div class="title" id="title">
+        </div>
+        <div class="subtitle" id="subtitle">
+        </div>
+        <div class="BibleQuote" id= "Bible">
+        </div>
+        <div style="margin-top: 100px" class="fb-like" data-href="http://isitsunday.com/" data-width="100" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
+    </div>
+</body>
 
-var d = new Date();
-var weekday = new Array(7);
-weekday[0]=  "Sunday";
-weekday[1] = "Monday";
-weekday[2] = "Tuesday";
-weekday[3] = "Wednesday";
-weekday[4] = "Thursday";
-weekday[5] = "Friday";
-weekday[6] = "Saturday";
+	<script src="sunday.js"></script>
+    <script type="text/javascript">
 
-var n = weekday[d.getDay()];
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-XXXXX-X']);
+  _gaq.push(['_trackPageview']);
 
-var random = Math.floor((Math.random() * 6 ));
-if( n == "Sunday" )
-{
-	DayText.innerHTML = "Yes, today it is " + n + "!<br>";
-	SubText.innerHTML = sunday[0];
-}
-else
-{
-	DayText.innerHTML = "No, today is " + n + ".<br>";
-	SubText.innerHTML = notSunday[random];
-}
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
 
 </script>
-</body>
+</html>
