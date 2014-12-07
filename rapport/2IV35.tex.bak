@@ -41,7 +41,7 @@
 \textsc{\large 2IV35}\\[0.5cm] % Minor heading such as course title
 
 \HRule \\[0.4cm]
-{ \huge \bfseries Awesome Visualization with graphs and shit}\\[0.4cm] % Title of your document
+{ \huge \bfseries Visualization data of the Netherlands}\\[0.4cm] % Title of your document
 \HRule \\[1.5cm]
 
 \begin{minipage}{0.4\textwidth}
@@ -68,6 +68,10 @@ l.a.j.v.hulten@student.tue.nl
 
 \end{titlepage}
 
+\newpage
+\tableofcontents
+\newpage
+
 \section*{Information Visualization}
 In this report we will describe how we implemented a web application for visualizing a large data set for the course 2IV35. This data set contains information about the population living in the Netherlands.  \newline
 There is a wide variate of data, for instance the living percentage for age ranges or car usage. The data is very large and it is hard to understand the data when viewed in the tabular view as it was provided, therefore we have come up with a better interface to make viewing and understanding the provided data easier. \newline
@@ -87,7 +91,7 @@ Finally in section 5, we will show how our visualization can be usefull. \newlin
   \end{center}
   \caption{Overview of our application, showing two modes next to each other. Here we see the map of the Netherlands with population given in heatmap next to the scatter plot of total number of cars against company cars}
 \end{figure}
-\newpage
+
 \section{Description of the Dataset}
 We have been given a dataset with information about the population living in the Netherlands. The data is provided in a .txt file with 417 rows and 60 columns every column is separated by a tab. Every row represents a city region inside of the Netherlands. This region is also describe inside a json file listing the coordinates of the region so that it can be drawn, all the regions combined represents the Netherlands.
 \subsection{High-level description}
@@ -181,16 +185,24 @@ The data is delivered as a .txt file with columns that are separated with a tab.
 \newpage
 \section{Design}
 In this section we explain the general design of the visualization.
+
 \subsection{General design}
-Since the dataset contains a large quantity of data about municipalities, a decision has to been made what to visualize. And also what visualization technique suits the selected data, so that it can be easily interpreted. More important is a valuable visualization, with this we mean that we can find valuable and useful information that meets the requirements.
-\subsection{User interface}
+Since the dataset contains a large quantity of data about municipalities, a decision has to been made what to visualize. And also what visualization technique suits the selected data, so that it can be easily interpreted. More important is a valuable visualization, meaning that we can find valuable and useful information that meets the requirements.
+
+\subsection{Graphs}
+The dataset is mostly consists out of percentage so displaying this distribution in a pie chart seems obvious. In a pie chart you can easily see how a group of people is divided in subgroups. However a pie chart can not contain to much data since the sections become to small and hard to distinguish. In the case of the municipalities data married, divorced, widower and singles is an good example to represent in a pie chart. Since there are not to many categories and presented in percentage of the total population. \newline
+Also the distribution of the ages could be presented in a pie chart. But since these consists out of 20 categories, the pieces of the pie chart becomes to small and difficult to compare. Thats why for displaying this data a other representation needed to be found. Eventual a bar chart was chosen to display this data. A bar chart is capable of displaying many more categories. Another advantage of the bar chart is that you can easily compare data for multiple municipalities by placing multiple bars for each category with distinct colors for each municipality. \newline
+For finding the cars in contrast to the inhabitants for each municipality and finding outliers a scatter plot is a good choice. A scatter plot can contain lots of data, this enables us to plot all the car data of each municipalities at once in a single plot. Since the scatter plot needs to visualize three variables we extended the scatter plot. We made the scatter plot to represent the number of inhabitants by the size of the dots. We think that this enables us to find specific outliers very fast.
+
+\subsection{User Interface}
 There a many municipalities and there is a lot of data. Showing this at once for all municipalities makes the visualizations to complex and hard to inspect. Therefor we needed an interface that allows the user to scroll through the data and select some aspects of the data that needs to be visualized. To support these actions on the visualizations we needed an interface. \newline
 We started with a map of the Netherlands showing all municipalities. This map is used to scroll to the municipalities by clicking them. After clicking a municipalities the data selected is shown.  Since we also want to make comparisons between municipalities, the ability to select two municipalities was added. When selecting two municipalities, the data of these two is added in one visualization. This approach makes it easy for the user to compare data between municipalities. \newline
-Since it is not useful to show all the data of a municipality at once, also an interface is needed to give the user to be ability to select some aspects about the data. In this case where there are not to many categories radio buttons is a good approach. Since they are small enough to place it direct in the visualization. This way the user gets a direct overview of the data and options available for the visualization without going through dropdown or list constructions. Selecting an aspect of the data would recolor the map to show an average overview of the data. This enables the user to find interesting municipalities and select them to get more detail of the data.
-\newpage
-\section{Data representation}
+Since it is not useful to show all the data of a municipality at once, also an interface is needed to give the user to be ability to select some aspects about the data. In this case where there are not to many categories radio buttons is a good approach. Since they are small enough to place it direct in the visualization. This way the user gets a direct overview of the data and options available for the visualization without going through dropdown or list constructions. Selecting an aspect of the data would recolor the map to show an average overview of the data. This enables the user to find interesting municipalities and select them to get more detail of the data. \newline
+Details about the data is not only shown by creating different graphs but also annotating the graphs with the actual value. The advantage of annotating graphs is that misinterpreting the data is minimized. To keep the view clear and uncluttered the annotations are only shown when hovering over the elements.
+
+\subsection{Data Representation}
 We tried to display as much useful and interesting data as we could from the cities-data.txt file, the data we don't use from the data as seen in the table is: \textbf{WATER, OAD, STED, AANTAL HH, P EENP HH, P HH Z K, AUTO HH and OPP TOT}. \newline
-Inside the data there were certain data aspects that were not given for certain city regions, for those entries the value became a big number like -99999997.0, also a row in the file had no function and could cause a misrepresentation of the data visualization. Because we didn't want to change the dataset given, we choose to identify the flaws and solve them in the coding of the visualization. \newline
+Inside the data there were certain data aspects that were not given for certain city regions, for those entries the value became a big number like -99999997.0, also a row in the file had no function and could cause a misrepresentation of the data visualization. Because we didn't want to change the dataset given, we decided to identify the flaws and solve them in the coding of the visualization. \newline
 \newpage
 \section{Implementation}
 \begin{wrapfigure}{r}{0.3\textwidth}
@@ -225,7 +237,7 @@ We had to use a range of visualizations to display useful data from the give dat
         \end{subfigure}
         \caption{visualization}
 \end{wrapfigure}
-\subsection{Technical notes}
+\subsection{Technical Notes}
 We have tested the application in Firefox and Chrome. Other modern browsers like Safari, Opera and Internet Explorer should also support our application, but we have not tested that. \newline
 The visualization can be viewed by everyone, if you go to the site "www.isitsunday.com/2IV35.html" (use capital "IV") it will load the visualization we have made for the course 2IV35. How long the link will be supported can not be said at this time. \newline
 \subsection{Main Interface}
@@ -325,7 +337,7 @@ All of the data that has been displayed in shown in the figure below. \newline
         \caption{All Heatmap visualizations}\label{fig:HeatMaps}
 \end{figure}
 \subsection{Scatter Plot}
-The first visualization which on default is visible when running the site is a scatter plot, there are 2 options for the scatter plot as explained in the interface chapter, these options are company cars and motorcycles. \newline
+The second visualization which on default is visible when running the site is a scatter plot, there are 2 options for the scatter plot as explained in the interface chapter, these options are company cars and motorcycles. \newline
 When selecting the company cars scatter plot, you will see the scatter plot of the total cars put against the number of company cars, every city region is a bubble and the size of the bubble represents the number of inhabitants. When selecting the Motorcycles the plot is similar, except instead of company cars, the number of motorcycles is displayed. You can mouseover a bubble, than a label will appear with the data of that bubble, so the name, inhabitants, total cars and total company cars/motorcycles. a line will be drawn across the x and y axis so you can better see at what point on the x and y axis the bubble is located. \newline
 The results of the 2 scatter plots can be seen in the figure below. with the company cars (a) and the motorcycles (b). \newline
 \begin{wrapfigure}{r}{1\textwidth}
@@ -355,7 +367,7 @@ The results of the 2 scatter plots can be seen in the figure below. with the com
 \newline
 \newline
 \subsection{Bar Chart}
-The second visualization is a barchart where the age range percentage are displayed. You can select between simple and extended as described in the interface section. When the simple chart is selected you see the age range from 0-14 to 65 and older and with the extended chart selected you see the age range from 0 to 4, 5 to 9 all the way to 95 and older. \newline
+The third visualization is a barchart where the age range percentage are displayed. You can select between simple and extended as described in the interface section. When the simple chart is selected you see the age range from 0-14 to 65 and older and with the extended chart selected you see the age range from 0 to 4, 5 to 9 all the way to 95 and older. \newline
 \newline
 \begin{wrapfigure}{r}{1\textwidth}
         \begin{subfigure}[b]{0.23\textwidth}
@@ -390,8 +402,75 @@ The second visualization is a barchart where the age range percentage are displa
 \newline
 \newline
 \newline
-You give the barchart input by clicking on the map, which is always visible on the left side of the screen, by clicking on a city region, the age range data of that region is loaded in the barchart. When a second city region is selected both the data of that city region and the previous city region is loaded in the barchart and they are given a different colour and a label to identify which colour is which city region. By double clicking a city region, you will see only the data of that city region. \newline
+You give the bar chart input by clicking on the map, which is always visible on the left side of the screen, by clicking on a city region, the age range data of that region is loaded in the bar chart. When a second city region is selected both the data of that city region and the previous city region is loaded in the bar chart and they are given a different colour and a label to identify which colour is which city region. By double clicking a city region, you will see only the data of that city region. \newline
 So you can have 1 city region displayed with simple data (a) or extended data (c), or you can see 2 city regions next to each other with simple data (b) or with extended data (d) as seen in the figure. \newline
 \subsection{Pie Chart}
-The third visualization
+The fourth visualization is the pie chart where 4 different kind of data is visualized, the datasets that are displayed are kept small, because otherwise the pie chart would lose it's use. The first data that is visualized is the marriage data, so the percentage that is either married, not married, divorced or widowed. The second data that is visualized is the male/female ratio for that city region. The third data is the inhabitants ratio between the last 2 selected city regions. And the fourth data is the land/water ratio of the given cityregion. \newline
+Again you give input by clicking on the map that's always visible on the left side and the city region that is clicked will be the input for the data shown in the pie charts, also you can switch between the four data options by clicking the radio button's as described in the interface. In the figure you see an example of the married ratio pie chart (a), the male/female ratio pie chart (b), the inhabitants ratio pie chart (c) and the land/water ratio pie chart.
+\begin{wrapfigure}{r}{1\textwidth}
+        \begin{subfigure}[b]{0.23\textwidth}
+                \includegraphics[width=\textwidth]{Visualization/PieChartMarried.png}
+                \caption{Married}
+                \label{fig:Married}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.23\textwidth}
+                \includegraphics[width=\textwidth]{Visualization/PieChartRatio.png}
+                \caption{Male/Female ratio}
+                \label{fig:Ratio}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.2\textwidth}
+                \includegraphics[width=\textwidth]{Visualization/PieChartInhabitants.png}
+                \caption{Inhabitants}
+                \label{fig:Inhabitants}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.2\textwidth}
+                \includegraphics[width=\textwidth]{Visualization/PieChartWater.png}
+                \caption{Water ratio}
+                \label{fig:Water}
+        \end{subfigure}
+        \caption{Pie Charts}\label{fig:PieCharts}
+\end{wrapfigure}
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\subsection{Hovering and Selecting}
+To get more detail from a particular visualization, the user can hover over it with the mouse, this has an effect with every visualization. \newline
+With the heatmap hovering over a cityregion will colour it black, so you know for sure which will be selected when clicking, also if you hold the mouse still over a certain region, you will see the population in that cityregion and the name of the city region. \newline
+With the scatter plot you can mouse over the balls in the plot, doing this will drawn lines accross the x and y axis so you can easily determine both values. Also a label will appear with all the information about that ball, so the name of the city region, inhabitants, total number of cars and the number of company cars/motorcycles. \newline
+With the bar chart you can mouseover the bars in the plot, the corresponding bar will have a line drawn to the y axis, so you can easily determine the value, also you can see the value in the label which will be shown when hovering over it, this gives the percentage of that bar and the given value of the x axis, with the name of the city region. \newline
+With the pie chart you can click on a pie section of the chart, this will cause the pie slice to pop out so you can beter determine the size, also the actual percentage is displayed in the slice. \newline
+\newpage
+
+\section{Trends}
+We have used our application to analyze the data and found a couple of trends. By
+this we mean remarkable changes or values in the data. \newline \newline
+The first trends we found was that there is a direct correlation between the number of inhabitants and cars within a municipality. However there is a obvious outlier and that is Almere, since it has lots of motor cycles in contrast to the number of inhabitants. As a reason we think that there are many lease company located there. \newline \newline
+The second trend is that the most widowers are located near the borders of the Netherlands. We can not find a good reason for that. However if you compare the number of widowers to the age in a municipality you can easily find that the average age of these municipality is higher to the once without many widowers. \newline \newline
+A third trend is that most foreigners live in the larger cities like Rotterdam, Amsterdam and Utrecht.
+\newpage
+\section{Conclusion}
+In this chapter we review the results of our visualizations. \newline
+The scatter plot is a good decision since it shows a lot of data in one view. But since most cities clutter in the left corner a part of the information is lost. We could improve this by making selecting different points possible and add zooming. \newline
+The bar chart displays the age categories very clearly. But also here we could improve by for example adding a average age line to it. An other improvement could be that instead of just clicking simple and extended view to unfold just a selected age bar in subcategories. This way you enable the users to directly search for the data. \newline
+Overall we think our visualizations suits the data good. We can easily find the answers of different questions. Nevertheless we think that the interface could be improved more. In some cases it is not directly clear what municipality is selected, since this is not reflected in the map. Also a clear flow of the application is missing. With this we mean that multiple views shows different information we could improve by showing the same information in different views. An approach like this gives the users the power to select the best view for the data instead of that the developer makes these discission for them. Naturally this is dependent on the target group of your application.
+
+\subsection{Testing}
+We tested our application with a select group of people and asked them to find the municipality with the most woman between the age of age of 20 to 25. They came up with Utrecht and Nijmegen as the best municipalities. So they successfully answered the question in a short amount of time. The test group was very interested in our visualization and liked to discover the data in the manner it was presented them.
+
+\begin{figure}[h]
+        \centering
+        \includegraphics[width=\textwidth]{Conclusion/Conclusion1.jpg}
+        \caption{Visualization testing group}
+        \label{fig:numberOfInhabitants}
+\end{figure}
+
+
+
 \end{document} 
