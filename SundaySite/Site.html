@@ -3,64 +3,14 @@
 
     <title>Is it sunday?</title>
 
-    <style>
-        body {
-            text-align: center;
-            background: black;
-        }
-
-        .container {
-            color: #006699;
-            margin-top: 20%;
-            font-Weight: bold;
-            text-align: center;
-        }
-
-        .title {
-            font-Size: 80px;
-        }
-
-        .subtitle {
-            font-size: 50px;
-        }
-        /* #### Mobile Phones Portrait or Landscape #### */
-        @media screen and (max-device-width: 640px) {
-            .BibleQuote {
-                margin-top: 50px;
-                margin-left: auto;
-                margin-right: auto;
-                font-size: 20px;
-                text-align: center;
-            }
-        }
-
-        /* #### Desktops #### */
-        @media screen and (min-width: 900px) {
-            .BibleQuote {
-                margin-top: 50px;
-                width: 700px;
-                margin-left: auto;
-                margin-right: auto;
-                font-size: 20px;
-                text-align: center;
-            }
-        }
-    </style>
+    <link href="css/site.css" rel="stylesheet" type="text/css" />
 
 </head>
 
 <html>
 <body>
     <div id="fb-root"></div>
-
-
-    <script>(function (d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/nl_NL/sdk.js#xfbml=1&version=v2.0";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+    <script src="js/facebook.js"></script>
 
     <div class="container">
         <div class="title" id="title">
@@ -73,5 +23,5 @@
     </div>
 </body>
 
-<script src="sunday.js"></script>
+<script src="js/sunday.js"></script>
 </html>

@@ -1,0 +1,42 @@
+﻿body {
+    text-align: center;
+    background: black;
+}
+
+.container {
+    color: #006699;
+    margin-top: 20%;
+    font-Weight: bold;
+    text-align: center;
+}
+
+.title {
+    font-Size: 80px;
+}
+
+.subtitle {
+    font-size: 50px;
+}
+
+/* #### Desktops #### */
+@media screen and (min-width: 900px) {
+    .BibleQuote {
+        margin-top: 50px;
+        width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 20px;
+        text-align: center;
+    }
+}
+
+/* #### Mobile Phones Portrait or Landscape #### */
+@media screen and (max-device-width: 640px) {
+    .BibleQuote {
+        margin-top: 50px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 20px;
+        text-align: center;
+    }
+}
