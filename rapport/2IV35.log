@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.9.9)  7 DEC 2014 17:52
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.9.9)  7 DEC 2014 18:57
 entering extended mode
 **2IV35.tex
 (C:\Users\Luuk\Source\Repos\Visualization_2IV35\rapport\2IV35.tex
@@ -269,10 +269,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 76--94
 
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [3 <C:/Users/Luuk/Source/Repos/Visualization_2IV35/rapport/FullScreen2.png>]
+[3 <C:/Users/Luuk/Source/Repos/Visualization_2IV35/rapport/FullScreen2.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 98--100
 
  []
@@ -304,7 +301,10 @@ Overfull \hbox (5.29213pt too wide) in paragraph at lines 127--169
  [] 
  []
 
-[4]
+
+Underfull \vbox (badness 1314) has occurred while \output is active []
+
+ [4]
 Overfull \hbox (5.29213pt too wide) in paragraph at lines 171--183
  [] 
  []
@@ -878,7 +878,7 @@ Here is how much of TeX's memory you used:
  6813 multiletter control sequences out of 15000+200000
  13829 words of font info for 50 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 36i,10n,43p,695b,438s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,10n,43p,696b,438s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C
 :/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C
@@ -886,7 +886,7 @@ Here is how much of TeX's memory you used:
 /Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Pr
 ogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Progr
 am Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb>
-Output written on 2IV35.pdf (15 pages, 3337868 bytes).
+Output written on 2IV35.pdf (15 pages, 3337822 bytes).
 PDF statistics:
  145 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
