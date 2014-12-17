@@ -57,5 +57,7 @@ public abstract class Renderer {
         }
     }
     
+    public abstract void setResolutionFactor(double resfac);
+    
     public abstract void visualize(GL2 gl);
 }

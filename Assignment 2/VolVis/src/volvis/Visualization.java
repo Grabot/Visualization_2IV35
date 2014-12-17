@@ -50,19 +50,13 @@ public class Visualization implements GLEventListener, TFChangeListener {
         canvas.repaint(50);
     }
     
-
   @Override
     public void changed() {
         canvas.display();
     }
 
-
-    
-
-
    @Override
     public void init(GLAutoDrawable drawable) {
-       
     }
 
    @Override
@@ -76,7 +70,6 @@ public class Visualization implements GLEventListener, TFChangeListener {
         gl.glLoadIdentity();
         glu.gluPerspective(fov, ((float) winWidth/((float) winHeight)), 0.1, 5000);
         gl.glTranslated(0, 0, -1000);
-
         
         // clear screen and set the view transform to the identity matrix
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -132,6 +125,7 @@ public class Visualization implements GLEventListener, TFChangeListener {
            
            for (int i = 0; i < renderers.size(); i++) {
                renderers.get(i).setInteractiveMode(true);
+               renderers.get(i).setResolutionFactor(0.25);
            }
        }
        
@@ -139,6 +133,7 @@ public class Visualization implements GLEventListener, TFChangeListener {
        public void mouseReleased(MouseEvent e) {
            for (int i = 0; i < renderers.size(); i++) {
                renderers.get(i).setInteractiveMode(false);
+                renderers.get(i).setResolutionFactor(1);
            }
            update();
        }
