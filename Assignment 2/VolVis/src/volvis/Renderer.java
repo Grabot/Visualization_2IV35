@@ -7,6 +7,7 @@ package volvis;
 import java.util.ArrayList;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
+import util.RendererChangeListener;
 import util.TFChangeListener;
 
 /**
@@ -18,7 +19,8 @@ public abstract class Renderer {
     boolean visible = false;
     boolean interactiveMode = false;
     ArrayList<TFChangeListener> listeners = new ArrayList<TFChangeListener>();
-
+    ArrayList<RendererChangeListener> rendererChangeListeners = new ArrayList<RendererChangeListener>();
+    
     public Renderer() {
         
     }
@@ -55,6 +57,20 @@ public abstract class Renderer {
         if (!listeners.contains(l)) {
             listeners.add(l);
         }
+    }
+    
+    public void addRendererChangeListener(RendererChangeListener listener)
+    {
+        if (!rendererChangeListeners.contains(listener))
+        {
+            rendererChangeListeners.add(listener);
+        }
+    }
+    
+    protected void RenderingCompleted()
+    {
+        for (RendererChangeListener listener : rendererChangeListeners)
+            listener.OnRenderingCompleted(this);
     }
     
     public abstract void setResolutionFactor(double resfac);

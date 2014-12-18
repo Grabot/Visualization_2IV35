@@ -5,17 +5,24 @@
 package volvis;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
+import javax.swing.SwingUtilities;
+import static jdk.nashorn.internal.objects.NativeRegExp.test;
+import util.RendererChangeListener;
 import util.TFChangeListener;
 import util.TrackballInteractor;
 
@@ -23,15 +30,17 @@ import util.TrackballInteractor;
  *
  * @author michel
  */
-public class Visualization implements GLEventListener, TFChangeListener {
+public class Visualization implements GLEventListener, TFChangeListener, RendererChangeListener {
 
-  GLU glu = new GLU();
+    GLU glu = new GLU();
     ArrayList<Renderer> renderers;
     GLCanvas canvas;
     int winWidth, winHeight;
     double fov = 20.0;
     TrackballInteractor trackball;
-        
+
+    private ReentrantLock openGlLock = new ReentrantLock();
+
     public Visualization(GLCanvas canvas) {
         this.renderers = new ArrayList<Renderer>();
         this.canvas = canvas;
@@ -43,23 +52,36 @@ public class Visualization implements GLEventListener, TFChangeListener {
 
     // Add a new renderer (i.e. visualization method) to the visualization
     public void addRenderer(Renderer vis) {
+
+        // Add event listener receiving rendering complete message
+        vis.addRendererChangeListener(this);
+
         renderers.add(vis);
     }
 
     public void update() {
         canvas.repaint(50);
     }
-    
-  @Override
+
+    @Override
     public void changed() {
-        canvas.display();
+
     }
 
-   @Override
+    public synchronized void test() {
+        openGlLock.tryLock();
+        try {
+            canvas.display();
+        } finally {
+            openGlLock.unlock();
+        }
+    }
+
+    @Override
     public void init(GLAutoDrawable drawable) {
     }
 
-   @Override
+    @Override
     public void display(GLAutoDrawable drawable) {
 
         // get the OpenGL rendering context
@@ -68,9 +90,9 @@ public class Visualization implements GLEventListener, TFChangeListener {
         // set up the projection transform
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
-        glu.gluPerspective(fov, ((float) winWidth/((float) winHeight)), 0.1, 5000);
+        glu.gluPerspective(fov, ((float) winWidth / ((float) winHeight)), 0.1, 5000);
         gl.glTranslated(0, 0, -1000);
-        
+
         // clear screen and set the view transform to the identity matrix
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
@@ -79,26 +101,27 @@ public class Visualization implements GLEventListener, TFChangeListener {
         gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glDepthFunc(GL2.GL_LESS);
 
-       if (trackball.isRotating()) {
-           // when dragging the mouse, keep updating the virtual trackball
-           trackball.updateTransform(gl);
-       }
-       
-       // multiply the current view transform (identity) with trackball transform
-       gl.glMultMatrixd(trackball.getTransformationMatrix(), 0);
-       
-       
+        if (trackball.isRotating()) {
+            // when dragging the mouse, keep updating the virtual trackball
+            trackball.updateTransform(gl);
+        }
+
+        // multiply the current view transform (identity) with trackball transform
+        gl.glMultMatrixd(trackball.getTransformationMatrix(), 0);
+
         // call the visualize() methods of all subscribed renderers
-        for (int i = 0; i < renderers.size(); i++) {
-            renderers.get(i).visualize(gl);
+        for (Renderer renderer : renderers) {
+            renderer.visualize(gl);
+            //renderers.get(i).StartRenderer(gl);
             // blocking call ensures drawing of renderer is completed before
             // next one starts
             gl.glFlush();
         }
+
     }
 
     // reshape handles window resize
-   @Override
+    @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL2 gl = drawable.getGL().getGL2();
         gl.glViewport(0, 0, width, height);
@@ -109,49 +132,50 @@ public class Visualization implements GLEventListener, TFChangeListener {
         winWidth = width;
         winHeight = height;
         trackball.setDimensions(width, height);
-        canvas.setMinimumSize(new Dimension(0,0));
+        canvas.setMinimumSize(new Dimension(0, 0));
     }
 
     @Override
     public void dispose(GLAutoDrawable glad) {
     }
 
-   
-   class MousePressListener extends MouseAdapter {
+    @Override
+    public void OnRenderingCompleted(Renderer source) {
+        //source.visualize();
+        //changed();
+        test();
+    }
 
-       @Override
-       public void mousePressed(MouseEvent e) {
-           trackball.setMousePos(e.getX(), e.getY());
-           
-           for (int i = 0; i < renderers.size(); i++) {
-               renderers.get(i).setInteractiveMode(true);
-               renderers.get(i).setResolutionFactor(0.25);
-           }
-       }
-       
-       @Override
-       public void mouseReleased(MouseEvent e) {
-           for (int i = 0; i < renderers.size(); i++) {
-               renderers.get(i).setInteractiveMode(false);
-                renderers.get(i).setResolutionFactor(1);
-           }
-           update();
-       }
-   }
-   
-    class MouseMotionListener extends MouseMotionAdapter {
-        
-        
-      @Override
-        public void mouseDragged(MouseEvent e) {
-             trackball.drag(e.getX(), e.getY());
-             trackball.setRotating(true);
-             update();
-          }
-          
+    class MousePressListener extends MouseAdapter {
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            trackball.setMousePos(e.getX(), e.getY());
+
+            for (int i = 0; i < renderers.size(); i++) {
+                renderers.get(i).setInteractiveMode(true);
+            }
         }
-    
-    
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            for (int i = 0; i < renderers.size(); i++) {
+                renderers.get(i).setInteractiveMode(false);
+            }
+        }
+    }
+
+    class MouseMotionListener extends MouseMotionAdapter {
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            trackball.drag(e.getX(), e.getY());
+            trackball.setRotating(true);
+            update();
+        }
+
+    }
+
     class MouseWheelHandler implements MouseWheelListener {
 
         @Override
@@ -166,7 +190,5 @@ public class Visualization implements GLEventListener, TFChangeListener {
             }
             update();
         }
-        
     }
-    
 }
