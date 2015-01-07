@@ -22,7 +22,7 @@ public class VolVisApplication extends javax.swing.JFrame {
     Visualization visualization;
     Volume volume;
     RaycastRenderer raycastRenderer;
-    
+        
     /**
      * Creates new form VolVisApplication
      */
@@ -40,8 +40,8 @@ public class VolVisApplication extends javax.swing.JFrame {
         raycastRenderer = new RaycastRenderer();
         visualization.addRenderer(raycastRenderer);
         raycastRenderer.addTFChangeListener(visualization);
-        tabbedPanel.addTab("Raycaster", raycastRenderer.getPanel());
         
+        tabbedPanel.addTab("Raycaster", raycastRenderer.getPanel());
     }
 
     /**

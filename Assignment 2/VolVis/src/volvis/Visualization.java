@@ -5,23 +5,18 @@
 package volvis;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
-import javax.swing.SwingUtilities;
-import static jdk.nashorn.internal.objects.NativeRegExp.test;
 import util.RendererChangeListener;
 import util.TFChangeListener;
 import util.TrackballInteractor;
@@ -143,7 +138,7 @@ public class Visualization implements GLEventListener, TFChangeListener, Rendere
     public void OnRenderingCompleted(Renderer source) {
         //source.visualize();
         //changed();
-        test();
+        canvas.display();
     }
 
     class MousePressListener extends MouseAdapter {

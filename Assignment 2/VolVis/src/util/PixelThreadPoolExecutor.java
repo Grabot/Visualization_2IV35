@@ -42,7 +42,7 @@ public class PixelThreadPoolExecutor extends ThreadPoolExecutor {
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
-        if ((getQueue().size() % 1000) == 0)
+        if ((getQueue().size() % 10000) == 0)
         {
             ProgressUpdated();
         }

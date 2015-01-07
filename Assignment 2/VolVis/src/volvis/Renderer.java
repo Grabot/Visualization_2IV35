@@ -73,7 +73,5 @@ public abstract class Renderer {
             listener.OnRenderingCompleted(this);
     }
     
-    public abstract void setResolutionFactor(double resfac);
-    
     public abstract void visualize(GL2 gl);
 }
