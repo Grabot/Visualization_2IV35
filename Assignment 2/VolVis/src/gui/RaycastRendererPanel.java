@@ -6,7 +6,6 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
-import javafx.scene.control.ComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JSlider;
 import volvis.RaycastRenderer;
