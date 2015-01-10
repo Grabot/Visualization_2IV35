@@ -1,1 +1,3 @@
 \contentsline {section}{\numberline {1}Speeding up interaction}{3}
+\contentsline {section}{\numberline {2}Compositing}{3}
+\contentsline {section}{\numberline {3}MIP}{4}

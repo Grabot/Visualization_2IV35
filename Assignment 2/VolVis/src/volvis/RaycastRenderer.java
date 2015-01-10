@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import javax.media.opengl.GL2;
-import util.PixelThreadPoolExecutor;
 import util.PixelThreadPoolChangeListener;
+import util.PixelThreadPoolExecutor;
 import util.RendererChangeListener;
 import util.TFChangeListener;
 import util.VectorMath;
@@ -256,7 +256,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
         gl.glEnable(GL2.GL_BLEND);
         gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
-        /*
         gl.glBegin(GL2.GL_LINE_LOOP);
         gl.glVertex3d(-volume.getDimX() / 2.0, -volume.getDimY() / 2.0, volume.getDimZ() / 2.0);
         gl.glVertex3d(-volume.getDimX() / 2.0, volume.getDimY() / 2.0, volume.getDimZ() / 2.0);
@@ -303,7 +302,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
         gl.glDisable(GL2.GL_BLEND);
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glPopAttrib();
-                */
     }
 
     @Override

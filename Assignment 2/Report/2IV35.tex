@@ -86,7 +86,7 @@ This enables the user to interact with the image and see some result in low deta
 Normally calculating in three resolutions introduces extra overhead but since intermediate results are stored little overhead is introduced.
 Also the calculation of the pixels is done multi threaded this means that the user can interact with the visualization while pixels are been calculated. While interacting while pixels are calculated the pixel queue is cleared and filled with the pixels of the new visualization.
 
-\begin{wrapfigure}{r}{1\textwidth}
+\begin{figure}[h]
 \begin{center}
         \begin{subfigure}[b]{0.23\textwidth}
                 \includegraphics[width=\textwidth]{Images/res4.png}
@@ -105,12 +105,14 @@ Also the calculation of the pixels is done multi threaded this means that the us
         \end{subfigure}
         \caption{Pie Charts}\label{fig:Resolutions}
 \end{center}
-\end{wrapfigure}
+\end{figure}
 
 
 \section{Compositing}
-
-
+\newpage
+\section{MIP}
+In scientific visualization, a maximum intensity projection (MIP) is a volume rendering method for 3D data. It consists of projecting the voxel with the highest attenuation value on every view throughout the volume onto a 2D image. \newline
+This method tends to display bone and contrast material–filled structures preferentially, and other lower-attenuation structures are not well visualized. The primary clinical application of MIP is to improve the detection of pulmonary nodules and assess their profusion. MIP also helps characterize the distribution of small nodules. In addition, MIP sections of variable thickness are excellent for assessing the size and location of vessels, including the pulmonary arteries and veins 1.
 
 
 \end{document} 
