@@ -86,7 +86,7 @@ This enables the user to interact with the image and see some result in low deta
 Normally calculating in three resolutions introduces extra overhead but since intermediate results are stored little overhead is introduced.
 Also the calculation of the pixels is done multi threaded this means that the user can interact with the visualization while pixels are been calculated. While interacting while pixels are calculated the pixel queue is cleared and filled with the pixels of the new visualization.
 
-\begin{wrapfigure}{r}{1\textwidth}
+\begin{figure}[h]
 \begin{center}
         \begin{subfigure}[b]{0.23\textwidth}
                 \includegraphics[width=\textwidth]{Images/res4.png}
@@ -105,14 +105,39 @@ Also the calculation of the pixels is done multi threaded this means that the us
         \end{subfigure}
         \caption{Pie Charts}\label{fig:Resolutions}
 \end{center}
-\end{wrapfigure}
+\end{figure}
 
 
 \section{Compositing}
-
+\newpage
 \section{MIP}
 In scientific visualization, a maximum intensity projection (MIP) is a volume rendering method for 3D data. It consists of projecting the voxel with the highest attenuation value on every view throughout the volume onto a 2D image. \newline
-This method tends to display bone and contrast material–filled structures preferentially, and other lower-attenuation structures are not well visualized. The primary clinical application of MIP is to improve the detection of pulmonary nodules and assess their profusion. MIP also helps characterize the distribution of small nodules. In addition, MIP sections of variable thickness are excellent for assessing the size and location of vessels, including the pulmonary arteries and veins 1.
+This method tends to display bone and contrast material–filled structures preferentially, and other lower-attenuation structures are not well visualized. The primary clinical application of MIP is to improve the detection of pulmonary nodules and assess their profusion. MIP also helps characterize the distribution of small nodules. In addition, MIP sections of variable thickness are excellent for assessing the size and location of vessels, including the pulmonary arteries and veins. \newline
+For the implementation of the MIP we sampled every pixel by casting a ray through the data and set the voxel to the maximum value. First we iterate over every pixel. At every pixel we record the corresponding voxel value and if it's the highest value we've encountered, we save it as being the highest value until we possibly find a higher one later in the iteration. \newline
+Below there are figures of MIP on the datasets.
+\begin{figure}[h]
+    \begin{center}
+                    \includegraphics[width=\textwidth]{SanderImages/visMIP.png}
+                    \caption{$\frac{1}{2}$ Resolution}
+                    \label{fig:res2}
+            \end{subfigure}
+            \begin{subfigure}[b]{0.23\textwidth}
+                    \includegraphics[width=\textwidth]{SanderImages/OrangeMIP.png}
+                    \caption{Full resolution}
+                    \label{fig:res1}
+            \end{subfigure}
+            \caption{Pie Charts}\label{fig:Resolutions}
+    \end{center}
+\end{figure}
 
+
+The implementation of Maximum Intensity Projection was straight forward. Sampling
+at every pixel, cast a ray through the data set and nd the voxel with the maximum value.
+To do so, we rst iterate over every pixel. At every pixel we record the corresponding voxel
+value which aligns with that pixel, and if it is the highest voxel value we've encountered
+for that pixel, we save it. The way we nd the voxel which corresponds to a particular
+pixel is to begin with the center plane, as it is calculated in the original code. From here,
+we scale this center plane forward and backwards through the data such that we maintain
+the orientation with the viewing plane.
 
 \end{document} 
