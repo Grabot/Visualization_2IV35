@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.7.18)  11 JAN 2015 22:42
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.7.18)  11 JAN 2015 23:18
 entering extended mode
 **D:/Documents/GitHub/Visualization_2IV35/Assignment*2/Report/2IV35.tex
 ("D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/2IV35.tex"
@@ -229,113 +229,167 @@ Underfull \hbox (badness 10000) in paragraph at lines 76--82
 <Images/res4.png, id=14, 433.11812pt x 420.57124pt>
 File: Images/res4.png Graphic file (type png)
  <use Images/res4.png>
-Package pdftex.def Info: Images/res4.png used on input line 92.
+Package pdftex.def Info: Images/res4.png used on input line 89.
 (pdftex.def)             Requested size: 132.79747pt x 128.95108pt.
 
 <Images/res2.png, id=16, 415.5525pt x 405.01312pt>
 File: Images/res2.png Graphic file (type png)
  <use Images/res2.png>
-Package pdftex.def Info: Images/res2.png used on input line 97.
+Package pdftex.def Info: Images/res2.png used on input line 94.
 (pdftex.def)             Requested size: 132.79747pt x 129.42761pt.
 
 <Images/res1.png, id=17, 409.02812pt x 404.51125pt>
 File: Images/res1.png Graphic file (type png)
  <use Images/res1.png>
-Package pdftex.def Info: Images/res1.png used on input line 102.
+Package pdftex.def Info: Images/res1.png used on input line 99.
 (pdftex.def)             Requested size: 132.79747pt x 131.3288pt.
 
 [3 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Images/res4.png
 > <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Images/res2.png>
  <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Images/res1.png>]
-Missing character: There is no â in font cmr10!
-Missing character: There is no € in font cmr10!
-Missing character: There is no “ in font cmr10!
-<SanderImages/visMIPZ.png, id=27, 738.96075pt x 601.64775pt>
-File: SanderImages/visMIPZ.png Graphic file (type png)
+<Images/BonsaiCOMP.png, id=27, 1445.4pt x 743.77875pt>
+File: Images/BonsaiCOMP.png Graphic file (type png)
 
-<use SanderImages/visMIPZ.png>
-Package pdftex.def Info: SanderImages/visMIPZ.png used on input line 119.
-(pdftex.def)             Requested size: 208.04779pt x 169.38744pt.
+<use Images/BonsaiCOMP.png>
+Package pdftex.def Info: Images/BonsaiCOMP.png used on input line 118.
+(pdftex.def)             Requested size: 442.65375pt x 227.77715pt.
 
-<SanderImages/FishCompZ.png, id=28, 640.89438pt x 491.8375pt>
-File: SanderImages/FishCompZ.png Graphic file (type png)
+<Images/OrangeCOMP.png, id=28, 1445.4pt x 744.53156pt>
+File: Images/OrangeCOMP.png Graphic file (type png)
 
-<use SanderImages/FishCompZ.png>
-Package pdftex.def Info: SanderImages/FishCompZ.png used on input line 124.
-(pdftex.def)             Requested size: 216.90276pt x 166.44954pt.
- [4 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/SanderImages/v
-isMIPZ.png> <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Sander
-Images/FishCompZ.png>]
-<SanderImages/PigMIP2.png, id=32, 1154.51324pt x 603.4545pt>
-File: SanderImages/PigMIP2.png Graphic file (type png)
+<use Images/OrangeCOMP.png>
+Package pdftex.def Info: Images/OrangeCOMP.png used on input line 124.
+(pdftex.def)             Requested size: 442.65375pt x 228.00768pt.
 
-<use SanderImages/PigMIP2.png>
-Package pdftex.def Info: SanderImages/PigMIP2.png used on input line 136.
-(pdftex.def)             Requested size: 442.65375pt x 231.36845pt.
 
-<SanderImages/SkeletonMIPZ.png, id=33, 605.8635pt x 520.344pt>
-File: SanderImages/SkeletonMIPZ.png Graphic file (type png)
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<use SanderImages/SkeletonMIPZ.png>
-Package pdftex.def Info: SanderImages/SkeletonMIPZ.png used on input line 144.
-(pdftex.def)             Requested size: 141.65244pt x 121.65361pt.
+<Images/PigCOMP.png, id=29, 1445.4pt x 742.27313pt>
+File: Images/PigCOMP.png Graphic file (type png)
+ <use Images/PigCOMP.png>
+Package pdftex.def Info: Images/PigCOMP.png used on input line 130.
+(pdftex.def)             Requested size: 442.65375pt x 227.31606pt.
 
-<SanderImages/BonsaiMIPZ.png, id=34, 594.72188pt x 493.34312pt>
-File: SanderImages/BonsaiMIPZ.png Graphic file (type png)
 
-<use SanderImages/BonsaiMIPZ.png>
-Package pdftex.def Info: SanderImages/BonsaiMIPZ.png used on input line 149.
-(pdftex.def)             Requested size: 146.07654pt x 121.17499pt.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<SanderImages/OrangeMIPZ.png, id=35, 665.48625pt x 601.0455pt>
-File: SanderImages/OrangeMIPZ.png Graphic file (type png)
+[4 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Images/BonsaiCO
+MP.png>] [5 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Images
+/OrangeCOMP.png> <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/I
+mages/PigCOMP.png>] <Images/OrangeOW.png, id=43, 768.62157pt x 479.54156pt>
+File: Images/OrangeOW.png Graphic file (type png)
 
-<use SanderImages/OrangeMIPZ.png>
-Package pdftex.def Info: SanderImages/OrangeMIPZ.png used on input line 154.
-(pdftex.def)             Requested size: 132.79747pt x 119.93182pt.
- [5 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/SanderImages/P
-igMIP2.png> <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Sander
-Images/SkeletonMIPZ.png> <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/
-Report/SanderImages/BonsaiMIPZ.png> <D:/Documents/GitHub/Visualization_2IV35/As
-signment 2/Report/SanderImages/OrangeMIPZ.png>] <SanderImages/interpolation.png
-, id=40, 230.8625pt x 203.76125pt>
+<use Images/OrangeOW.png>
+Package pdftex.def Info: Images/OrangeOW.png used on input line 142.
+(pdftex.def)             Requested size: 442.65375pt x 276.17328pt.
+ [6 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Images/OrangeO
+W.png>]
+<Images/BonsaiOW.png, id=49, 1262.46657pt x 740.7675pt>
+File: Images/BonsaiOW.png Graphic file (type png)
+
+<use Images/BonsaiOW.png>
+Package pdftex.def Info: Images/BonsaiOW.png used on input line 152.
+(pdftex.def)             Requested size: 309.85626pt x 181.81177pt.
+
+<Images/StentOW.png, id=50, 996.72375pt x 740.7675pt>
+File: Images/StentOW.png Graphic file (type png)
+ <use Images/StentOW.png>
+Package pdftex.def Info: Images/StentOW.png used on input line 160.
+(pdftex.def)             Requested size: 309.85626pt x 230.27983pt.
+
+[7 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Images/BonsaiOW
+.png> <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Images/Stent
+OW.png>] <SanderImages/interpolation.png, id=57, 230.8625pt x 203.76125pt>
 File: SanderImages/interpolation.png Graphic file (type png)
 
 <use SanderImages/interpolation.png>
-Package pdftex.def Info: SanderImages/interpolation.png used on input line 168.
+Package pdftex.def Info: SanderImages/interpolation.png used on input line 172.
 
 (pdftex.def)             Requested size: 177.05879pt x 156.27481pt.
- [6 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/SanderImages/i
+ [8 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/SanderImages/i
 nterpolation.png>]
-("D:\Documents\GitHub\Visualization_2IV35\Assignment 2\Report\2IV35.aux")
+Missing character: There is no â in font cmr10!
+Missing character: There is no € in font cmr10!
+Missing character: There is no “ in font cmr10!
+
+<SanderImages/visMIPZ.png, id=63, 738.96075pt x 601.64775pt>
+File: SanderImages/visMIPZ.png Graphic file (type png)
+
+<use SanderImages/visMIPZ.png>
+Package pdftex.def Info: SanderImages/visMIPZ.png used on input line 198.
+(pdftex.def)             Requested size: 208.04779pt x 169.38744pt.
+
+<SanderImages/FishCompZ.png, id=64, 640.89438pt x 491.8375pt>
+File: SanderImages/FishCompZ.png Graphic file (type png)
+
+<use SanderImages/FishCompZ.png>
+Package pdftex.def Info: SanderImages/FishCompZ.png used on input line 203.
+(pdftex.def)             Requested size: 216.90276pt x 166.44954pt.
+ [9 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/SanderImages/v
+isMIPZ.png> <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Sander
+Images/FishCompZ.png>]
+<SanderImages/PigMIP2.png, id=68, 1154.51324pt x 603.4545pt>
+File: SanderImages/PigMIP2.png Graphic file (type png)
+
+<use SanderImages/PigMIP2.png>
+Package pdftex.def Info: SanderImages/PigMIP2.png used on input line 215.
+(pdftex.def)             Requested size: 442.65375pt x 231.36845pt.
+
+<SanderImages/SkeletonMIPZ.png, id=69, 605.8635pt x 520.344pt>
+File: SanderImages/SkeletonMIPZ.png Graphic file (type png)
+
+<use SanderImages/SkeletonMIPZ.png>
+Package pdftex.def Info: SanderImages/SkeletonMIPZ.png used on input line 223.
+(pdftex.def)             Requested size: 141.65244pt x 121.65361pt.
+
+<SanderImages/BonsaiMIPZ.png, id=70, 594.72188pt x 493.34312pt>
+File: SanderImages/BonsaiMIPZ.png Graphic file (type png)
+
+<use SanderImages/BonsaiMIPZ.png>
+Package pdftex.def Info: SanderImages/BonsaiMIPZ.png used on input line 228.
+(pdftex.def)             Requested size: 146.07654pt x 121.17499pt.
+
+<SanderImages/OrangeMIPZ.png, id=71, 665.48625pt x 601.0455pt>
+File: SanderImages/OrangeMIPZ.png Graphic file (type png)
+
+<use SanderImages/OrangeMIPZ.png>
+Package pdftex.def Info: SanderImages/OrangeMIPZ.png used on input line 233.
+(pdftex.def)             Requested size: 132.79747pt x 119.93182pt.
+ [10 <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/SanderImages/
+PigMIP2.png> <D:/Documents/GitHub/Visualization_2IV35/Assignment 2/Report/Sande
+rImages/SkeletonMIPZ.png> <D:/Documents/GitHub/Visualization_2IV35/Assignment 2
+/Report/SanderImages/BonsaiMIPZ.png> <D:/Documents/GitHub/Visualization_2IV35/A
+ssignment 2/Report/SanderImages/OrangeMIPZ.png>] ("D:\Documents\GitHub\Visualiz
+ation_2IV35\Assignment 2\Report\2IV35.aux")
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 3417 strings out of 495271
- 49135 string characters out of 3181478
- 105765 words of memory out of 3000000
- 6569 multiletter control sequences out of 15000+200000
+ 3453 strings out of 495271
+ 49869 string characters out of 3181478
+ 104765 words of memory out of 3000000
+ 6599 multiletter control sequences out of 15000+200000
  15221 words of font info for 57 fonts, out of 3000000 for 9000
  54 hyphenation exceptions out of 8191
- 36i,10n,43p,571b,520s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,10n,43p,622b,520s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Pr
 ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Program Files/Mi
 KTeX 2.9/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Program Files/MiKTeX 2.
 9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/
-type1/public/amsfonts/cm/cmmi8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pub
-lic/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfo
-nts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
-r6.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:
-/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program F
-iles/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/Program Files/M
-iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.
-9/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on 2IV35.pdf (6 pages, 3913829 bytes).
+type1/public/amsfonts/cm/cmmi6.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pub
+lic/amsfonts/cm/cmmi8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfo
+nts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
+r12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C
+:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program 
+Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/Program Files/MiKTeX 2.9
+/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
+ype1/public/amsfonts/cm/cmsy8.pfb>
+Output written on 2IV35.pdf (10 pages, 6762971 bytes).
 PDF statistics:
- 93 PDF objects out of 1000 (max. 8388607)
+ 123 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 51 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 81 words of extra memory for PDF output out of 10000 (max. 10000000)
 
