@@ -75,10 +75,10 @@ l.a.j.v.hulten@student.tue.nl
 \section*{Introduction}
 In this report we will describe some implementation details of the volume rendering application. We will show the advantages and disadvantages of some rendering techniques at the hand of images.
 In section 1, we will give some details about rendering in a lower resolution to speed up interacting with the application. \newline
-In section 2, we will . \newline
-In section 3, we will . \newline
-In section 4, we will . \newline
-Finally in section 5, we will give a short conclusion about how we choose to visualize the data. \newline
+In section 2, we will discuss the MIP rendering technique
+In section 3, we will discuss the Compositing rendering technique
+In section 4, we will discuss the Opacity weighting rendering technique
+Finally in section 5, we will give a short conclusion. \newline
 
 \section{Speeding up interaction}
 Since most visualization techniques are quite slow, interacting with the visualization becomes laggy and difficult. To speed up these interaction we render the image while interacting in a lower resolution. We implemented the rendering to render the image in three different resolutions. These resolutions are $\frac{1}{4}$ and $\frac{1}{2}$ of the original resolution. At last we render the image at full resolution.
@@ -172,19 +172,19 @@ The following images have been produced using the compositing rendering techniqu
 
 \begin{figure}[h!]
     \includegraphics[width=\textwidth]{Images/BonsaiCOMP.png}
-    \caption{Bonsai}
+    \caption{Bonsai Compositing}
     \label{fig:BonsaiCOMP}
 \end{figure}
 
 \begin{figure}[h!]
     \includegraphics[width=\textwidth]{Images/OrangeCOMP.png}
-    \caption{Orange}
+    \caption{Orange Compositing}
     \label{fig:OrangeCOMP}
 \end{figure}
 
 \begin{figure}[h!]
     \includegraphics[width=\textwidth]{Images/PigCOMP.png}
-    \caption{Pig}
+    \caption{Pig Compositing}
     \label{fig:PigCOMP}
 \end{figure} \newpage
 
@@ -194,5 +194,25 @@ Compositing is best used for rendering the outside of objects from volume data.
 \newpage
 
 \section{Opacity Weighting}
+Opacity weighting is a rendering technique where opacity are scaled depending on material values selected by the user. With these values a volume of opacities is calculated. In this volume each voxel has a opacity scaled to the selected material values and the local gradient magnitude. After these alpha values have been calculated a ray is cast into this volume and with the compositing technique merged into one color value that is projected on the view plane.
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{Images/OrangeOW.png}
+    \caption{Orange Opacity Weighting}
+    \label{fig:BonsaiOW}
+\end{figure}
+Calculating these opacity values takes a long time since it has to be done for every voxel. Since these opacity values are independent of the view vector the rendered image can be rotated without having to recalculate all opacity values. However changing the material choice values will result in a full recalculation of all voxel alpha values. We used the transfer function control points to input the values $f_{v_{n}}$ and $a_{v_{n}}$ since this was already implemented and was easy to implement the new functionality. \newpage
 
+As shown in figure \ref{fig:BonsaiOW} and \ref{fig:OrangeOW} images rendered using opacity weighting looks to have no volume. You see through the volume to the other side as it was hollow. This is as expected since the article explains that where selected tissues contact other tissue these voxels get the highest opacities.
+
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{Images/BonsaiOW.png}
+    \caption{Bonsai Opacity Weighting}
+    \label{fig:OrangeOW}
+\end{figure}
+This rendering technique is suitable for identifying and selecting different tissue types in volumetric data without a boolean decision if the tissue is in or out the volume.
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{Images/StentOW.png}
+    \caption{Stent Opacity Weighting}
+    \label{fig:StentOW}
+\end{figure}
 \end{document}

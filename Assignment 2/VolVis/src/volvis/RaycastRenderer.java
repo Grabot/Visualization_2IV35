@@ -380,10 +380,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
         gl.glDisable(GL2.GL_BLEND);
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glPopAttrib();
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
     }
 
     @Override
@@ -628,10 +624,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
                 TFColor voxelColor = tFunc.getColor(val);
 
                 voxelColor.a = ((double) alphaval) / 255;
-
-                if (voxelColor.a > 0.1) {
-                    System.out.println(voxelColor.a);
-                }
 
                 compColor.a = 1;
                 compColor.r = voxelColor.r * voxelColor.a + (1 - voxelColor.a) * compColor.r;

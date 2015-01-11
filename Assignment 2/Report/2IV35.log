@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.9.9)  11 JAN 2015 20:32
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.9.9)  11 JAN 2015 21:24
 entering extended mode
 **C:/Users/Luuk/Source/Repos/Visualization_2IV35/Assignment*2/Report/2IV35.tex
 ("C:/Users/Luuk/Source/Repos/Visualization_2IV35/Assignment 2/Report/2IV35.tex"
@@ -326,11 +326,11 @@ Package pdftex.def Info: Images/OrangeCOMP.png used on input line 180.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<Images/PigCOMP.png, id=42, 963.6pt x 519.44063pt>
+<Images/PigCOMP.png, id=42, 1445.4pt x 742.27313pt>
 File: Images/PigCOMP.png Graphic file (type png)
  <use Images/PigCOMP.png>
 Package pdftex.def Info: Images/PigCOMP.png used on input line 186.
-(pdftex.def)             Requested size: 442.65375pt x 238.61269pt.
+(pdftex.def)             Requested size: 442.65375pt x 227.31606pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -338,7 +338,34 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 [6 <C:/Users/Luuk/Source/Repos/Visualization_2IV35/Assignment 2/Report/Images/B
 onsaiCOMP.png>] [7 <C:/Users/Luuk/Source/Repos/Visualization_2IV35/Assignment 2
 /Report/Images/OrangeCOMP.png> <C:/Users/Luuk/Source/Repos/Visualization_2IV35/
-Assignment 2/Report/Images/PigCOMP.png>] [8]
+Assignment 2/Report/Images/PigCOMP.png>]
+<Images/OrangeOW.png, id=57, 768.62157pt x 479.54156pt>
+File: Images/OrangeOW.png Graphic file (type png)
+
+<use Images/OrangeOW.png>
+Package pdftex.def Info: Images/OrangeOW.png used on input line 199.
+(pdftex.def)             Requested size: 442.65375pt x 276.17328pt.
+ [8 <C:/Users/Luuk/Source/Repos/Visualization_2IV35/Assignment 2/Report/Images/
+OrangeOW.png>]
+<Images/BonsaiOW.png, id=63, 1262.46657pt x 740.7675pt>
+File: Images/BonsaiOW.png Graphic file (type png)
+
+<use Images/BonsaiOW.png>
+Package pdftex.def Info: Images/BonsaiOW.png used on input line 208.
+(pdftex.def)             Requested size: 442.65375pt x 259.73593pt.
+
+<Images/StentOW.png, id=64, 996.72375pt x 740.7675pt>
+File: Images/StentOW.png Graphic file (type png)
+ <use Images/StentOW.png>
+Package pdftex.def Info: Images/StentOW.png used on input line 214.
+(pdftex.def)             Requested size: 442.65375pt x 328.97926pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[9 <C:/Users/Luuk/Source/Repos/Visualization_2IV35/Assignment 2/Report/Images/B
+onsaiOW.png>] [10 <C:/Users/Luuk/Source/Repos/Visualization_2IV35/Assignment 2/
+Report/Images/StentOW.png>]
 ("C:\Users\Luuk\Source\Repos\Visualization_2IV35\Assignment 2\Report\2IV35.aux"
 )
 
@@ -346,29 +373,30 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 3451 strings out of 493921
- 50197 string characters out of 3144880
+ 3469 strings out of 493921
+ 50554 string characters out of 3144880
  107914 words of memory out of 3000000
- 6701 multiletter control sequences out of 15000+200000
+ 6716 multiletter control sequences out of 15000+200000
  15221 words of font info for 57 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 36i,10n,43p,578b,528s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,10n,43p,629b,528s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C
 :/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C
 :/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:
 /Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/P
-rogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Prog
-ram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program
- Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Fi
-les (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files 
-(x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files (x86
-)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/Program Files (x86
-)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/
-MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on 2IV35.pdf (8 pages, 5392117 bytes).
+rogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Prog
+ram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program
+ Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Fi
+les (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files
+ (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files (x8
+6)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files (x86)/M
+iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/Program Files (x86)/M
+iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiK
+TeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on 2IV35.pdf (10 pages, 6744733 bytes).
 PDF statistics:
- 101 PDF objects out of 1000 (max. 8388607)
+ 117 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 61 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 76 words of extra memory for PDF output out of 10000 (max. 10000000)
 
