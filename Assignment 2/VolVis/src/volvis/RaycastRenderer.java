@@ -9,6 +9,7 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import gui.RaycastRendererPanel;
 import gui.TransferFunctionEditor;
 import java.awt.image.BufferedImage;
+import static java.lang.Double.isNaN;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
     private Volume levoyVolume = null;
     private BufferedImage image;
     private double[] viewMatrix = new double[4 * 4];
+    private boolean LevoyUpToDate = false;
 
     RaycastRendererPanel panel;
     TransferFunction tFunc;
@@ -74,17 +76,21 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
         for (TFChangeListener listener : listeners) {
             listener.changed();
         }
+        LevoyUpToDate = false;
     }
 
     public RaycastRendererPanel getPanel() {
         return panel;
     }
 
-    public TransferFunction tfunction()
-    {
+    public TransferFunction tfunction() {
         return tFunc;
     }
-    
+
+    private short getLevoyVoxel(double[] coord) {
+        return getVoxel(coord, levoyVolume);
+    }
+
     private short getVoxel(double[] coord) {
         return getVoxel(coord, volume);
     }
@@ -127,9 +133,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
                 value = (short) (c0 * (1 - zd) + c1 * zd);
             }
         } catch (Exception e) {
-        } finally {
-            return value;
         }
+        return value;
     }
 
     public void StartRenderer(double[] viewMatrix) {
@@ -152,11 +157,15 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
             }
         }
 
+        if (type == RendererTypes.Levoy) {
+            calculateLevoyArray();
+        } 
+
         // Create new pool for image
         pixelThreadPoolExecutor = new PixelThreadPoolExecutor(1, 1, 500, TimeUnit.MILLISECONDS);
         pixelThreadPoolExecutor.addListener(this);
 
-        // vector uVec and vVec define a plane through the origin, 
+        // vector uVec and vVec define a plane through the origin,
         // perpendicular to the view vector viewVec
         final double[] viewVec = new double[3];
         final double[] uVec = new double[3];
@@ -192,6 +201,19 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
                         subPixelQueue.add(runnable);
                     } else {
                         runnable = new COMPThread(i, j, 1, imageCenter, pixelCoord, volumeCenter, viewVec, uVec, vVec);
+                        subsubPixelQueue.add(runnable);
+                    }
+                }
+
+                if (type == RendererTypes.Levoy) {
+                    if ((i % 4 == 0) && (j % 4 == 0)) {
+                        runnable = new LevoyThread(i, j, 4, imageCenter, pixelCoord, volumeCenter, viewVec, uVec, vVec);
+                        runnable.run();
+                    } else if ((i % 2 == 0) && (j % 2 == 0)) {
+                        runnable = new LevoyThread(i, j, 2, imageCenter, pixelCoord, volumeCenter, viewVec, uVec, vVec);
+                        subPixelQueue.add(runnable);
+                    } else {
+                        runnable = new LevoyThread(i, j, 1, imageCenter, pixelCoord, volumeCenter, viewVec, uVec, vVec);
                         subsubPixelQueue.add(runnable);
                     }
                 }
@@ -236,7 +258,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
         for (Runnable runnable : subPixelQueue) {
             pixelThreadPoolExecutor.execute(runnable);
         }
-        
+
         for (Runnable runnable : subsubPixelQueue) {
             pixelThreadPoolExecutor.execute(runnable);
         }
@@ -244,6 +266,62 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
         pixelThreadPoolExecutor.shutdown();
 
         RenderingCompleted();
+    }
+
+    private void calculateLevoyArray() {
+        if (LevoyUpToDate) {
+            return;
+        }
+
+        //tfunction().setLevoyEnabled(true);
+        levoyVolume = new Volume(volume.getDimX(), volume.getDimY(), volume.getDimZ());
+
+        for (int x = 0; x < volume.getDimX(); x++) {
+            for (int y = 0; y < volume.getDimY(); y++) {
+                for (int z = 0; z < volume.getDimZ(); z++) {
+                    double gv_1 = 0.5 * (volume.getVoxel(x + 1, y, z) - volume.getVoxel(x - 1, y, z));
+                    double gv_2 = 0.5 * (volume.getVoxel(x, y + 1, z) - volume.getVoxel(x, y - 1, z));
+                    double gv_3 = 0.5 * (volume.getVoxel(x, y, z + 1) - volume.getVoxel(x, y, z - 1));
+
+                    double gradMagVal = Math.sqrt(Math.pow(gv_1, 2) + Math.pow(gv_2, 2) + Math.pow(gv_3, 2));
+                    //gradientMagnitude.setVoxel(x, y, z, (short)gradMagVal );
+
+                    double a;
+                    double aTot = 1;
+                    for (int cp = 1; cp < tFunc.getControlPoints().size() - 1; cp++) {
+                        double Fv = ((double) tFunc.getControlPoints().get(cp).value) / 255;
+                        double alphaV = tFunc.getControlPoints().get(cp).color.a;
+
+                            //Equation 3 to get av
+//                            if ((gradientMagnitude.getVoxel(x, y, z) == 0) && (volume.getVoxel(x,y,z) == Fv)) {
+//                                a = 1;
+//                            } else if ((gradientMagnitude.getVoxel(x, y, z) > 0) 
+//                                    && ((volume.getVoxel(x,y,z) - (r * gradientMagnitude.getVoxel(x, y, z))) <= Fv)
+//                                    && (Fv <= (volume.getVoxel(x,y,z) + (r * gradientMagnitude.getVoxel(x, y, z))))) {
+//                                a = 1 - (1 / r) * Math.abs((Fv - volume.getVoxel(x,y,z)) / (gradientMagnitude.getVoxel(x, y, z)));
+//                            } else {
+//                                a = 0;
+//                            }
+                        // Equation 4 to get a(xi)
+                        double Fvp1 = ((double) tFunc.getControlPoints().get(cp + 1).value) / 255;
+                        short voxelVal = volume.getVoxel(x, y, z);
+                        double fxi = ((double) voxelVal) / 255;
+                        if (Fv <= fxi && fxi <= Fvp1) {
+                            double alphaVp1 = tFunc.getControlPoints().get(cp + 1).color.a;
+                            a = (gradMagVal / 255) * (alphaVp1 * ((fxi - Fv) / (Fvp1 - Fv)) + alphaV * ((Fvp1 - fxi) / (Fvp1 - Fv)));
+                        } else {
+                            a = 0;
+                        }
+
+                        aTot = (1 - a) * aTot;
+                    }
+                    aTot = 1 - aTot;
+
+                    levoyVolume.setVoxel(x, y, z, (short) (aTot * 255));
+                }
+            }
+        }
+        LevoyUpToDate = true;
     }
 
     private void drawBoundingBox(GL2 gl) {
@@ -460,7 +538,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
 
         @Override
         public void run() {
-            TFColor compColor = new TFColor(0, 0, 0, 1);
+            TFColor compColor = new TFColor(0, 0, 0, 0);
             double maxRange = Math.abs(viewVec[0]) > (Math.abs(viewVec[1]) > Math.abs(viewVec[2]) ? volume.getDimY() : volume.getDimZ()) ? volume.getDimX() : (Math.abs(viewVec[1]) > Math.abs(viewVec[2]) ? volume.getDimY() : volume.getDimZ());
 
             for (int n = 0; n < maxRange; n++) {
@@ -476,6 +554,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
                 // Apply the transfer function to obtain a color
                 TFColor voxelColor = tFunc.getColor(val);
 
+                compColor.a = voxelColor.a * voxelColor.a + (1 - voxelColor.a) * compColor.a;
                 compColor.r = voxelColor.r * voxelColor.a + (1 - voxelColor.a) * compColor.r;
                 compColor.g = voxelColor.g * voxelColor.a + (1 - voxelColor.a) * compColor.g;
                 compColor.b = voxelColor.b * voxelColor.a + (1 - voxelColor.a) * compColor.b;
@@ -498,5 +577,76 @@ public class RaycastRenderer extends Renderer implements TFChangeListener, Pixel
                 }
             }
         }
-    } 
+    }
+
+    class LevoyThread implements Runnable {
+
+        int i;
+        int j;
+        int res;
+        int imageCenter;
+
+        double[] pixelCoord = new double[3];
+        double[] volumeCenter = new double[3];
+
+        double[] viewVec = new double[3];
+        double[] uVec = new double[3];
+        double[] vVec = new double[3];
+
+        LevoyThread(int i, int j, int res, int imageCenter, double[] pixelCoord, double[] volumeCenter, double[] viewVec, double[] uVec, double[] vVec) {
+            this.i = i;
+            this.j = j;
+            this.res = res;
+            this.imageCenter = imageCenter;
+            this.pixelCoord = pixelCoord;
+            this.volumeCenter = volumeCenter;
+            this.viewVec = viewVec;
+            this.uVec = uVec;
+            this.vVec = vVec;
+        }
+
+        @Override
+        public void run() {
+            TFColor compColor = new TFColor(0, 0, 0, 0);
+            double maxRange = Math.abs(viewVec[0]) > (Math.abs(viewVec[1]) > Math.abs(viewVec[2]) ? volume.getDimY() : volume.getDimZ()) ? volume.getDimX() : (Math.abs(viewVec[1]) > Math.abs(viewVec[2]) ? volume.getDimY() : volume.getDimZ());
+
+            for (int n = 0; n < maxRange; n++) {
+                pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter)
+                        + viewVec[0] * (n - (maxRange / 2)) + volumeCenter[0];
+                pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter)
+                        + viewVec[1] * (n - (maxRange / 2)) + volumeCenter[1];
+                pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter)
+                        + viewVec[2] * (n - (maxRange / 2)) + volumeCenter[2];
+
+                int val = getVoxel(pixelCoord);
+                int alphaval = getLevoyVoxel(pixelCoord);
+
+                TFColor voxelColor = tFunc.getColor(val);
+
+                voxelColor.a = ((double) alphaval) / 255;
+
+                compColor.a = 1;
+                compColor.r = voxelColor.r * voxelColor.a + (1 - voxelColor.a) * compColor.r;
+                compColor.g = voxelColor.g * voxelColor.a + (1 - voxelColor.a) * compColor.g;
+                compColor.b = voxelColor.b * voxelColor.a + (1 - voxelColor.a) * compColor.b;
+            }
+
+            // BufferedImage expects a pixel color packed as ARGB in an int;
+            int c_alpha = compColor.a <= 1.0 ? (int) Math.floor(compColor.a * 255) : 255;
+            int c_red = compColor.r <= 1.0 ? (int) Math.floor(compColor.r * 255) : 255;
+            int c_green = compColor.g <= 1.0 ? (int) Math.floor(compColor.g * 255) : 255;
+            int c_blue = compColor.b <= 1.0 ? (int) Math.floor(compColor.b * 255) : 255;
+
+            int pixelColor = (c_alpha << 24) | (c_red << 16) | (c_green << 8) | c_blue;
+
+            // Set multiple pixels at lower resolution
+            for (int ri = 0; ri < res; ri++) {
+                for (int rj = 0; rj < res; rj++) {
+                    if ((i + ri < image.getHeight()) && (j + rj < image.getWidth())) {
+                        image.setRGB(i + ri, j + rj, pixelColor);
+                    }
+                }
+            }
+        }
+    }
 }

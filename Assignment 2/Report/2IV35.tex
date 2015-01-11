@@ -75,10 +75,10 @@ l.a.j.v.hulten@student.tue.nl
 \section*{Introduction}
 In this report we will describe some implementation details of the volume rendering application. We will show the advantages and disadvantages of some rendering techniques at the hand of images.
 In section 1, we will give some details about rendering in a lower resolution to speed up interacting with the application. \newline
-In section 2, we will . \newline
-In section 3, we will . \newline
-In section 4, we will . \newline
-Finally in section 5, we will give a short conclusion about how we choose to visualize the data. \newline
+In section 2, we will discuss the MIP rendering technique
+In section 3, we will discuss the Compositing rendering technique
+In section 4, we will discuss the Opacity weighting rendering technique
+Finally in section 5, we will give a short conclusion. \newline
 
 \section{Speeding up interaction}
 Since most visualization techniques are quite slow, interacting with the visualization becomes laggy and difficult. To speed up these interaction we render the image while interacting in a lower resolution. We implemented the rendering to render the image in three different resolutions. These resolutions are $\frac{1}{4}$ and $\frac{1}{2}$ of the original resolution. At last we render the image at full resolution.
@@ -86,19 +86,19 @@ This enables the user to interact with the image and see some result in low deta
 Normally calculating in three resolutions introduces extra overhead but since intermediate results are stored little overhead is introduced.
 Also the calculation of the pixels is done multi threaded this means that the user can interact with the visualization while pixels are been calculated. While interacting while pixels are calculated the pixel queue is cleared and filled with the pixels of the new visualization.
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{center}
-        \begin{subfigure}[b]{0.23\textwidth}
+        \begin{subfigure}[b]{0.3\textwidth}
                 \includegraphics[width=\textwidth]{Images/res4.png}
                 \caption{$\frac{1}{4}$ Resolution}
                 \label{fig:res4}
         \end{subfigure}
-        \begin{subfigure}[b]{0.23\textwidth}
+        \begin{subfigure}[b]{0.3\textwidth}
                 \includegraphics[width=\textwidth]{Images/res2.png}
                 \caption{$\frac{1}{2}$ Resolution}
                 \label{fig:res2}
         \end{subfigure}
-        \begin{subfigure}[b]{0.23\textwidth}
+        \begin{subfigure}[b]{0.3\textwidth}
                 \includegraphics[width=\textwidth]{Images/res1.png}
                 \caption{Full resolution}
                 \label{fig:res1}
@@ -107,15 +107,13 @@ Also the calculation of the pixels is done multi threaded this means that the us
 \end{center}
 \end{figure}
 
-
-\section{Compositing}
 \newpage
 \section{MIP}
 In scientific visualization, a maximum intensity projection (MIP) is a volume rendering method for 3D data. It consists of projecting the voxel with the highest attenuation value on every view throughout the volume onto a 2D image. \newline
 This method tends to display bone and contrast material–filled structures preferentially, and other lower-attenuation structures are not well visualized. The primary clinical application of MIP is to improve the detection of pulmonary nodules and assess their profusion. MIP also helps characterize the distribution of small nodules. In addition, MIP sections of variable thickness are excellent for assessing the size and location of vessels, including the pulmonary arteries and veins. \newline
 For the implementation of the MIP we sampled every pixel by casting a ray through the data and set the voxel to the maximum value. First we iterate over every pixel. At every pixel we record the corresponding voxel value and if it's the highest value we've encountered, we save it as being the highest value until we possibly find a higher one later in the iteration. \newline
 Below in figure \ref{fig:FishMIP} there is an example of a MIP rendering using the fish dataset and the composition as comparison in figure \ref{fig:FishComp}.
-\begin{figure}[h]
+\begin{figure}[h!]
     \begin{center}
         \begin{subfigure}[b]{0.47\textwidth}
             \includegraphics[width=\textwidth]{SanderImages/visMIPZ.png}
@@ -131,12 +129,20 @@ Below in figure \ref{fig:FishMIP} there is an example of a MIP rendering using t
     \end{center}
 \end{figure} \newline
 We see that MIP works well when the datasets have objects with high density, such as the Fish or the Skeleton, for instance in figure \ref{fig:PigMIP} you are able to see the contents of the Piggy bank using this rendering form, which wasn't able with the composition rendering.
-\begin{figure}[h]
+
+\newpage
+
+\begin{figure}[h!]
     \includegraphics[width=\textwidth]{SanderImages/PigMIP2.png}
     \caption{Pig MIP}
     \label{fig:PigMIP}
 \end{figure}
+<<<<<<< HEAD
 \begin{figure}[h]
+=======
+
+\begin{figure}[h!]
+>>>>>>> f0b353314182cf7b9325eea56969f228a01cb491
     \begin{center}
         \begin{subfigure}[b]{0.32\textwidth}
             \includegraphics[width=\textwidth]{SanderImages/SkeletonMIPZ.png}
@@ -155,6 +161,7 @@ We see that MIP works well when the datasets have objects with high density, suc
         \end{subfigure}
         \caption{Multiple MIP renderings}
     \end{center}
+<<<<<<< HEAD
 \end{figure} \newline
 \newpage
 \section{Trilinear Interpolation}
@@ -181,3 +188,64 @@ $c_{1} = c_{01} \cdot (1-y_d) + c_{11} \cdot y_d$ \newline
 $c = c_{0} \cdot (1-z_d) + c_{1} \cdot z_d$ \newline
 \end{center}
 \end{document} 
+=======
+\end{figure} 
+
+\newpage
+
+\section{Compositing}
+With compositing the colors along the the ray are combined together using the alpha values of that color. Compositing can be done in two directions depending on the direction the ray is cast.
+We used the back to front variant using the following formula:
+\begin{equation}\label{Compositing}
+  c_i = \sigma_i * c_i + (1 - \sigma_i) * c_{i-1}
+\end{equation}
+This formula is used for each component (alpha, red, green, blue) of the color.
+The following images have been produced using the compositing rendering technique.
+
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{Images/BonsaiCOMP.png}
+    \caption{Bonsai Compositing}
+    \label{fig:BonsaiCOMP}
+\end{figure}
+
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{Images/OrangeCOMP.png}
+    \caption{Orange Compositing}
+    \label{fig:OrangeCOMP}
+\end{figure}
+
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{Images/PigCOMP.png}
+    \caption{Pig Compositing}
+    \label{fig:PigCOMP}
+\end{figure} \newpage
+
+As seen in the previous images compositing delivers more sophisticated images in compare to the MIP rendering technique. This was to be expected since MIP only uses one value along the ray, while compositing uses all the values with respect to its alpha value, combining them to a single color. As seen in the pictures this technique shows more details in the rendered images. \newline
+Compositing is best used for rendering the outside of objects from volume data.
+
+\newpage
+
+\section{Opacity Weighting}
+Opacity weighting is a rendering technique where opacity are scaled depending on material values selected by the user. With these values a volume of opacities is calculated. In this volume each voxel has a opacity scaled to the selected material values and the local gradient magnitude. After these alpha values have been calculated a ray is cast into this volume and with the compositing technique merged into one color value that is projected on the view plane.
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{Images/OrangeOW.png}
+    \caption{Orange Opacity Weighting}
+    \label{fig:BonsaiOW}
+\end{figure}
+Calculating these opacity values takes a long time since it has to be done for every voxel. Since these opacity values are independent of the view vector the rendered image can be rotated without having to recalculate all opacity values. However changing the material choice values will result in a full recalculation of all voxel alpha values. We used the transfer function control points to input the values $f_{v_{n}}$ and $a_{v_{n}}$ since this was already implemented and was easy to implement the new functionality. \newpage
+
+As shown in figure \ref{fig:BonsaiOW} and \ref{fig:OrangeOW} images rendered using opacity weighting looks to have no volume. You see through the volume to the other side as it was hollow. This is as expected since the article explains that where selected tissues contact other tissue these voxels get the highest opacities.
+
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{Images/BonsaiOW.png}
+    \caption{Bonsai Opacity Weighting}
+    \label{fig:OrangeOW}
+\end{figure}
+This rendering technique is suitable for identifying and selecting different tissue types in volumetric data without a boolean decision if the tissue is in or out the volume.
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{Images/StentOW.png}
+    \caption{Stent Opacity Weighting}
+    \label{fig:StentOW}
+\end{figure}
+\end{document}
+>>>>>>> f0b353314182cf7b9325eea56969f228a01cb491
