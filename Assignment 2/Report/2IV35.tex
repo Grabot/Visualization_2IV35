@@ -136,7 +136,6 @@ We see that MIP works well when the datasets have objects with high density, suc
     \caption{Pig MIP}
     \label{fig:PigMIP}
 \end{figure}
-
 \begin{figure}[h]
     \begin{center}
         \begin{subfigure}[b]{0.32\textwidth}
@@ -156,6 +155,29 @@ We see that MIP works well when the datasets have objects with high density, suc
         \end{subfigure}
         \caption{Multiple MIP renderings}
     \end{center}
-\end{figure}
+\end{figure} \newline
 \newpage
+\section{Trilinear Interpolation}
+We also implemented tilinear interpolation, this allows us to be able to get an approximate value of a voxel, which ordinarily might not correspond with the raw data points. \newline
+Trilinear interpolation is the extension of linear interpolation and bilinear interpolation and operates in 3 dimensions, in figure \ref{fig:interpolation} you can see an example representation of trilinear interpolation. \newline
+Below is the algorithm to compute the point c in figure \ref{fig:interpolation} that we used in the program. 
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.4\textwidth]{SanderImages/interpolation.png}
+        \caption{representation of trilinear interpolation}
+        \label{fig:interpolation}
+    \end{center}
+\end{figure}
+\begin{center}
+$x_d = \frac{x-x_0}{x_1-x_0}$ \newline
+$y_d = \frac{y-y_0}{y_1-y_0}$ \newline
+$z_d = \frac{z-z_0}{z_1-z_0}$ \newline
+$c_{00} = V_{x_0,y_0,z_0} \cdot (1-x_d) + V_{x_1,y_0,z_0} \cdot x_d$ \newline
+$c_{10} = V_{x_0,y_1,z_0} \cdot (1-x_d) + V_{x_1,y_1,z_0} \cdot x_d$ \newline
+$c_{01} = V_{x_0,y_0,z_1} \cdot (1-x_d) + V_{x_1,y_0,z_1} \cdot x_d$ \newline
+$c_{11} = V_{x_0,y_1,z_1} \cdot (1-x_d) + V_{x_1,y_1,z_1} \cdot x_d$ \newline
+$c_{0} = c_{00} \cdot (1-y_d) + c_{10} \cdot y_d$ \newline
+$c_{1} = c_{01} \cdot (1-y_d) + c_{11} \cdot y_d$ \newline
+$c = c_{0} \cdot (1-z_d) + c_{1} \cdot z_d$ \newline
+\end{center}
 \end{document} 

@@ -114,30 +114,51 @@ Also the calculation of the pixels is done multi threaded this means that the us
 In scientific visualization, a maximum intensity projection (MIP) is a volume rendering method for 3D data. It consists of projecting the voxel with the highest attenuation value on every view throughout the volume onto a 2D image. \newline
 This method tends to display bone and contrast material–filled structures preferentially, and other lower-attenuation structures are not well visualized. The primary clinical application of MIP is to improve the detection of pulmonary nodules and assess their profusion. MIP also helps characterize the distribution of small nodules. In addition, MIP sections of variable thickness are excellent for assessing the size and location of vessels, including the pulmonary arteries and veins. \newline
 For the implementation of the MIP we sampled every pixel by casting a ray through the data and set the voxel to the maximum value. First we iterate over every pixel. At every pixel we record the corresponding voxel value and if it's the highest value we've encountered, we save it as being the highest value until we possibly find a higher one later in the iteration. \newline
-Below there are figures of MIP on the datasets.
+Below in figure \ref{fig:FishMIP} there is an example of a MIP rendering using the fish dataset and the composition as comparison in figure \ref{fig:FishComp}.
 \begin{figure}[h]
     \begin{center}
-                    \includegraphics[width=\textwidth]{SanderImages/visMIP.png}
-                    \caption{$\frac{1}{2}$ Resolution}
-                    \label{fig:res2}
-            \end{subfigure}
-            \begin{subfigure}[b]{0.23\textwidth}
-                    \includegraphics[width=\textwidth]{SanderImages/OrangeMIP.png}
-                    \caption{Full resolution}
-                    \label{fig:res1}
-            \end{subfigure}
-            \caption{Pie Charts}\label{fig:Resolutions}
+        \begin{subfigure}[b]{0.47\textwidth}
+            \includegraphics[width=\textwidth]{SanderImages/visMIPZ.png}
+            \caption{Fish MIP rendering}
+            \label{fig:FishMIP}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.49\textwidth}
+            \includegraphics[width=\textwidth]{SanderImages/FishCompZ.png}
+            \caption{Fish Composition rendering}
+            \label{fig:FishComp}
+        \end{subfigure}
+        \caption{Fish rendering, MIP and composition}
     \end{center}
+\end{figure} \newline
+We see that MIP works well when the datasets have objects with high density, such as the Fish or the Skeleton, for instance in figure \ref{fig:PigMIP} you are able to see the contents of the Piggy bank using this rendering form, which wasn't able with the composition rendering.
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{SanderImages/PigMIP2.png}
+    \caption{Pig MIP}
+    \label{fig:PigMIP}
 \end{figure}
 
+\begin{figure}[h]
+    \begin{center}
+        \begin{subfigure}[b]{0.32\textwidth}
+            \includegraphics[width=\textwidth]{SanderImages/SkeletonMIPZ.png}
+            \caption{Skeleton MIP}
+            \label{fig:Skeleton}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.33\textwidth}
+            \includegraphics[width=\textwidth]{SanderImages/BonsaiMIPZ.png}
+            \caption{Bonsai MIP}
+            \label{fig:Bonsai}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.30\textwidth}
+            \includegraphics[width=\textwidth]{SanderImages/OrangeMIPZ.png}
+            \caption{Orange MIP}
+            \label{fig:OrangeMIP}
+        \end{subfigure}
+        \caption{Multiple MIP renderings}
+    \end{center}
+\end{figure}
+\newpage
+\section{trilinear interpolation}
 
-The implementation of Maximum Intensity Projection was straight forward. Sampling
-at every pixel, cast a ray through the data set and nd the voxel with the maximum value.
-To do so, we rst iterate over every pixel. At every pixel we record the corresponding voxel
-value which aligns with that pixel, and if it is the highest voxel value we've encountered
-for that pixel, we save it. The way we nd the voxel which corresponds to a particular
-pixel is to begin with the center plane, as it is calculated in the original code. From here,
-we scale this center plane forward and backwards through the data such that we maintain
-the orientation with the viewing plane.
-
+Trilinear interpolation is a method of multivariate interpolation on a 3-dimensional regular grid. It approximates the value of an intermediate point (x, y, z) within th
 \end{document} 
