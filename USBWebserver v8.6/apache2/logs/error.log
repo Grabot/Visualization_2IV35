@@ -1,5 +1,6 @@
-[Fri Dec 05 11:57:33.165155 2014] [mpm_winnt:notice] [pid 13232:tid 384] AH00455: Apache/2.4.6 (Win32) PHP/5.4.17 configured -- resuming normal operations
-[Fri Dec 05 11:57:33.165155 2014] [mpm_winnt:notice] [pid 13232:tid 384] AH00456: Apache Lounge VC10 Server built: Jul 16 2013 11:15:41
-[Fri Dec 05 11:57:33.165155 2014] [core:notice] [pid 13232:tid 384] AH00094: Command line: 'D:\\Documents\\GitHub\\2IV35\\USBWebserver v8.6/apache2/bin/httpd_usbwv8.exe -d D:/Documents/GitHub/2IV35/USBWebserver v8.6/apache2'
-[Fri Dec 05 11:57:33.175156 2014] [mpm_winnt:notice] [pid 13232:tid 384] AH00418: Parent: Created child process 11260
-[Fri Dec 05 11:57:33.712688 2014] [mpm_winnt:notice] [pid 11260:tid 400] AH00354: Child: Starting 64 worker threads.
+[Fri Jan 23 15:57:54.774155 2015] [mpm_winnt:notice] [pid 11776:tid 388] AH00455: Apache/2.4.6 (Win32) PHP/5.4.17 configured -- resuming normal operations
+[Fri Jan 23 15:57:54.774155 2015] [mpm_winnt:notice] [pid 11776:tid 388] AH00456: Apache Lounge VC10 Server built: Jul 16 2013 11:15:41
+[Fri Jan 23 15:57:54.774155 2015] [core:notice] [pid 11776:tid 388] AH00094: Command line: 'D:\\Documents\\GitHub\\Visualization_2IV35\\USBWebserver v8.6/apache2/bin/httpd_usbwv8.exe -d D:/Documents/GitHub/Visualization_2IV35/USBWebserver v8.6/apache2'
+[Fri Jan 23 15:57:54.777155 2015] [mpm_winnt:notice] [pid 11776:tid 388] AH00418: Parent: Created child process 524
+[Fri Jan 23 15:57:55.202197 2015] [mpm_winnt:notice] [pid 524:tid 404] AH00354: Child: Starting 64 worker threads.
+[Fri Jan 23 15:58:12.446922 2015] [:error] [pid 524:tid 924] [client ::1:64732] PHP Warning:  phpinfo(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in D:\\Documents\\GitHub\\Visualization_2IV35\\USBWebserver v8.6\\root\\index.php on line 47
