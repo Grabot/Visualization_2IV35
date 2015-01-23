@@ -1,0 +1,253 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package volvis;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import util.TFChangeListener;
+import volume.Volume;
+
+/**
+ *
+ * @author michel
+ */
+public class TransferFunction {
+
+    private Volume volume;
+    private double r = 1.0;
+    private boolean levoy = false;
+    private final ArrayList<TFChangeListener> listeners = new ArrayList<TFChangeListener>();
+
+    // Construct a default grey-scale transfer function over the scalar range min - max.
+    // The opacity increases linearly from 0.0 to 1.0
+    public TransferFunction(short min, short max, Volume volume) {
+        sMin = min;
+        sMax = max;
+        this.volume = volume;
+        sRange = sMax - sMin;
+        controlPoints = new ArrayList<ControlPoint>();
+
+        controlPoints.add(new ControlPoint(min, new TFColor(0.0, 0.0, 0.0, 0.0)));
+        controlPoints.add(new ControlPoint(53, new TFColor(0.0, 0.0, 0.0, 0.5)));
+        controlPoints.add(new ControlPoint(75, new TFColor(1, 0.95, 0.0, 1)));
+        controlPoints.add(new ControlPoint(103, new TFColor(0.0, 0.0, 0.0, 0.5)));
+        controlPoints.add(new ControlPoint(max, new TFColor(0.0, 0.0, 0.0, 0.0)));
+
+        LUTsize = sRange;
+        LUT = new TFColor[LUTsize];
+
+        buildLUT();
+
+    }
+
+    public int getMinimum() {
+        return sMin;
+    }
+
+    public int getMaximum() {
+        return sMax;
+    }
+
+    public void setRvalue(double value) {
+        r = value;
+        buildLUT();
+        changed();
+    }
+
+    public void setLevoyEnabled(boolean value) {
+        if (value != levoy) {
+            levoy = value;
+            buildLUT();
+            changed();
+        }
+    }
+
+    public ArrayList<ControlPoint> getControlPoints() {
+        return controlPoints;
+    }
+
+    public TFColor getColor(int value) {
+        return LUT[computeLUTindex(value)];
+    }
+
+    public void setColor(int value, TFColor col) {
+        LUT[computeLUTindex(value)] = col;
+    }
+
+    public int addControlPoint(int value, double r, double g, double b, double a) {
+        if (value < sMin || value > sMax) {
+            return -1;
+        }
+        a = Math.floor(a * 100) / 100.0;
+
+        ControlPoint cp = new ControlPoint(value, new TFColor(r, g, b, a));
+        int idx = 0;
+        while (idx < controlPoints.size() && controlPoints.get(idx).compareTo(cp) < 0) {
+            idx++;
+        }
+
+        if (controlPoints.get(idx).compareTo(cp) == 0) {
+            controlPoints.set(idx, cp);
+        } else {
+            controlPoints.add(idx, cp);
+        }
+
+        buildLUT();
+        return idx;
+    }
+
+    public void removeControlPoint(int idx) {
+        controlPoints.remove(idx);
+        buildLUT();
+    }
+
+    public void updateControlPointScalar(int index, int s) {
+        controlPoints.get(index).value = s;
+        buildLUT();
+    }
+
+    public void updateControlPointAlpha(int index, double alpha) {
+        alpha = Math.floor(alpha * 100) / 100.0;
+        controlPoints.get(index).color.a = alpha;
+        buildLUT();
+    }
+
+    public void updateControlPointColor(int idx, Color c) {
+        ControlPoint cp = controlPoints.get(idx);
+        cp.color.r = c.getRed() / 255.0;
+        cp.color.g = c.getGreen() / 255.0;
+        cp.color.b = c.getBlue() / 255.0;
+        buildLUT();
+    }
+
+    // Add a changelistener, which will be notified is the transfer function changes
+    public void addTFChangeListener(TFChangeListener l) {
+        if (!listeners.contains(l)) {
+            listeners.add(l);
+        }
+    }
+
+    // notify the change listeners
+    public void changed() {
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).changed();
+        }
+    }
+
+    private int computeLUTindex(int value) {
+        int idx = ((LUTsize - 1) * (value - sMin)) / sRange;
+        return idx;
+    }
+
+    private void buildLUT() {
+
+        for (int i = 1; i < controlPoints.size(); i++) {
+            ControlPoint prev = controlPoints.get(i - 1);
+            ControlPoint next = controlPoints.get(i);
+            //System.out.println(prev.value + " " + prev.color + " -- " + next.value + " " + next.color);
+            double range = next.value - prev.value;
+            for (int k = prev.value; k <= next.value; k++) {
+                double frac = (k - prev.value) / range;
+                TFColor newcolor = new TFColor();
+                newcolor.r = prev.color.r + frac * (next.color.r - prev.color.r);
+                newcolor.g = prev.color.g + frac * (next.color.g - prev.color.g);
+                newcolor.b = prev.color.b + frac * (next.color.b - prev.color.b);
+                newcolor.a = prev.color.a + frac * (next.color.a - prev.color.a);
+                LUT[computeLUTindex(k)] = newcolor;
+            }
+        }
+
+        if (levoy) {
+            LevoyGradientWeighting();
+        }
+    }
+
+    private void LevoyGradientWeighting() {
+
+        for (int i = 0; i < LUTsize; i++) {
+            double af = -1;
+            double a = 0;
+
+            for (int j = 1; j < controlPoints.size(); j++) {
+                double Fv = controlPoints.get(j).value;
+                double alphaV = controlPoints.get(j).color.a;
+
+                double rvt = Fv / r;
+
+                int[] his1 = volume.getHistogram();
+                int[] his2 = new int[his1.length];
+                int[] his3 = new int[his2.length];
+
+                for (int n = 1; n < his1.length - 1; n++) {
+                    his2[n - 1] = (his1[n + 1] - his1[n]) / 1;
+                }
+
+                for (int n = 1; n < his2.length - 1; n++) {
+                    his3[n - 1] = (his2[n + 1] - his2[n]) / 1;
+                }
+
+                for (int n = 1; n < his2.length - 1; n++) {
+                    if ((his2[n + 1] < his2[n]) && (his2[n - 1] < his2[n])) {
+                        //i is max
+                        if ((Math.signum(his3[n + 1]) != Math.signum(his3[n - 1])) && his3[n] == 0) {
+
+                            // Equation 3 determine  a(xi)
+                            if ((Math.abs(his2[n]) == 0) && (his1[n] == Fv)) {
+                                a = 1;
+                            } else if ((Math.abs(his2[n]) > 0)
+                                    && ((his1[n] - rvt * Math.abs(his2[n])) <= Fv)
+                                    && (Fv <= his1[n] + rvt * Math.abs(his2[n]))) {
+                                a = 1 - (1 / rvt) * Math.abs((Fv - his1[n]) / (Math.abs(his2[n])));
+                            } else {
+                                a = 0;
+                            }
+                        }
+                    }
+                }
+                
+                
+                
+                a = a * alphaV;
+                if (af < 0.0) {
+                    af = (1 - a);
+                } else {
+                    af = af * (1 - a);
+                }
+
+            }
+            af = 1 - af;
+
+            TFColor tCol = getColor(i);
+            tCol.a = af;
+            setColor(i, tCol);
+        }
+    }
+
+    public class ControlPoint implements Comparable<ControlPoint> {
+
+        public int value;
+        public TFColor color;
+
+        public ControlPoint(int v, TFColor c) {
+            value = v;
+            color = c;
+        }
+
+        @Override
+        public int compareTo(ControlPoint t) {
+            return (value < t.value ? -1 : (value == t.value ? 0 : 1));
+        }
+
+        @Override
+        public String toString() {
+            return new String("(" + value + ") -> " + color.toString());
+        }
+    }
+    private short sMin, sMax;
+    private int sRange;
+    private TFColor[] LUT;
+    private int LUTsize = 4095;
+    private ArrayList<ControlPoint> controlPoints;
+}
