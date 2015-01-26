@@ -34,14 +34,13 @@
 
     <script type="text/javascript">
 
-        var species = ["setosa", "versicolor", "virginica"],
-            traits = ["sepal length", "petal length", "sepal width", "petal width"];
+        var symptoms = ["Temperature", "Nausea", "Lumbar pain", "Urine pushing", "Micturition pains", "Burning of urethra", "Inflamation of urinary bladder", "Nephritis"];
 
         var m = [80, 160, 200, 160],
             w = 1280 - m[1] - m[3],
             h = 800 - m[0] - m[2];
 
-        var x = d3.scale.ordinal().domain(traits).rangePoints([0, w]),
+        var x = d3.scale.ordinal().domain(symptoms).rangePoints([0, w]),
             y = {};
 
         var line = d3.svg.line(),
@@ -54,60 +53,50 @@
           .append("svg:g")
             .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
+        // Read the data from file
+        d3.text("data/inflammation.csv", function (text) {
+            var data = d3.tsv.parseRows(text).map(function (row) {
+                return row.map(function (value) {
+                    if (value == "no") {
+                        return 0;
+                    } else if (value == "yes") {
+                        return 1;
+                    } else { return parseFloat(value.replace(",", ".")); }
+                });
+            });
 
-        d3.text("data/inflammation.csv", function (row) {
-            //console.log(text);
-
-            var data = d3.tsv.parseRows(text).map(row);
             console.log(data);
-        });
-
-        d3.csv("data/iris.csv", function (flowers) {
 
             // Create a scale and brush for each trait.
-            traits.forEach(function (d) {
+            symptoms.forEach(function (d) {
                 // Coerce values to numbers.
-                flowers.forEach(function (p) { p[d] = +p[d]; });
+                console.log(d);
+
+                data.forEach(function (p) { p[d] = +p[d]; });
 
                 y[d] = d3.scale.linear()
-                    .domain(d3.extent(flowers, function (p) { return p[d]; }))
+                    .domain(d3.extent(data, function (p) { return p[d]; }))
                     .range([h, 0]);
 
                 y[d].brush = d3.svg.brush()
                     .y(y[d])
-                    .on("brush", brush);
+                .on("brush", brush);
             });
-
-            // Add a legend.
-            var legend = svg.selectAll("g.legend")
-                .data(species)
-              .enter().append("svg:g")
-                .attr("class", "legend")
-                .attr("transform", function (d, i) { return "translate(0," + (i * 20 + 584) + ")"; });
-
-            legend.append("svg:line")
-                .attr("class", String)
-                .attr("x2", 8);
-
-            legend.append("svg:text")
-                .attr("x", 12)
-                .attr("dy", ".31em")
-                .text(function (d) { return "Iris " + d; });
 
             // Add foreground lines.
             foreground = svg.append("svg:g")
                 .attr("class", "foreground")
               .selectAll("path")
-                .data(flowers)
+                .data(data)
               .enter().append("svg:path")
                 .attr("d", path)
-                .attr("class", function (d) { return d.species; });
+                .attr("class", function (d) { /*console.log(d);*/  return d; });
 
-            // Add a group element for each trait.
-            var g = svg.selectAll(".trait")
-                .data(traits)
+            // Add a group element for each symptom.
+            var g = svg.selectAll(".symptom")
+                .data(symptoms)
               .enter().append("svg:g")
-                .attr("class", "trait")
+                .attr("class", "symptom")
                 .attr("transform", function (d) { return "translate(" + x(d) + ")"; })
                 .call(d3.behavior.drag()
                 .origin(function (d) { return { x: x(d) }; })
@@ -132,33 +121,121 @@
                 .attr("x", -8)
                 .attr("width", 16);
 
+
+
+
+
+            console.log("test");
+
+
+
+
+
+
+            //console.log(data);
+
+            /*
+    
+            d3.csv("data/iris.csv", function (flowers) {
+    
+                // Create a scale and brush for each trait.
+                traits.forEach(function (d) {
+                    // Coerce values to numbers.
+                    flowers.forEach(function (p) { p[d] = +p[d]; });
+    
+                    y[d] = d3.scale.linear()
+                        .domain(d3.extent(flowers, function (p) { return p[d]; }))
+                        .range([h, 0]);
+    
+                    y[d].brush = d3.svg.brush()
+                        .y(y[d])
+                        .on("brush", brush);
+                });
+    
+                // Add a legend.
+                var legend = svg.selectAll("g.legend")
+                    .data(species)
+                  .enter().append("svg:g")
+                    .attr("class", "legend")
+                    .attr("transform", function (d, i) { return "translate(0," + (i * 20 + 584) + ")"; });
+    
+                legend.append("svg:line")
+                    .attr("class", String)
+                    .attr("x2", 8);
+    
+                legend.append("svg:text")
+                    .attr("x", 12)
+                    .attr("dy", ".31em")
+                    .text(function (d) { return "Iris " + d; });
+    
+                // Add foreground lines.
+                foreground = svg.append("svg:g")
+                    .attr("class", "foreground")
+                  .selectAll("path")
+                    .data(flowers)
+                  .enter().append("svg:path")
+                    .attr("d", path)
+                    .attr("class", function (d) { return d.species; });
+    
+                // Add a group element for each trait.
+                var g = svg.selectAll(".trait")
+                    .data(traits)
+                  .enter().append("svg:g")
+                    .attr("class", "trait")
+                    .attr("transform", function (d) { return "translate(" + x(d) + ")"; })
+                    .call(d3.behavior.drag()
+                    .origin(function (d) { return { x: x(d) }; })
+                    .on("dragstart", dragstart)
+                    .on("drag", drag)
+                    .on("dragend", dragend));
+    
+                // Add an axis and title.
+                g.append("svg:g")
+                    .attr("class", "axis")
+                    .each(function (d) { d3.select(this).call(axis.scale(y[d])); })
+                  .append("svg:text")
+                    .attr("text-anchor", "middle")
+                    .attr("y", -9)
+                    .text(String);
+    
+                // Add a brush for each axis.
+                g.append("svg:g")
+                    .attr("class", "brush")
+                    .each(function (d) { d3.select(this).call(y[d].brush); })
+                  .selectAll("rect")
+                    .attr("x", -8)
+                    .attr("width", 16);
+    
+                     */
+
             function dragstart(d) {
-                i = traits.indexOf(d);
+                i = symptoms.indexOf(d);
             }
 
             function drag(d) {
                 x.range()[i] = d3.event.x;
-                traits.sort(function (a, b) { return x(a) - x(b); });
+                symptoms.sort(function (a, b) { return x(a) - x(b); });
                 g.attr("transform", function (d) { return "translate(" + x(d) + ")"; });
                 foreground.attr("d", path);
             }
 
             function dragend(d) {
-                x.domain(traits).rangePoints([0, w]);
+                x.domain(symptoms).rangePoints([0, w]);
                 var t = d3.transition().duration(500);
-                t.selectAll(".trait").attr("transform", function (d) { return "translate(" + x(d) + ")"; });
+                t.selectAll(".symptom").attr("transform", function (d) { return "translate(" + x(d) + ")"; });
                 t.selectAll(".foreground path").attr("d", path);
             }
+
         });
 
         // Returns the path for a given data point.
         function path(d) {
-            return line(traits.map(function (p) { return [x(p), y[p](d[p])]; }));
+            return line(symptoms.map(function (p) { return [x(p), y[p](d[p])]; }));
         }
 
         // Handles a brush event, toggling the display of foreground lines.
         function brush() {
-            var actives = traits.filter(function (p) { return !y[p].brush.empty(); }),
+            var actives = symptoms.filter(function (p) { return !y[p].brush.empty(); }),
                 extents = actives.map(function (p) { return y[p].brush.extent(); });
             foreground.classed("fade", function (d) {
                 return !actives.every(function (p, i) {
