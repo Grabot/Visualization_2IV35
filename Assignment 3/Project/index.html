@@ -11,6 +11,14 @@
 
     <!-- D3 Libary -->
     <script src="js/d3.js" charset="utf-8"></script>
+    <script src="js/d3.js" charset="utf-8"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="d3pie.min.js"></script>
+    <script src="d3pie.js"></script>
+    <script src="dimple.v2.1.0.js"></script>
+    <script src="drawBarChart.js"></script>
 
     <style>
         .foreground path {
@@ -47,7 +55,7 @@
             <div class="col-md-4">.col-md-4</div>
         </div>
     </div>
-
+    <div id="BarChart"></div>
 
     <script type="text/javascript">
 
@@ -295,6 +303,91 @@
                 };
             }
         }
+
+        var numberOfRows = 120;
+        d3.text("data/inflammation.csv", function(datasetText)
+        {
+            //do everything in here I guess
+            var dataTSV = datasetText;
+            var dataArray = [];
+            var dataRowArray = [];
+
+            dataArray = dataTSV.split("\n");
+
+
+            for( var i = 0; i < numberOfRows; i++ )
+            {
+                dataRowArray[i] = dataArray[i].split("\t");
+            }
+
+            var Naseau = 0;
+            var LumbarPain = 0;
+            var UrinePushing = 0;
+            var MicturitionPains = 0;
+            var UrethraBurning = 0;
+            var InflammationBladder = 0;
+            var Nephritis = 0;
+            //naseau [1]
+            for( var i = 0; i < numberOfRows; i++ )
+            {
+                dataRowArray[i][7] = dataRowArray[i][7].replace(/(\r\n|\n|\r)/gm,"");
+                if( dataRowArray[i][1] == 'yes' )
+                {
+                    Naseau++;
+                }
+                if( dataRowArray[i][2] == 'yes' )
+                {
+                    LumbarPain++;
+                }
+                if( dataRowArray[i][3] == 'yes' )
+                {
+                    UrinePushing++;
+                }
+                if( dataRowArray[i][4] == 'yes' )
+                {
+                    MicturitionPains++;
+                }
+                if( dataRowArray[i][5] == 'yes' )
+                {
+                    UrethraBurning++;
+                }
+                if( dataRowArray[i][6] == 'yes' )
+                {
+                    InflammationBladder++;
+                }
+                if( dataRowArray[i][7] == 'yes' )
+                {
+                    Nephritis++;
+                }
+            }
+            console.log("naseau: " +  Naseau );
+            console.log("lumbar Pain: " +  LumbarPain );
+            console.log("UrinePushing: " +  UrinePushing );
+            console.log("MicturitionPains: " +  MicturitionPains );
+            console.log("UrethraBurning: " +  UrethraBurning );
+            console.log("InflammationBladder: " +  InflammationBladder );
+            console.log("Nephritis: " +  Nephritis );
+
+            var percentageNaseau = ((Naseau/numberOfRows)*100);
+            var percentageLumbar = ((LumbarPain/numberOfRows)*100);
+            var percentageUrinePushing = ((UrinePushing/numberOfRows)*100);
+            var percentageMicturition = ((MicturitionPains/numberOfRows)*100);
+            var percentageUrethraBurning = ((UrethraBurning/numberOfRows)*100);
+            var percentageInflammation = ((InflammationBladder/numberOfRows)*100);
+            var percentageNephritis = ((Nephritis/numberOfRows)*100);
+            
+            percentageData = [
+                { "Percentage of people" : percentageNaseau, "Disease" : "Naseau" },
+                { "Percentage of people" : percentageLumbar, "Disease" : "Lumbar Pain" },
+                { "Percentage of people" : percentageUrinePushing, "Disease" : "Urine Pushing" },
+                { "Percentage of people" : percentageMicturition, "Disease" : "Micturition pains" },
+                { "Percentage of people" : percentageUrethraBurning, "Disease" : "Burning of urethra" },
+                { "Percentage of people" : percentageInflammation, "Disease" : "diagnosis inflammation of urinary bladder" },
+                { "Percentage of people" : percentageNephritis, "Disease" : "diagnosis nephritis of renal pelvis origin" }
+            ];
+
+            var BarChartVar = drawBarChart( percentageData );
+        });
     </script>
 
 
