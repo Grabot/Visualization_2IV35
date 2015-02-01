@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.7.18)  1 FEB 2015 17:39
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.7.18)  1 FEB 2015 18:15
 entering extended mode
 **D:/Documents/GitHub/Visualization_2IV35/number3rapport/2IV35.tex
 (D:/Documents/GitHub/Visualization_2IV35/number3rapport/2IV35.tex
@@ -218,34 +218,69 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {C:/Users/s138362/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 72--78
+<images/chordDiagram.PNG, id=9, 475.17525pt x 331.2375pt>
+File: images/chordDiagram.PNG Graphic file (type png)
+
+<use images/chordDiagram.PNG>
+Package pdftex.def Info: images/chordDiagram.PNG used on input line 79.
+(pdftex.def)             Requested size: 442.65375pt x 308.57837pt.
+ [2 <D:/Documents/GitHub/Visualization_2IV35/number3rapport/images/chordDiagram
+.PNG>]
+Underfull \hbox (badness 10000) in paragraph at lines 87--98
 
  []
 
-[2]
-Underfull \hbox (badness 10000) in paragraph at lines 82--93
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 107.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\omscmr.fd"
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 107.
+
+Underfull \hbox (badness 10000) in paragraph at lines 100--115
 
  []
 
+[3] [4] [5] [6]
+<images/ParallelCoordinates.PNG, id=34, 483.60675pt x 316.7835pt>
+File: images/ParallelCoordinates.PNG Graphic file (type png)
 
-Underfull \hbox (badness 10000) in paragraph at lines 95--110
+<use images/ParallelCoordinates.PNG>
+Package pdftex.def Info: images/ParallelCoordinates.PNG used on input line 139.
 
- []
+(pdftex.def)             Requested size: 354.12434pt x 231.97025pt.
+ [7 <D:/Documents/GitHub/Visualization_2IV35/number3rapport/images/ParallelCoor
+dinates.PNG>]
+<images/barChart.PNG, id=40, 319.79475pt x 215.6055pt>
+File: images/barChart.PNG Graphic file (type png)
 
-[3] [4] [5] [6] [7]
+<use images/barChart.PNG>
+Package pdftex.def Info: images/barChart.PNG used on input line 149.
+(pdftex.def)             Requested size: 354.12434pt x 238.75906pt.
+ [8 <D:/Documents/GitHub/Visualization_2IV35/number3rapport/images/barChart.PNG
+>]
+<images/chordDiagramSolo.PNG, id=45, 304.13625pt x 294.50024pt>
+File: images/chordDiagramSolo.PNG Graphic file (type png)
+
+<use images/chordDiagramSolo.PNG>
+Package pdftex.def Info: images/chordDiagramSolo.PNG used on input line 159.
+(pdftex.def)             Requested size: 354.12434pt x 342.91469pt.
+ [9 <D:/Documents/GitHub/Visualization_2IV35/number3rapport/images/chordDiagram
+Solo.PNG>] [10]
 (D:\Documents\GitHub\Visualization_2IV35\number3rapport\2IV35.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 3338 strings out of 495271
- 47288 string characters out of 3181478
+ 3386 strings out of 495271
+ 48264 string characters out of 3181478
  106765 words of memory out of 3000000
- 6502 multiletter control sequences out of 15000+200000
+ 6541 multiletter control sequences out of 15000+200000
  16019 words of font info for 59 fonts, out of 3000000 for 9000
  54 hyphenation exceptions out of 8191
- 36i,10n,43p,822b,262s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,10n,43p,822b,322s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Pr
 ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Program Files/Mi
@@ -254,10 +289,11 @@ KTeX 2.9/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Program Files/MiKTeX 2.
 ype1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/publ
 ic/amsfonts/cm/cmr6.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.
-pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb>
-Output written on 2IV35.pdf (7 pages, 139171 bytes).
+pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C
+:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on 2IV35.pdf (10 pages, 507265 bytes).
 PDF statistics:
- 66 PDF objects out of 1000 (max. 8388607)
+ 88 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 21 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -75,6 +75,11 @@ In section 1, we will first give a description of the format of the data set. \n
 In section 2, we will explain our design considerations for the interface. \newline
 In section 3, we will present our actual implementation, with screenshots and motivation. \newline
 Finally in section 4, we will show how our visualization can be usefull. \newline
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{images/chordDiagram.PNG}
+    \caption{the visualization with only the slider ander the chord diagram visible}
+    \label{fig:overView}
+\end{figure}
 \newpage
 \section{Description of the Dataset}
 We have been given a dataset with information about certain patients and certain diseases that ales them. The data is provided in a .csv file with 120 rows and 8 columns every column is separated by a tab. Every row represents a patient. There is also a .txt file with a more detailed explanation of how the data in the .csv can be read.
@@ -99,14 +104,14 @@ several days. However, there is inclination to returns. At persons with acute in
 Acute nephritis of renal pelvis origin occurs considerably more often at women than at men. It begins with sudden fever, which reaches, and sometimes exceeds 40C. The fever is accompanied by shivers and one- or both-side lumbar pains, which are sometimes very strong. Symptoms of acute inflammation of urinary bladder appear very often. Quite not infrequently there are nausea and vomiting and spread pains of whole abdomen. \newline
 The data was created by a medical expert as a data set to test the expert system, which will perform the presumptive diagnosis of two diseases of urinary system. The basis for rules detection was Rough Sets Theory. Each instance represents an potential patient. \newline
 Attribute Information: \newline
-a1 Temperature of patient { 35C-42C } \newline
-a2 Occurrence of nausea { yes, no } \newline
-a3 Lumbar pain { yes, no } \newline
-a4 Urine pushing (continuous need for urination) { yes, no } \newline
-a5 Micturition pains { yes, no } \newline
-a6 Burning of urethra, itch, swelling of urethra outlet { yes, no } \newline
-d1 decision: Inflammation of urinary bladder { yes, no } \newline
-d2 decision: Nephritis of renal pelvis origin { yes, no } \newline
+a1 Temperature of patient \{ 35C-42C \} \newline
+a2 Occurrence of nausea \{ yes, no \} \newline
+a3 Lumbar pain \{ yes, no \} \newline
+a4 Urine pushing (continuous need for urination) \{ yes, no \} \newline
+a5 Micturition pains \{ yes, no \} \newline
+a6 Burning of urethra, itch, swelling of urethra outlet \{ yes, no \} \newline
+d1 decision: Inflammation of urinary bladder \{ yes, no \} \newline
+d2 decision: Nephritis of renal pelvis origin \{ yes, no \} \newline
 \subsection{Data Representation}
 With the visualization you can try to find correlations between combinations of diseases and temperature, taken from the dataset inflammation.csv. this is supposed to be used by a person who has knowledge off the data being visualized so that person knows what to select and what to analyze. We hope we have provide ample visualization techniques and provided the right amount of filter techniques for them for people with knowledge to find correlations, since both of us don't have knowledge on this subject and what would be more important to visualize.
 \newpage
@@ -125,12 +130,41 @@ For the visualization of data, we used the d3.js library. This library allows us
 We have tested the application in Firefox and Chrome. Other modern browsers like Safari, Opera and Internet Explorer should also support our application, but we have not tested that.
 \subsection{Main Interface}
 The main view will be all visualizations below each other with the chord diagram on top, below the parallel coordinates and under that the bar chart, there will be a slider visible on the top of the page on which you can select a temperature range that will filter the data used in the visualizations. These will than update with the filtered data.
+\newpage
 \subsection{Parallel Coordinates}
-
+We used the dataset that was provided to visualize it in a parallel coordinates visualization. Parallel coordinates are one of the most famous visualization techniques, and among the most common subjects of academic papers in visualization. While initially confusing, they are a very powerful tool for understanding multi-dimensional numerical datasets. \newline
+For instance now can be seen that a high temperature and nausea have a direct connection. The full result of this can be seen in figure \ref{fig:Parallel}.
+\begin{figure}[h]
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{images/ParallelCoordinates.PNG}
+    \caption{the parallel Coordinates visualization}
+    \label{fig:Parallel}
+\end{center}
+\end{figure}
+\newpage
 \subsection{Bar Chart}
-
+The Bar Chart uses vertical bars to show comparisons among the disease categories. on the x axis the different diseases from the dataset are represented and on the y axis the percentage of people that have it is displayed. The percentage is based on the amount of people that are in the dataset and on which percentage has the disease, for each disease there is a bar. This is a basic technique, but it is very useful to see which diseases are more prevalent among the people. The full result of this can be seen in figure \ref{fig:Bar}.
+\begin{figure}[h]
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{images/barChart.PNG}
+    \caption{the Bar Chart visualization}
+    \label{fig:Bar}
+\end{center}
+\end{figure}
+\newpage
 \subsection{Chord Diagram}
-
+A chord diagram is a graphical method of displaying the inter-relationships between data in a matrix. The data is arranged radially around a circle with the relationships between the points drawn as arcs connecting the data together. The full result of this visualization can be seen in figure \ref{fig:Chord}\newline
+\begin{figure}[h]
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{images/chordDiagramSolo.PNG}
+    \caption{the Chord Diagram visualization}
+    \label{fig:Chord}
+\end{center}
+\end{figure}
+\newpage
 \subsection{Hovering and Selecting}
-
+To get more detail from a particular visualization, the user can hover over it with the mouse, this has an effect on every visualization. \newline
+With the chord diagram, just that part of the circle and the relations are highlighted so you can more easily see the relations. \newline
+With the parallel coordinates when you hover over a line, it will be highlighted red all along the graph, so you can see how it traverses the graph. \newline
+With the bar chart more information of the bar is given if it is hovered over, it will display the full name on the x axis of the disease and also the percentage in a label located at the mouse.
 \end{document} 
