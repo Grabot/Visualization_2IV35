@@ -8,17 +8,18 @@
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-slider.css" rel="stylesheet">
 
     <!-- D3 Libary -->
     <script src="js/d3.js" charset="utf-8"></script>
-    <script src="js/d3.js" charset="utf-8"></script>
-    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
     <script src="http://d3js.org/queue.v1.min.js"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
     <script src="d3pie.min.js"></script>
     <script src="d3pie.js"></script>
     <script src="dimple.v2.1.0.js"></script>
     <script src="drawBarChart.js"></script>
+    <script src="js/bootstrap-slider.js"></script>
 
     <style>
         .foreground path {
@@ -42,6 +43,10 @@
             stroke: #000;
             stroke-width: .5px;
         }
+
+        #ex1Slider .slider-selection {
+            background: #BABABA;
+        }
     </style>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -55,6 +60,8 @@
     <div class="container">
         <h1>Inflamation</h1>
 
+        <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14" />
+
         <div class="row">
             <div class="col-md-8" id="graph_parallelcoordinates"></div>
             <div class="col-md-4">.col-md-4</div>
@@ -63,6 +70,13 @@
     <div id="BarChart"></div>
 
     <script type="text/javascript">
+
+        // Without JQuery
+        var slider = new Slider('#ex1', {
+            formatter: function (value) {
+                return 'Current value: ' + value;
+            }
+        });
 
         var symptoms = ["Temperature", "Nausea", "Lumbar pain", "Urine pushing", "Micturition pains", "Burning of urethra", "Inflamation of urinary bladder", "Nephritis"];
         var data;
@@ -239,7 +253,7 @@
               .append("g")
                 .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-            var path = svg.append("g").selectAll("g.group")
+            var path = svg.selectAll("g.group")
                 .data(chord.groups)
                 .enter().append("svg:g")
                 .attr("class", "group");
@@ -252,12 +266,11 @@
                 .on("mouseover", fade(.1))
                 .on("mouseout", fade(1));
 
+
             path.append("svg:text")
                 .attr("x", 6)
                 .attr("dy", 15)
-                .style("display", "block")
                 .append("svg:textpath")
-                .style("display", "block")
                 .attr("xlink:href", function (d) { return "#group" + d.index; })
                 .text(function (d) { return symptoms[d.index + 1]; });
 
@@ -294,7 +307,6 @@
                 .style("fill", function (d) { return fill(d.target.index); })
                 .style("opacity", 1);
 
-
             // Returns an array of tick angles and labels, given a group.
             function groupTicks(d) {
                 var k = (d.endAngle - d.startAngle) / d.value;
@@ -315,12 +327,11 @@
                         .style("opacity", opacity);
                 };
             }
-            
+
         }
 
         var numberOfRows = 120;
-        d3.text("data/inflammation.csv", function(datasetText)
-        {
+        d3.text("data/inflammation.csv", function (datasetText) {
             //do everything in here I guess
             var dataTSV = datasetText;
             var dataArray = [];
@@ -329,8 +340,7 @@
             dataArray = dataTSV.split("\n");
 
 
-            for( var i = 0; i < numberOfRows; i++ )
-            {
+            for (var i = 0; i < numberOfRows; i++) {
                 dataRowArray[i] = dataArray[i].split("\t");
             }
 
@@ -342,65 +352,57 @@
             var InflammationBladder = 0;
             var Nephritis = 0;
             //naseau [1]
-            for( var i = 0; i < numberOfRows; i++ )
-            {
-                dataRowArray[i][7] = dataRowArray[i][7].replace(/(\r\n|\n|\r)/gm,"");
-                if( dataRowArray[i][1] == 'yes' )
-                {
+            for (var i = 0; i < numberOfRows; i++) {
+                dataRowArray[i][7] = dataRowArray[i][7].replace(/(\r\n|\n|\r)/gm, "");
+                if (dataRowArray[i][1] == 'yes') {
                     Naseau++;
                 }
-                if( dataRowArray[i][2] == 'yes' )
-                {
+                if (dataRowArray[i][2] == 'yes') {
                     LumbarPain++;
                 }
-                if( dataRowArray[i][3] == 'yes' )
-                {
+                if (dataRowArray[i][3] == 'yes') {
                     UrinePushing++;
                 }
-                if( dataRowArray[i][4] == 'yes' )
-                {
+                if (dataRowArray[i][4] == 'yes') {
                     MicturitionPains++;
                 }
-                if( dataRowArray[i][5] == 'yes' )
-                {
+                if (dataRowArray[i][5] == 'yes') {
                     UrethraBurning++;
                 }
-                if( dataRowArray[i][6] == 'yes' )
-                {
+                if (dataRowArray[i][6] == 'yes') {
                     InflammationBladder++;
                 }
-                if( dataRowArray[i][7] == 'yes' )
-                {
+                if (dataRowArray[i][7] == 'yes') {
                     Nephritis++;
                 }
             }
-            console.log("naseau: " +  Naseau );
-            console.log("lumbar Pain: " +  LumbarPain );
-            console.log("UrinePushing: " +  UrinePushing );
-            console.log("MicturitionPains: " +  MicturitionPains );
-            console.log("UrethraBurning: " +  UrethraBurning );
-            console.log("InflammationBladder: " +  InflammationBladder );
-            console.log("Nephritis: " +  Nephritis );
+            console.log("naseau: " + Naseau);
+            console.log("lumbar Pain: " + LumbarPain);
+            console.log("UrinePushing: " + UrinePushing);
+            console.log("MicturitionPains: " + MicturitionPains);
+            console.log("UrethraBurning: " + UrethraBurning);
+            console.log("InflammationBladder: " + InflammationBladder);
+            console.log("Nephritis: " + Nephritis);
 
-            var percentageNaseau = ((Naseau/numberOfRows)*100);
-            var percentageLumbar = ((LumbarPain/numberOfRows)*100);
-            var percentageUrinePushing = ((UrinePushing/numberOfRows)*100);
-            var percentageMicturition = ((MicturitionPains/numberOfRows)*100);
-            var percentageUrethraBurning = ((UrethraBurning/numberOfRows)*100);
-            var percentageInflammation = ((InflammationBladder/numberOfRows)*100);
-            var percentageNephritis = ((Nephritis/numberOfRows)*100);
-            
+            var percentageNaseau = ((Naseau / numberOfRows) * 100);
+            var percentageLumbar = ((LumbarPain / numberOfRows) * 100);
+            var percentageUrinePushing = ((UrinePushing / numberOfRows) * 100);
+            var percentageMicturition = ((MicturitionPains / numberOfRows) * 100);
+            var percentageUrethraBurning = ((UrethraBurning / numberOfRows) * 100);
+            var percentageInflammation = ((InflammationBladder / numberOfRows) * 100);
+            var percentageNephritis = ((Nephritis / numberOfRows) * 100);
+
             percentageData = [
-                { "Percentage of people" : percentageNaseau, "Disease" : "Naseau" },
-                { "Percentage of people" : percentageLumbar, "Disease" : "Lumbar Pain" },
-                { "Percentage of people" : percentageUrinePushing, "Disease" : "Urine Pushing" },
-                { "Percentage of people" : percentageMicturition, "Disease" : "Micturition pains" },
-                { "Percentage of people" : percentageUrethraBurning, "Disease" : "Burning of urethra" },
-                { "Percentage of people" : percentageInflammation, "Disease" : "diagnosis inflammation of urinary bladder" },
-                { "Percentage of people" : percentageNephritis, "Disease" : "diagnosis nephritis of renal pelvis origin" }
+                { "Percentage of people": percentageNaseau, "Disease": "Naseau" },
+                { "Percentage of people": percentageLumbar, "Disease": "Lumbar Pain" },
+                { "Percentage of people": percentageUrinePushing, "Disease": "Urine Pushing" },
+                { "Percentage of people": percentageMicturition, "Disease": "Micturition pains" },
+                { "Percentage of people": percentageUrethraBurning, "Disease": "Burning of urethra" },
+                { "Percentage of people": percentageInflammation, "Disease": "diagnosis inflammation of urinary bladder" },
+                { "Percentage of people": percentageNephritis, "Disease": "diagnosis nephritis of renal pelvis origin" }
             ];
 
-            var BarChartVar = drawBarChart( percentageData );
+            var BarChartVar = drawBarChart(percentageData);
         });
     </script>
 
