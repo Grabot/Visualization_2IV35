@@ -18,10 +18,16 @@
             stroke: black;
         }
 
-        .foreground path:hover {
-            fill: none;
-            stroke: red;
-            stroke-width:10;
+            .foreground path:hover {
+                fill: none;
+                stroke: red;
+                stroke-width: 10;
+            }
+
+        .chord path {
+            fill-opacity: .67;
+            stroke: #000;
+            stroke-width: .5px;
         }
     </style>
 
@@ -42,9 +48,13 @@
         </div>
     </div>
 
+
     <script type="text/javascript">
 
         var symptoms = ["Temperature", "Nausea", "Lumbar pain", "Urine pushing", "Micturition pains", "Burning of urethra", "Inflamation of urinary bladder", "Nephritis"];
+        var data;
+        var matrix = [];
+
 
         var margin = { top: 150, right: 40, bottom: 30, left: 40 }
           , width = parseInt(d3.select('#graph_parallelcoordinates').style('width'), 0)
@@ -66,7 +76,7 @@
 
         // Read the data from file
         d3.text("data/inflammation.csv", function (text) {
-            var data = d3.tsv.parseRows(text).map(function (row) {
+            data = d3.tsv.parseRows(text).map(function (row) {
 
                 return row.map(function (value) {
                     if (value == "no") {
@@ -76,6 +86,25 @@
                     } else { return parseFloat(value.replace(",", ".")); }
                 });
             });
+
+            // Create count data matrix
+            for (var i = 1; i < symptoms.length; i++) {
+                matrix[i - 1] = [];
+                for (var j = 1; j < symptoms.length; j++) {
+                    var count = 0;
+                    for (var n = 0; n < data.length; n++) {
+
+                        if (data[n][i] == 1 && data[n][j] == 1) {
+                            count++;
+                        }
+                    }
+
+                    matrix[(i - 1)][(j - 1)] = count;
+                }
+            }
+
+            drawChordDiagram(matrix);
+
 
             // Create a scale and brush for each trait.
             symptoms.forEach(function (d) {
@@ -170,7 +199,104 @@
             });
         }
 
+
+        function drawChordDiagram(matrix) {
+            // From http://mkweb.bcgsc.ca/circos/guide/tables/
+            //var matrix = [
+            //  [0, 5871, 8916, 2868, 1000],
+            //  [1951, 0, 2060, 6171, 1000],
+            //  [8010, 16145, 0, 8045, 1000],
+            //  [1013, 990, 940, 0, 2000],
+            //  [100, 100, 100, 100, 0]
+            //];
+
+            console.log(matrix);
+
+            var chord = d3.layout.chord()
+                .padding(.05)
+                .sortSubgroups(d3.descending)
+                .matrix(matrix);
+
+            var width = 960,
+                height = 500,
+                innerRadius = Math.min(width, height) * .41,
+                outerRadius = innerRadius * 1.1;
+
+            var fill = d3.scale.ordinal()
+                .domain(d3.range(4))
+                .range(["#000000", "#FFDD89", "#957244", "#F26223", "#FFDD89", "#957244", "#F26223"]);
+
+            var svg = d3.select("body").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+              .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+            svg.append("g").selectAll("path")
+                .data(chord.groups)
+              .enter().append("path")
+                .style("fill", function (d) { return fill(d.index); })
+                .style("stroke", function (d) { return fill(d.index); })
+                .attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius))
+                .on("mouseover", fade(.1))
+                .on("mouseout", fade(1));
+
+            var ticks = svg.append("g").selectAll("g")
+                .data(chord.groups)
+              .enter().append("g").selectAll("g")
+                .data(groupTicks)
+              .enter().append("g")
+                .attr("transform", function (d) {
+                    return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+                        + "translate(" + outerRadius + ",0)";
+                });
+
+            ticks.append("line")
+                .attr("x1", 1)
+                .attr("y1", 0)
+                .attr("x2", 5)
+                .attr("y2", 0)
+                .style("stroke", "#000");
+
+            ticks.append("text")
+                .attr("x", 8)
+                .attr("dy", ".35em")
+                .attr("transform", function (d) { return d.angle > Math.PI ? "rotate(180)translate(-16)" : null; })
+                .style("text-anchor", function (d) { return d.angle > Math.PI ? "end" : null; })
+                .text(function (d) { return d.label; });
+
+            svg.append("g")
+                .attr("class", "chord")
+              .selectAll("path")
+                .data(chord.chords)
+              .enter().append("path")
+                .attr("d", d3.svg.chord().radius(innerRadius))
+                .style("fill", function (d) { return fill(d.target.index); })
+                .style("opacity", 1);
+
+            // Returns an array of tick angles and labels, given a group.
+            function groupTicks(d) {
+                var k = (d.endAngle - d.startAngle) / d.value;
+                return d3.range(0, d.value, 1000).map(function (v, i) {
+                    return {
+                        angle: v * k + d.startAngle,
+                        label: i % 5 ? null : v / 1000 + "k"
+                    };
+                });
+            }
+
+            // Returns an event handler for fading a given chord group.
+            function fade(opacity) {
+                return function (g, i) {
+                    svg.selectAll(".chord path")
+                        .filter(function (d) { return d.source.index != i && d.target.index != i; })
+                      .transition()
+                        .style("opacity", opacity);
+                };
+            }
+        }
     </script>
+
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
