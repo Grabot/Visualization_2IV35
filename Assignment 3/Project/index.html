@@ -60,10 +60,14 @@
     <div class="container">
         <h1>Inflamation</h1>
 
-        <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14" />
+        <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="35" data-slider-max="42" data-slider-step="0.1" data-slider-value="38.5" />
 
         <div class="row">
-            <div class="col-md-8" id="graph_parallelcoordinates"></div>
+            <div class="col-md-8" id="graph_parallelcoordinates" hidden></div>
+            <div class="col-md-4">.col-md-4</div>
+        </div>
+        <div class="row">
+            <div class="col-md-8" id="graph_cord"></div>
             <div class="col-md-4">.col-md-4</div>
         </div>
     </div>
@@ -71,16 +75,11 @@
 
     <script type="text/javascript">
 
-        // Without JQuery
-        var slider = new Slider('#ex1', {
-            formatter: function (value) {
-                return 'Current value: ' + value;
-            }
-        });
-
         var symptoms = ["Temperature", "Nausea", "Lumbar pain", "Urine pushing", "Micturition pains", "Burning of urethra", "Inflamation of urinary bladder", "Nephritis"];
+        var tempsymptoms = ["TemperatureLow", "TemperatureHigh", "Nausea", "Lumbar pain", "Urine pushing", "Micturition pains", "Burning of urethra", "Inflamation of urinary bladder", "Nephritis"];
         var data;
         var matrix = [];
+        var tempdivider;
 
         var margin = { top: 150, right: 40, bottom: 30, left: 40 }
           , width = parseInt(d3.select('#graph_parallelcoordinates').style('width'), 0)
@@ -113,23 +112,18 @@
                 });
             });
 
-            // Create count data matrix
-            for (var i = 1; i < symptoms.length; i++) {
-                matrix[i - 1] = [];
-                for (var j = 1; j < symptoms.length; j++) {
-                    var count = 0;
-                    for (var n = 0; n < data.length; n++) {
-
-                        if (data[n][i] == 1 && data[n][j] == 1) {
-                            count++;
-                        }
-                    }
-
-                    matrix[(i - 1)][(j - 1)] = count;
+            // Without JQuery
+            var slider = new Slider('#ex1', {
+                formatter: function (value) {
+                    tempdivider = value;
+                    drawChordDiagram();
+                    return 'Current value: ' + value;
                 }
-            }
+            });
 
-            drawChordDiagram(matrix);
+
+
+            //drawChordDiagram(matrix);
 
 
             // Create a scale and brush for each trait.
@@ -203,7 +197,13 @@
                 t.selectAll(".foreground path").attr("d", path);
             }
 
+
+
+
         });
+
+
+
 
         // Returns the path for a given data point.
         function path(d) {
@@ -226,15 +226,44 @@
         }
 
 
-        function drawChordDiagram(matrix) {
-            // From http://mkweb.bcgsc.ca/circos/guide/tables/
-            //var matrix = [
-            //  [0, 5871, 8916, 2868, 1000],
-            //  [1951, 0, 2060, 6171, 1000],
-            //  [8010, 16145, 0, 8045, 1000],
-            //  [1013, 990, 940, 0, 2000],
-            //  [100, 100, 100, 100, 0]
-            //];
+        function drawChordDiagram() {
+
+            // Split data
+            var tempdata = [];
+
+            for (var n = 0; n < data.length; n++) {
+                tempdata[n] = [];
+
+                if (data[n][0] > tempdivider) {
+                    tempdata[n][1] = 1;
+                } else {
+                    tempdata[n][0] = 1;
+                }
+
+                for (var i = 1; i < data[n].length; i++) {
+                    tempdata[n][i + 1] = data[n][i];
+                }
+            }
+
+            console.log(data);
+            console.log(tempdata);
+
+
+            // Create count data matrix
+            for (var i = 0; i < tempsymptoms.length; i++) {
+                matrix[i] = [];
+                for (var j = 0; j < tempsymptoms.length; j++) {
+                    var count = 0;
+                    for (var n = 0; n < tempdata.length; n++) {
+                        if (tempdata[n][i] == 1 && tempdata[n][j] == 1) {
+                            count++;
+                        }
+                    }
+                    matrix[i][j] = count;
+                }
+            }
+
+
             var chord = d3.layout.chord()
                 .padding(.05)
                 .sortSubgroups(d3.descending)
@@ -247,7 +276,9 @@
 
             var fill = d3.scale.category10();
 
-            var svg = d3.select("body").append("svg")
+            d3.select("#graph_cord").selectAll("svg").remove();
+
+            var svg = d3.select("#graph_cord").append("svg")
                 .attr("width", width)
                 .attr("height", height)
               .append("g")
@@ -266,13 +297,12 @@
                 .on("mouseover", fade(.1))
                 .on("mouseout", fade(1));
 
-
             path.append("svg:text")
                 .attr("x", 6)
                 .attr("dy", 15)
                 .append("svg:textpath")
                 .attr("xlink:href", function (d) { return "#group" + d.index; })
-                .text(function (d) { return symptoms[d.index + 1]; });
+                .text(function (d) { return tempsymptoms[d.index]; });
 
             var ticks = svg.append("g").selectAll("g")
                 .data(chord.groups)
