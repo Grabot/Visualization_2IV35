@@ -60,14 +60,16 @@
     <div class="container">
         <h1>Inflamation</h1>
 
+        <p>Divide temperature group</p>
         <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="35" data-slider-max="42" data-slider-step="0.1" data-slider-value="38.5" />
 
         <div class="row">
-            <div class="col-md-8" id="graph_parallelcoordinates" hidden></div>
+            <div class="col-md-8" id="graph_cord"></div>
             <div class="col-md-4">.col-md-4</div>
         </div>
+    
         <div class="row">
-            <div class="col-md-8" id="graph_cord"></div>
+            <div class="col-md-8" id="graph_parallelcoordinates"></div>
             <div class="col-md-4">.col-md-4</div>
         </div>
     </div>
@@ -196,9 +198,6 @@
                 t.selectAll(".symptom").attr("transform", function (d) { return "translate(" + x(d) + ")"; });
                 t.selectAll(".foreground path").attr("d", path);
             }
-
-
-
 
         });
 
@@ -423,13 +422,13 @@
             var percentageNephritis = ((Nephritis / numberOfRows) * 100);
 
             percentageData = [
-                { "Percentage of people": percentageNaseau, "Disease": "Naseau" },
-                { "Percentage of people": percentageLumbar, "Disease": "Lumbar Pain" },
-                { "Percentage of people": percentageUrinePushing, "Disease": "Urine Pushing" },
-                { "Percentage of people": percentageMicturition, "Disease": "Micturition pains" },
-                { "Percentage of people": percentageUrethraBurning, "Disease": "Burning of urethra" },
-                { "Percentage of people": percentageInflammation, "Disease": "diagnosis inflammation of urinary bladder" },
-                { "Percentage of people": percentageNephritis, "Disease": "diagnosis nephritis of renal pelvis origin" }
+                { "Diagnose": 1, "Percentage of people": percentageNaseau, "Disease": "Naseau", Value2:5 },
+                { "Diagnose": 1, "Percentage of people": percentageLumbar, "Disease": "Lumbar Pain", Value2: 5 },
+                { "Diagnose": 1, "Percentage of people": percentageUrinePushing, "Disease": "Urine Pushing", Value2: 5 },
+                { "Diagnose": 2, "Percentage of people": percentageMicturition, "Disease": "Micturition pains", Value2: 5 },
+                { "Diagnose": 2, "Percentage of people": percentageUrethraBurning, "Disease": "Burning of urethra", Value2: 5 },
+                { "Diagnose": 2, "Percentage of people": percentageInflammation, "Disease": "diagnosis inflammation of urinary bladder", Value2: 5 },
+                { "Diagnose": 2, "Percentage of people": percentageNephritis, "Disease": "diagnosis nephritis of renal pelvis origin", Value2: 5 }
             ];
 
             var BarChartVar = drawBarChart(percentageData);
