@@ -65,15 +65,14 @@
 
         <div class="row">
             <div class="col-md-8" id="graph_cord"></div>
-            <div class="col-md-4">.col-md-4</div>
+            <div class="col-md-4" id="BarChart"></div>
         </div>
-    
         <div class="row">
             <div class="col-md-8" id="graph_parallelcoordinates"></div>
             <div class="col-md-4">.col-md-4</div>
         </div>
     </div>
-    <div id="BarChart"></div>
+    <!--<div id="BarChart"></div>-->
 
     <script type="text/javascript">
 
@@ -244,10 +243,6 @@
                 }
             }
 
-            console.log(data);
-            console.log(tempdata);
-
-
             // Create count data matrix
             for (var i = 0; i < tempsymptoms.length; i++) {
                 matrix[i] = [];
@@ -261,7 +256,6 @@
                     matrix[i][j] = count;
                 }
             }
-
 
             var chord = d3.layout.chord()
                 .padding(.05)
@@ -351,7 +345,34 @@
             function fade(opacity) {
                 return function (g, i) {
                     svg.selectAll(".chord path")
-                        .filter(function (d) { return d.source.index != i && d.target.index != i; })
+                        .filter(function (d) {
+                            // console.log(matrix[d.target.index]);
+                            //BarChartVar.data = matrix[d.target.index];
+                            //BarChartVar.draw(1000);
+                            //var BarChartVar = drawBarChart(matrix[d.source.index]);
+                            if (d.source.index == i && d.target.index == i) {
+                                //BarChartVar.data = matrix[d.target.index];
+
+                                percentageData = [
+                                    { "Percentage of people": (matrix[d.target.index][0] / data.length) * 100, "Disease": "Low Temperature" },
+                                    { "Percentage of people": (matrix[d.target.index][1] / data.length) * 100, "Disease": "High Temperature" },
+                                    { "Percentage of people": (matrix[d.target.index][2] / data.length) * 100, "Disease": "Naseau" },
+                                    { "Percentage of people": (matrix[d.target.index][3] / data.length) * 100, "Disease": "Lumbar Pain" },
+                                    { "Percentage of people": (matrix[d.target.index][4] / data.length) * 100, "Disease": "Urine Pushing" },
+        { "Percentage of people": (matrix[d.target.index][5] / data.length) * 100, "Disease": "Micturition pains" },
+        { "Percentage of people": (matrix[d.target.index][6] / data.length) * 100, "Disease": "Burning of urethra" },
+        { "Percentage of people": (matrix[d.target.index][7] / data.length) * 100, "Disease": "diagnosis inflammation of urinary bladder" },
+        { "Percentage of people": (matrix[d.target.index][8] / data.length) * 100, "Disease": "diagnosis nephritis of renal pelvis origin" }
+                                ];
+
+                                BarChartVar.data = percentageData;
+                                BarChartVar.draw(1000);
+                                //BarChartVar.draw(1000);
+                                //console.log(d);
+                            }
+
+                            return d.source.index != i && d.target.index != i;
+                        })
                       .transition()
                         .style("opacity", opacity);
                 };
@@ -373,6 +394,8 @@
                 dataRowArray[i] = dataArray[i].split("\t");
             }
 
+            var LowTemperature = 0;
+            var HighTemperature = 0;
             var Naseau = 0;
             var LumbarPain = 0;
             var UrinePushing = 0;
@@ -383,6 +406,13 @@
             //naseau [1]
             for (var i = 0; i < numberOfRows; i++) {
                 dataRowArray[i][7] = dataRowArray[i][7].replace(/(\r\n|\n|\r)/gm, "");
+
+                if (parseFloat(dataRowArray[i][0].replace(",", ".")) > tempdivider) {
+                    HighTemperature++;
+                } else {
+                    LowTemperature++;
+                }
+
                 if (dataRowArray[i][1] == 'yes') {
                     Naseau++;
                 }
@@ -405,14 +435,9 @@
                     Nephritis++;
                 }
             }
-            console.log("naseau: " + Naseau);
-            console.log("lumbar Pain: " + LumbarPain);
-            console.log("UrinePushing: " + UrinePushing);
-            console.log("MicturitionPains: " + MicturitionPains);
-            console.log("UrethraBurning: " + UrethraBurning);
-            console.log("InflammationBladder: " + InflammationBladder);
-            console.log("Nephritis: " + Nephritis);
 
+            var percentageLowTemperature = ((LowTemperature / numberOfRows) * 100);
+            var percentageHighTemperature = ((HighTemperature / numberOfRows) * 100);
             var percentageNaseau = ((Naseau / numberOfRows) * 100);
             var percentageLumbar = ((LumbarPain / numberOfRows) * 100);
             var percentageUrinePushing = ((UrinePushing / numberOfRows) * 100);
@@ -422,16 +447,18 @@
             var percentageNephritis = ((Nephritis / numberOfRows) * 100);
 
             percentageData = [
-                { "Diagnose": 1, "Percentage of people": percentageNaseau, "Disease": "Naseau", Value2:5 },
-                { "Diagnose": 1, "Percentage of people": percentageLumbar, "Disease": "Lumbar Pain", Value2: 5 },
-                { "Diagnose": 1, "Percentage of people": percentageUrinePushing, "Disease": "Urine Pushing", Value2: 5 },
-                { "Diagnose": 2, "Percentage of people": percentageMicturition, "Disease": "Micturition pains", Value2: 5 },
-                { "Diagnose": 2, "Percentage of people": percentageUrethraBurning, "Disease": "Burning of urethra", Value2: 5 },
-                { "Diagnose": 2, "Percentage of people": percentageInflammation, "Disease": "diagnosis inflammation of urinary bladder", Value2: 5 },
-                { "Diagnose": 2, "Percentage of people": percentageNephritis, "Disease": "diagnosis nephritis of renal pelvis origin", Value2: 5 }
+                { "Percentage of people": percentageLowTemperature, "Disease": "Low Temperature" },
+                { "Percentage of people": percentageHighTemperature, "Disease": "High Temperature" },
+                { "Percentage of people": percentageNaseau, "Disease": "Naseau" },
+                { "Percentage of people": percentageLumbar, "Disease": "Lumbar Pain" },
+                { "Percentage of people": percentageUrinePushing, "Disease": "Urine Pushing" },
+                { "Percentage of people": percentageMicturition, "Disease": "Micturition pains" },
+                { "Percentage of people": percentageUrethraBurning, "Disease": "Burning of urethra" },
+                { "Percentage of people": percentageInflammation, "Disease": "diagnosis inflammation of urinary bladder" },
+                { "Percentage of people": percentageNephritis, "Disease": "diagnosis nephritis of renal pelvis origin" }
             ];
 
-            var BarChartVar = drawBarChart(percentageData);
+            BarChartVar = drawBarChart(percentageData);
         });
     </script>
 

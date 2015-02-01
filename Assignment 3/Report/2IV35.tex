@@ -69,11 +69,12 @@ l.a.j.v.hulten@student.tue.nl
 \end{titlepage}
 
 \section*{Information Visualization}
-In this report we will describe how we implemented a web application for visualizing a large data set for the course 2IV35. This data set contains information about certain patients and certain diseases that ales them. \newline
-The data that is available is per patient there temperature, Occurrence of nausea, Lumbar pain, Urine pushing, Micturition pains,  Burning of urethra, itch, swelling of urethra outlet, decision: Inflammation of urinary bladder and decision: Nephritis of renal pelvis origin \newline
+In this report we will describe how we implemented a web application for visualizing a large data set for the course 2IV35. This data contains information about symptoms of patients and the diagnosed disease. \newline
+The data available is the temperature, Occurrence of nausea, Lumbar pain, Urine pushing, Micturition pains, Burning of urethra, itch, swelling of urethra outlet, decision: Inflammation of urinary bladder and decision: Nephritis of renal pelvis origin per patient. \newline
 In section 1, we will first give a description of the format of the data set. \newline
 In section 2, we will explain our design considerations for the interface. \newline
-finally in section 3, we will present our actual implementation, with screenshots and motivation. \newline
+In section 3, we will present our actual implementation, with screenshots and motivation. \newline
+Finally in section 4, we will present the conclusion of the visualization.
 \begin{figure}[h]
     \includegraphics[width=\textwidth]{images/chordDiagram.PNG}
     \caption{the visualization with only the slider ander the chord diagram visible}
@@ -81,9 +82,9 @@ finally in section 3, we will present our actual implementation, with screenshot
 \end{figure}
 \newpage
 \section{Description of the Dataset}
-We have been given a dataset with information about certain patients and certain diseases that ales them. The data is provided in a .csv file with 120 rows and 8 columns every column is separated by a tab. Every row represents a patient. There is also a .txt file with a more detailed explanation of how the data in the .csv can be read.
+We have been given a dataset with information with symptoms and diagnosed deseases. The data is provided in a .csv file with 120 rows and 8 columns every column is separated by a tab. Every row represents a patient. There is also a .txt file with a more detailed explanation on how the data in the .csv can be interpreted.
 \subsection{High-level description}
-Our data set is called "inflammation.csv" and it describes patients and the diseases that ales them. There are 8 columns that represent the diseases and there are 120 rows that represent the patients. The data from the 2nd to the 8th column are "yes" to indicate that he has the disease of that column or "no" to indicate that he doesn't have the disease that the column represents. For example: \newline
+The data set is called "inflammation.csv", the set contains 8 columns that represent the symptoms, and 120 rows of data. The data from the 2nd to the 8th column are "yes" to indicate that he has the disease of that column or "no" to indicate that he doesn't have the disease that the column represents. For example: \newline
 \textbf{'35,9 no no yes yes yes yes no'} \newline
 Where: \newline
 '35,9' Temperature of patient \newline
@@ -111,28 +112,98 @@ a5 Micturition pains \{ yes, no \} \newline
 a6 Burning of urethra, itch, swelling of urethra outlet \{ yes, no \} \newline
 d1 decision: Inflammation of urinary bladder \{ yes, no \} \newline
 d2 decision: Nephritis of renal pelvis origin \{ yes, no \} \newline
-\subsection{Data Representation}
-With the visualization you can try to find correlations between combinations of diseases and temperature, taken from the dataset inflammation.csv. this is supposed to be used by a person who has knowledge off the data being visualized so that person knows what to select and what to analyze. We hope we have provide ample visualization techniques and provided the right amount of filter techniques for them for people with knowledge to find correlations, since both of us don't have knowledge on this subject and what would be more important to visualize.
 \newpage
 \section{Design}
-In this section we explain the general design of the visualization.
-\subsection{General design}
-What the goal is with the visualization is finding a correlation between the data, for instance between the temperature and the diseases that the patients tend to have. For this we used a bar chart, a chord diagram and parallel coordinates. We also implemented a slider that allows the user to determine a temperature range for which the data will be visualized.
-\subsection{User Interface}
-The ways we've decided to represent the data will be all shown on the page and there will be a slider that affects all visualizations, so the data is connected. A more detailed description of the visualization methods can be found in the implementation chapter. \newline
-All the data is shown on top of each other so each of them can be accessed. At the top is the chord diagram, you can select a part of the chord diagram and the lines of that part will be lit up. Below there you see the parallel coordinates, you can select a line or a selection of lines to see how they maneuver through the graph, you can also reposition the bars of the parallel coordinates to your liking. Below there you can see the bar graph, this just represents the percentage of people that have a disease from the dataset.
+In this section we explain the general design of the visualization. The goal of the visualization is to find a correlation between symptoms and diagnose. For this multiple visualization , aggregation and filtering techniques can be applied.
+
+\subsection{Visualization techniques}
+The data at hand is except of the temperature binary data. In this binary data we have to find patterns or paths to lead to a certain diagnose.
+The following visualization techniques where considered:
+
+\subsubsection{Table}
+In the table visualization the data is shown in a table. This table can than be filtered and ordered to find patterns in the data.
+
+\begin{itemize}
+  \item Pros\\
+    Advantages of this technique is that the data is 'pure' the data doesn't need any preprocessing to be visualized.
+  \item Cons \\
+    A lot of filtering and ordering needs to be applied to find patterns. Also since the quantity of data is quite large it's hard for a person to get a good impression of the data.
+\end{itemize}
+
+\subsubsection{Scatter plot}
+The scatter plot is a good visualization technique for visualizing lots of data. In this case it would be possible to create a scatter plot with symptoms on the x-axis and patient rows or diagnoses on the y-axis. In a scatter plot clustering and patterns are easily discovered.
+\begin{itemize}
+  \item Pros\\
+    Easy to find patterns \\
+    Can display lots of data \\
+  \item Cons \\
+    Preprocessing of the data is needed in this case \\
+    With binary data you get a table like impression of the data \\
+\end{itemize}
+
 \newpage
+
+\subsubsection{Box plot}
+We can create a statistical interpretation of the data by calculating box plots. For example a good impression of a patient temperature for each diagnose can be given by a box plot.
+
+\begin{itemize}
+  \item Pros\\
+    Box plots are good in giving statistical data like mean and variance. \\
+  \item Cons \\
+   Lots of the data is lost in this representation. \\
+\end{itemize}
+
+\subsubsection{Chord diagram}
+A chord diagram is a visualization method used for displaying relations between data.
+
+\begin{itemize}
+  \item Pros\\
+    Gives relations between symptoms. \\
+    Can display the strength of a relation by the chord sizes.
+  \item Cons \\
+   Like the scatter plot the data needs pre processing. \\
+\end{itemize}
+
+\subsubsection{Parallel Coordinates}
+Also the parallel coordinates diagram is particular good in displaying relational data. An advantage of the parallel coordinates visualization technique over the chord diagram is that the data doesn't need preprocessing and also every element in the data could be visualized.
+
+\begin{itemize}
+  \item Pros\\
+    Can easily show paths in the data. \\
+    Most often the data does not need pre-processing. \\
+  \item Cons \\
+   Is not capable of displaying lots of data. \\
+\end{itemize}
+
+\newpage
+
+\subsection{User Interface}
+Since the available experience in D3 the choice for a web based D3 approach was easily made. However since the arrival of smart devices people moreover visit web sites with tablets and phones. Thats why the decision for using a responsive design was chosen. Creating a responsive design is very time consuming that so we used bootstrap as a responsive framework. However scaling graphs isn't as easy as we originally thought. Many problems come at hand:
+\begin{itemize}
+  \item labels aren't readable \\
+  \item width height ratio is lost \\
+  \item graphs don't wrap nicely beneath each other \\
+\end{itemize}
+Since there were to many problems and to little time to solve them we dropped the responsive design requirement after applying it on the parallel coordinates graph. \\
+
+Also a slider is created to categorize the temperature in a low and high temperature class. Using this slider the user can shift the temperature in a certain class and search for a point where there is an obvious relation between temperature and diagnose. \\
+
+For the parallel coordinates the category lines are movable. Rearranging these categories can be used to find paths in the data that lead to a diagnose or even to find symptoms that don't have any influence at all on the diagnose. \\
+
+The groups of the Chord diagram are selectable. Selecting a group lets the bar chart displaying the relational data of the selected group. \\
+\newpage
+
 \section{Implementation}
-We decided to do the implementation in HTML, CSS and Javascript, the reasoning for this is because this way users will be able to visi the visualization easily using their web-browser, without needing to install additional software. \newline
-For the visualization of data, we used the d3.js library. This library allows users o handle data in Javascript easily. for the visualization we also used the scripts dimple.js, which uses the d3.js library and allows you take full advantage of the power of d3 to visualize data. In the end with d3 we made a parallel coordinates, chord diagram and a bar chart that use the dataset provided.
+For the visualization of data, we used the d3.js library. This library allows developers to visualize data using Javascript easily. Also external library like dimple.js (extention of D3) and bootstrap for responsive design was used.
+
 \subsection{Technical Notes}
-We have tested the application in Firefox and Chrome. Other modern browsers like Safari, Opera and Internet Explorer should also support our application, but we have not tested that.
+We have tested the application in Firefox and Chrome. Other modern browsers like Safari, Opera and Internet Explorer should also support our application.
 \subsection{Main Interface}
 The main view will be all visualizations below each other with the chord diagram on top, below the parallel coordinates and under that the bar chart, there will be a slider visible on the top of the page on which you can select a temperature range that will filter the data used in the visualizations. These will than update with the filtered data.
 \newpage
 \subsection{Parallel Coordinates}
 We used the dataset that was provided to visualize it in a parallel coordinates visualization. Parallel coordinates are one of the most famous visualization techniques, and among the most common subjects of academic papers in visualization. While initially confusing, they are a very powerful tool for understanding multi-dimensional numerical datasets. \newline
-For instance now can be seen that a high temperature and nausea have a direct connection. The full result of this can be seen in figure \ref{fig:Parallel}.
+For instance now can be seen that a high temperature and nausea have a direct connection. The full result of this can be seen in figure. \ref{fig:Parallel}.
 \begin{figure}[h]
 \begin{center}
     \includegraphics[width=0.8\textwidth]{images/ParallelCoordinates.PNG}
@@ -152,7 +223,7 @@ The Bar Chart uses vertical bars to show comparisons among the disease categorie
 \end{figure}
 \newpage
 \subsection{Chord Diagram}
-A chord diagram is a graphical method of displaying the inter-relationships between data in a matrix. The data is arranged radially around a circle with the relationships between the points drawn as arcs connecting the data together. The full result of this visualization can be seen in figure \ref{fig:Chord}\newline
+A chord diagram is a graphical method of displaying the inter-relationships between data in a matrix. The data is arranged radially around a circle with the relationships between the points drawn as arcs connecting the data together. The full result of this visualization can be seen in figure \ref{fig:Chord}\newline. For using the data had to be pre processed to a adjacency matrix. This matrix contains the count that a symptom occurs related to another symptom.
 \begin{figure}[h]
 \begin{center}
     \includegraphics[width=0.8\textwidth]{images/chordDiagramSolo.PNG}
@@ -166,4 +237,41 @@ To get more detail from a particular visualization, the user can hover over it w
 With the chord diagram, just that part of the circle and the relations are highlighted so you can more easily see the relations. \newline
 With the parallel coordinates when you hover over a line, it will be highlighted red all along the graph, so you can see how it traverses the graph. \newline
 With the bar chart more information of the bar is given if it is hovered over, it will display the full name on the x axis of the disease and also the percentage in a label located at the mouse.
+
+\section{Conclusion}
+
+\subsection{Observation}
+With the visualization the influence of symptoms to the resulting treatment can easily be found. Selecting the diagnose in the chord diagram directly shows the dependency on the different symptoms. With the bar chart at the side the influence of each symptom is even better visible.
+We can easily observe that patients of Nephritis have a higher temperature accommodated with lumbar pain and nausea.
+
+\begin{figure}[h!]
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{images/ObservationIoUB.PNG}
+    \caption{Observation of diagnose Inflamation of urinary bladder}
+    \label{fig:Chord}
+\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{images/ObservationNephritis.PNG}
+    \caption{Observation diagnose Nephritis}
+    \label{fig:Chord}
+\end{center}
+\end{figure}
+
+\subsection{Feedback}
+The bar chart and chord chart are very powerfull visualizations for this data. The parallel line graph was not a good choice for visualizing this data. We thought we could easily find paths, leading to a certain diagnose. However, since the data consist mostly out of binary data all lines are drawn on top of each other. This prevents the user to distinct different lines in the view. 
+
+We have a slider for changing the temperature group data. The user has to set this intuitively. A good idea would be to implement a box plot graph. This graph should contain a plot for each symptom per diagnose. From this the user could directly find good setting values and iterate from that.
+
+Another thing for improvement is removing the scale change when selecting an other group data from the chord. By rescaling the y-axis the user loses his view on the new values compared to the previous ones.
+
+Work breakdown:
+Responsiveness: Sander, Luuk
+Bar chart: Sander
+Chord chart: Luuk
+Parallel line: Luuk
+Animations: Sander
+
 \end{document} 
