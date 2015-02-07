@@ -1,0 +1,84 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage{a4wide,graphicx,fancyhdr,amsmath,amssymb, enumerate, caption, subcaption, wrapfig}
+
+%----------------------- Macros and Definitions --------------------------
+
+\setlength\headheight{20pt}
+\addtolength\topmargin{-10pt}
+\addtolength\footskip{20pt}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines,
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\ch}{\mathcal{CH}}
+
+\fancypagestyle{plain}
+\fancyhf{}
+\fancyhead[LO,RE]{\sffamily\bfseries\large Technische Universiteit Eindhoven}
+\fancyhead[RO,LE]{\sffamily\bfseries\large 2IV35 Visualization}
+\fancyfoot[LO,RE]{\sffamily\bfseries\large Department of Mathematics and Computer Science}
+\fancyfoot[RO,LE]{\sffamily\bfseries\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[RO,LE]{\sffamily\bfseries\large Technische Universiteit Eindhoven}
+\fancyhead[LO,RE]{\sffamily\bfseries\large 2IV35 Visualization}
+\fancyfoot[LO,RE]{\sffamily\bfseries\large Department of Mathematics and Computer Science}
+\fancyfoot[RO,LE]{\sffamily\bfseries\thepage}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\begin{document}
+\begin{titlepage}
+
+\center % Center everything on the page
+
+\textsc{\Huge \textbf{Technische Universiteit Eindhoven}}\\[1.5cm] % Name of your university/college
+\textsc{\LARGE \textbf{Visualization}}\\[0.5cm] % Major heading such as course name
+\textsc{\large 2IV35}\\[0.5cm] % Minor heading such as course title
+
+\HRule \\[0.4cm]
+{ \huge \bfseries Visualization data of the Netherlands}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{\textbf{Author:}}\\
+Sander Kools \\
+0848523 \\
+s.w.a.kools@student.tue.nl % Your name
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{\textbf{Author:}}\\
+Luuk Hulten\\
+0720248 \\
+l.a.j.v.hulten@student.tue.nl
+\end{flushright}
+\end{minipage}\\[4cm]
+
+{\large \today}\\[3cm] % Date, change the \today to a set date if you want to be precise
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section*{Information Visualization}
+In this report we will describe how we implemented a web application for visualizing a large data set for the course 2IV35. This data set contains information about the population living in the Netherlands.  \newline
+There is a wide variation of data, for instance the percentage of age range or car usage. The data is very large and it is hard to understand the data when viewed in the tabular view as it was provided, therefore we have come up with a better interface to make viewing and understanding the provided data easier. \newline
+In section 1, we will first give a description of the format of the data set. \newline
+In section 2, we will explain our design considerations for the interface. \newline
+In section 3, we will present our actual implementation, with screenshots and motivation. \newline
+In section 4, we will consider the trends found in the visualization. \newline
+Finally in section 5, we will give a short conclusion about how we choose to visualize the data. \newline
+
+\end{document} 
