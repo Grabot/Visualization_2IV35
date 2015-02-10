@@ -1,8 +1,5 @@
 package engineTester;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import models.TexturedModel;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -11,35 +8,17 @@ import entities.Entity;
 
 public class Particle extends Entity {
 
-	private Vector3f force = new Vector3f(0, 0, 0);
-	private Vector3f predictedPosition = new Vector3f(0, 0, 0);
-	private List<Particle> neighbourParticles = new ArrayList<Particle>();
+	private Vector3f velocity = new Vector3f(0, 0, 0);
 
-	public Particle(TexturedModel model, Vector3f position, Vector3f rotation, float scale) {
-		super(model, position, rotation, scale);
+	public Particle(TexturedModel model, Vector3f position) {
+		super(model, position, new Vector3f(0,0,0), 1);
 	}
 
-	public void increaseForce(float dfx, float dfy, float dfz) {
-		this.force.x += dfx;
-		this.force.y += dfy;
-		this.force.z += dfz;
+	public void setVelocity(Vector3f value){
+		this.velocity = value;
 	}
 
-	public Vector3f getForce() {
-		return force;
-	}
-
-	public void setPredictedPosition(Vector3f position) {
-		predictedPosition = position;
-	}
-
-	public void addNeighbourParticle(Particle particle)
-	{
-		neighbourParticles.add(particle);
-	}
-	
-	public void clearNeighbourList()
-	{
-		neighbourParticles.clear();
+	public Vector3f getVelocity() {
+		return velocity;
 	}
 }
