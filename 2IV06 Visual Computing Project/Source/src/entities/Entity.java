@@ -9,6 +9,7 @@ public class Entity {
 	private Vector3f position;
 	private Vector3f rotation;
 	private float scale;
+	private boolean isRoot = false;
 	
 	public Entity(TexturedModel model, Vector3f position, Vector3f rotation, float scale) {
 		this.model = model;
@@ -19,9 +20,11 @@ public class Entity {
 
 	public void increasePosition(float dx, float dy, float dz)
 	{
+		if (!isRoot){
 		this.position.x += dx;
 		this.position.y += dy;
 		this.position.z += dz;
+		}
 	}
 
 	public void increaseRotation(float dx, float dy, float dz)

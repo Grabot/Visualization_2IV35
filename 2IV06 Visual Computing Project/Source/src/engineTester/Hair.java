@@ -14,7 +14,12 @@ public class Hair {
 	public Hair(TexturedModel model, Vector3f position, int num_of_particles, float particleDistance) {
 		this.particleDistance = particleDistance;
 		for (int i = 0; i < num_of_particles; i++) {
-			particles.add(new Particle(model, new Vector3f(position.x, position.y - (i * particleDistance), position.z)));
+			if (i == 0)
+			{
+				particles.add(new Particle(model, new Vector3f(position.x  - (i * particleDistance), position.y, position.z), true));
+			} else {
+				particles.add(new Particle(model, new Vector3f(position.x  - (i * particleDistance), position.y, position.z)));
+			}
 		}
 	}
 
