@@ -9,19 +9,31 @@ import entities.Entity;
 public class Particle extends Entity {
 
 	private Vector3f velocity = new Vector3f(0, 0, 0);
+	private Vector3f FTLCorrectionVector = new Vector3f(0, 0, 0);
+	
+	public Vector3f getFTLCorrectionVector() {
+		return FTLCorrectionVector;
+	}
+
+	public void setFTLCorrectionVector(Vector3f fTLCorrectionVector) {
+		FTLCorrectionVector = fTLCorrectionVector;
+	}
+
 	private boolean isRoot = false;
 	private Vector3f predictedPosition;
 
 	public Particle(TexturedModel model, Vector3f position) {
-		super(model, position, new Vector3f(0,0,0), 1);
+		super(model, position, new Vector3f(0, 0, 0), 1);
+		this.predictedPosition = position;
 	}
-	
+
 	public Particle(TexturedModel model, Vector3f position, boolean isRoot) {
-		super(model, position, new Vector3f(0,0,0), 1);
+		super(model, position, new Vector3f(0, 0, 0), 1);
+		this.predictedPosition = position;
 		this.isRoot = isRoot;
 	}
 
-	public void setVelocity(Vector3f value){
+	public void setVelocity(Vector3f value) {
 		this.velocity = value;
 	}
 
@@ -32,12 +44,14 @@ public class Particle extends Entity {
 	public boolean isRoot() {
 		return isRoot;
 	}
-	
+
 	public Vector3f getPredictedPosition() {
 		return predictedPosition;
 	}
 
 	public void setPredictedPosition(Vector3f predictedPosition) {
-		this.predictedPosition = predictedPosition;
+		if (!isRoot()) {
+			this.predictedPosition = predictedPosition;
+		}
 	}
 }

@@ -27,4 +27,8 @@ public class Hair {
 		return particles;
 	}
 
+	public float getParticleDistance() {
+		return particleDistance;
+	}
+
 }

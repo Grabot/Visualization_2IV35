@@ -24,23 +24,6 @@ public class Loader {
 	private List<Integer> vbos = new ArrayList<Integer>();
 	private List<Integer> textures = new ArrayList<Integer>();
 
-	public RawModel loadToVao(float[] positions, int[] indices) {
-		int vaoID = createVAO();
-		bindIndicesBuffer(indices);
-		storeDataInAttributeList(0, positions);
-		unbindVAO();
-		return new RawModel(vaoID, indices.length);
-	}
-
-	public RawModel loadToVao(float[] positions, float[] textureCoords, int[] indices) {
-		int vaoID = createVAO();
-		bindIndicesBuffer(indices);
-		storeDataInAttributeList(0, 3, positions);
-		storeDataInAttributeList(1, 2, textureCoords);
-		unbindVAO();
-		return new RawModel(vaoID, indices.length);
-	}
-
 	public RawModel loadToVao(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
@@ -48,14 +31,22 @@ public class Loader {
 		storeDataInAttributeList(1, 2, textureCoords);
 		storeDataInAttributeList(2, 3, normals);
 		unbindVAO();
-		return new RawModel(vaoID, indices.length);
+		return new RawModel(vaoID, indices.length, normals);
+	}
+	
+	public RawModel loadToVao(float[] positions) {
+		int vaoID = createVAO();
+		storeDataInAttributeList(0, 3, positions);
+		unbindVAO();
+		return new RawModel(vaoID, positions.length, null);
 	}
 	
 	public int loadTexture(String filename) {
 		Texture texture = null;
-		
+
 		try {
-			texture = TextureLoader.getTexture("PNG", new FileInputStream("res/" + filename + ".png"));
+			texture = TextureLoader.getTexture("PNG", new FileInputStream(
+					"res/" + filename + ".png"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -65,7 +56,7 @@ public class Loader {
 		textures.add(textureID);
 		return textureID;
 	}
-	
+
 	public void Dispose() {
 		for (int vao : vaos) {
 			GL30.glDeleteVertexArrays(vao);
@@ -73,7 +64,7 @@ public class Loader {
 		for (int vbo : vbos) {
 			GL15.glDeleteBuffers(vbo);
 		}
-		for(int texture:textures) {
+		for (int texture : textures) {
 			GL11.glDeleteTextures(texture);
 		}
 	}
@@ -85,21 +76,6 @@ public class Loader {
 		return vaoID;
 	}
 
-	private void storeDataInAttributeList(int attributeNumber, float[] data) {
-		int vboID = GL15.glGenBuffers();
-		vbos.add(vboID);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
-		FloatBuffer buffer = storeDataInFloatBuffer(data);
-
-		// GL_STATIC_DRAW means that the data isn't changed any more
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-		GL20.glVertexAttribPointer(attributeNumber, 3, GL11.GL_FLOAT, false, 0,
-				0);
-
-		// unbind current vao
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-	}
-
 	private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
@@ -108,34 +84,33 @@ public class Loader {
 
 		// GL_STATIC_DRAW means that the data isn't changed any more
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0,
-				0);
+		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
 
 		// unbind current vao
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 	}
-	
+
 	private void unbindVAO() {
 		GL30.glBindVertexArray(0);
 	}
 
-	private void bindIndicesBuffer(int[] indices){
+	private void bindIndicesBuffer(int[] indices) {
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
 		IntBuffer buffer = storeDataInIntBuffer(indices);
-		
+
 		// GL_STATIC_DRAW means that the data isn't changed any more
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
 	}
-	
-	private IntBuffer storeDataInIntBuffer(int[] data){
+
+	private IntBuffer storeDataInIntBuffer(int[] data) {
 		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
 		buffer.put(data);
 		buffer.flip(); // finished writing to buffer and make buffer to be read
 		return buffer;
 	}
-	
+
 	private FloatBuffer storeDataInFloatBuffer(float[] data) {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
 		buffer.put(data);

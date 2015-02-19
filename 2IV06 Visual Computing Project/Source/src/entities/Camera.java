@@ -30,10 +30,10 @@ public class Camera {
 		}
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
-			position.z += 0.05f;
+			position.z += 1.25f;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
-			position.z -= 0.05f;
+			position.z -= 1.25f;
 		}
 	}
 
