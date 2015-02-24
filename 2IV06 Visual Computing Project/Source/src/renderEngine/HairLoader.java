@@ -1,8 +1,5 @@
 package renderEngine;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -15,50 +12,29 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
 
-public class Loader {
+public class HairLoader {
 
-	protected List<Integer> vaos = new ArrayList<Integer>();
-	protected List<Integer> vbos = new ArrayList<Integer>();
-	protected List<Integer> textures = new ArrayList<Integer>();
+	private List<Integer> vaos = new ArrayList<Integer>();
+	private List<Integer> vbos = new ArrayList<Integer>();
 
-	public RawModel loadToVao(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
+	public RawModel loadToVao(float[] positions, int[] indices) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
-		storeDataInAttributeList(0, 3, positions);
-		storeDataInAttributeList(1, 2, textureCoords);
-		storeDataInAttributeList(2, 3, normals);
+		int vboPositions = storeDataInAttributeList(0, 3, positions);
 		unbindVAO();
-		return new RawModel(vaoID, indices.length);
+		
+		RawModel rawModel =  new RawModel(vaoID, positions.length);
+		rawModel.setPositionsVboID(vboPositions);
+		return rawModel;
 	}
 	
-	public int loadTexture(String filename) {
-		Texture texture = null;
-
-		try {
-			texture = TextureLoader.getTexture("PNG", new FileInputStream(
-					"res/" + filename + ".png"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		int textureID = texture.getTextureID();
-		textures.add(textureID);
-		return textureID;
-	}
-
 	public void Dispose() {
 		for (int vao : vaos) {
 			GL30.glDeleteVertexArrays(vao);
 		}
 		for (int vbo : vbos) {
 			GL15.glDeleteBuffers(vbo);
-		}
-		for (int texture : textures) {
-			GL11.glDeleteTextures(texture);
 		}
 	}
 
@@ -69,8 +45,7 @@ public class Loader {
 		return vaoID;
 	}
 	
-	private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
-		int vboID = GL15.glGenBuffers();
+	public void updateDataInAttributeList(int vboID, int attributeNumber, int coordinateSize, float[] data) {
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
 		FloatBuffer buffer = storeDataInFloatBuffer(data);
@@ -81,6 +56,22 @@ public class Loader {
 
 		// unbind current vao
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+	}
+	
+	private int storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
+		int vboID = GL15.glGenBuffers();
+		vbos.add(vboID);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
+		FloatBuffer buffer = storeDataInFloatBuffer(data);
+
+		// GL_STATIC_DRAW means that the data isn't changed any more
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
+		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
+
+		// unbind current vao
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		
+		return vboID;
 	}
 
 	private void unbindVAO() {

@@ -13,6 +13,7 @@ import entities.Entity;
 import entities.Light;
 
 import renderEngine.DisplayManager;
+import renderEngine.HairLoader;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
@@ -24,6 +25,8 @@ public class MainSimulator {
 
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();
+		HairLoader hairLoader = new HairLoader();
+		MasterRenderer renderer = new MasterRenderer();
 
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
 		TexturedModel texturedModel = new TexturedModel(model,
@@ -44,19 +47,19 @@ public class MainSimulator {
 				new Vector3f(0, 0, 0), scale);
 
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
-		for (int i = 0; i < model.getNormals().length; i += 3) {
-			Vector3f loc = new Vector3f(model.getNormals()[i],
-					model.getNormals()[i + 1], model.getNormals()[i + 2]);
-
-			//if (loc.y > 0)
-				//hairs.add(new Hair(texturedModel, VectorMath.Product(loc, scale), 30, 2));
+		for (int x = -5; x < 5; x++) {
+			for (int z = -5; z < 5; z++) {
+		//		hairs.add(new Hair(texturedModel, new Vector3f(x*2, 0, z*2), 15, 4));
+			}
+		}
+		hairs.add(new Hair(texturedModel, new Vector3f(0, 0, 0), 15, 4));
+	
+		for (Hair hair : hairs) {
+			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
+			hair.setRawModel(hairModel);
 		}
 
-		hairs.add(new Hair(texturedModel, new Vector3f(0, 0, 0), 30, 2));
-
 		float deltaT = 1.0f / 20.0f;
-
-		MasterRenderer renderer = new MasterRenderer();
 
 		while (!Display.isCloseRequested()) {
 
@@ -89,34 +92,19 @@ public class MainSimulator {
 			// End simulation loop //
 			// ///////////////////////
 
-			renderer.render(light, camera);
-
 			// draw all hair particles
 			for (Hair hair : hairs) {
 				for (Particle particle : hair.getParticles()) {
 					renderer.processEntity(particle);
 				}
+				hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
+				renderer.processEntity(hair);
 			}
 
 			// Draw head model
 			// renderer.processEntity(head);
 
-			// 1rst attribute buffer : vertices
-			/*
-			for (Hair hair : hairs) {
-				float[] positions = new float[hair.getParticles().size() * 3];
-
-				for (int i = 0; i < hair.getParticles().size(); i++) {
-					Particle particle = hair.getParticles().get(i);
-
-					positions[i * 3] = particle.getPosition().x;
-					positions[i * 3 + 1] = particle.getPosition().x;
-					positions[i * 3 + 2] = particle.getPosition().x;
-				}
-			}
-			*/
-
-			// renderer.render(light, camera);
+			renderer.render(light, camera);
 			DisplayManager.updateDisplay();
 
 			// end time
@@ -126,6 +114,7 @@ public class MainSimulator {
 
 		// renderer.Dispose();
 		loader.Dispose();
+		hairLoader.Dispose();
 		DisplayManager.closeDisplay();
 	}
 }

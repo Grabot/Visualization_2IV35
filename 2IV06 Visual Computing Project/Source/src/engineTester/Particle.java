@@ -8,19 +8,10 @@ import entities.Entity;
 
 public class Particle extends Entity {
 
-	private Vector3f velocity = new Vector3f(0, 0, 0);
-	private Vector3f FTLCorrectionVector = new Vector3f(0, 0, 0);
-	
-	public Vector3f getFTLCorrectionVector() {
-		return FTLCorrectionVector;
-	}
-
-	public void setFTLCorrectionVector(Vector3f fTLCorrectionVector) {
-		FTLCorrectionVector = fTLCorrectionVector;
-	}
-
 	private boolean isRoot = false;
 	private Vector3f predictedPosition;
+	private Vector3f velocity = new Vector3f(0, 0, 0);
+	private Vector3f FTLCorrectionVector = new Vector3f(0, 0, 0);
 
 	public Particle(TexturedModel model, Vector3f position) {
 		super(model, position, new Vector3f(0, 0, 0), 1);
@@ -33,6 +24,14 @@ public class Particle extends Entity {
 		this.isRoot = isRoot;
 	}
 
+	public Vector3f getFTLCorrectionVector() {
+		return FTLCorrectionVector;
+	}
+
+	public void setFTLCorrectionVector(Vector3f fTLCorrectionVector) {
+		FTLCorrectionVector = fTLCorrectionVector;
+	}
+	
 	public void setVelocity(Vector3f value) {
 		this.velocity = value;
 	}
