@@ -18,6 +18,9 @@ public class Hair {
 	private Particle root;
 	private ArrayList<Particle> particles = new ArrayList<Particle>();
 
+
+	
+	
 	public Hair(TexturedModel model, Vector3f position, int num_of_particles, float particleDistance) {
 		this.particleDistance = particleDistance;
 		for (int i = 0; i < num_of_particles; i++) {

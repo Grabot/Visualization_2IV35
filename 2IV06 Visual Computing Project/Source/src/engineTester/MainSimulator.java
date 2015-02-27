@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import models.RawModel;
 import models.TexturedModel;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -49,17 +50,19 @@ public class MainSimulator {
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
 		for (int x = -5; x < 5; x++) {
 			for (int z = -5; z < 5; z++) {
-		//		hairs.add(new Hair(texturedModel, new Vector3f(x*2, 0, z*2), 15, 4));
+				// hairs.add(new Hair(texturedModel, new Vector3f(x*2, 0, z*2),
+				// 15, 4));
 			}
 		}
 		hairs.add(new Hair(texturedModel, new Vector3f(0, 0, 0), 15, 4));
-	
+
 		for (Hair hair : hairs) {
 			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
 			hair.setRawModel(hairModel);
 		}
 
 		float deltaT = 1.0f / 20.0f;
+		boolean pause = false;
 
 		while (!Display.isCloseRequested()) {
 
@@ -67,31 +70,44 @@ public class MainSimulator {
 			long startTime = System.nanoTime();
 
 			camera.move();
-
-			// /////////////////////////
-			// Start simulation loop //
-			// /////////////////////////
-
-			Vector3f externalForce = new Vector3f(0, (float) -9.81f, 0);
-
-			// Calculate gravity on particle
-			for (Hair hair : hairs) {
-
-				// Calculate all predicted positions of hair particles
-				Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
-
-				// Solve constraints
-				Equations.FixedDistanceContraint(hair);
-
-				Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
-
-				Equations.UpdateParticlePositions(hair);
+			
+			if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
+				pause = !pause;
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			
+			if (!pause) {
 
-			// ///////////////////////
-			// End simulation loop //
-			// ///////////////////////
+				// /////////////////////////
+				// Start simulation loop //
+				// /////////////////////////
 
+				Vector3f externalForce = new Vector3f(0, (float) -9.81f, 0);
+
+				// Calculate gravity on particle
+				for (Hair hair : hairs) {
+
+					// Calculate all predicted positions of hair particles
+					Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
+
+					// Solve constraints
+					Equations.FixedDistanceContraint(hair);
+
+					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
+
+					Equations.UpdateParticlePositions(hair);
+				}
+
+				// ///////////////////////
+				// End simulation loop //
+				// ///////////////////////
+			}
+	
 			// draw all hair particles
 			for (Hair hair : hairs) {
 				for (Particle particle : hair.getParticles()) {
