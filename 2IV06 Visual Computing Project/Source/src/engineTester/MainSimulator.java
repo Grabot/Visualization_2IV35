@@ -25,6 +25,7 @@ public class MainSimulator {
 	public static void main(String[] args) {
 
 		DisplayManager.createDisplay();
+		Volume volume = new Volume(5);
 		Loader loader = new Loader();
 		HairLoader hairLoader = new HairLoader();
 		MasterRenderer renderer = new MasterRenderer();
@@ -100,6 +101,11 @@ public class MainSimulator {
 
 					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
+					// Add particle weight to grid
+					for(Particle particle : hair.getParticles()) {
+						volume.addVoxelWeight(particle.getPredictedPosition(), 1.0f);
+					}
+					
 					Equations.UpdateParticlePositions(hair);
 				}
 

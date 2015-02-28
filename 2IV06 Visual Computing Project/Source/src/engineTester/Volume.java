@@ -7,30 +7,28 @@ import java.util.Map;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import toolbox.VectorMath;
+
 public class Volume {
 	private float cellSize = 10;
-	private Vector3f[][][] velocityGrid;
-	private Vector3f[][][] densityGrid;
-		
-	Map<Vector3f, Cell> cells = new HashMap<Vector3f, Cell>();
-	
-	public Volume(float cellSize)
-	{
-		 this.cellSize = cellSize;
+	private Map<Vector3f, Cell> cells = new HashMap<Vector3f, Cell>();
+
+	public Volume(float cellSize) {
+		this.cellSize = cellSize;
 	}
-	
-	private Cell getCell(Vector3f position) {
-		
-		Vector3f key = getKey(position);
-		
+
+	public void Clear() {
+		cells.clear();
+	}
+
+	private Cell getCell(Vector3f key) {
 		// If cell doesn't exist create one
-		if (!cells.containsKey(getKey(position)))
-		{
+		if (!cells.containsKey(key)) {
 			Cell cell = new Cell();
 			cells.put(key, cell);
 			return cell;
 		}
-		
+
 		return (Cell) cells.get(key);
 	}
 	
@@ -38,18 +36,38 @@ public class Volume {
 		Vector3f vec = new Vector3f();
 		vec.x = (float) Math.floor(position.x / cellSize);
 		vec.y = (float) Math.floor(position.y / cellSize);
-		vec.z = (float) Math.floor(position.z / cellSize);	
+		vec.z = (float) Math.floor(position.z / cellSize);
 		return vec;
 	}
-	
-	public void addVoxelWeight(Vector3f position, float weight){
-		Cell cell = getCell(position);
-		cell.Weight += weight;	
-	}
-	
-	public float getVoxelWeight(Vector3f position){
+
+	public void addVoxelWeight(Vector3f position, float weight) {
+		Vector3f coord = getKey(position);
 		
-		return 0.0f;
+		getCell(VectorMath.Sum(coord, new Vector3f(0,0,0))).Weight += weight;
+		getCell(VectorMath.Sum(coord, new Vector3f(1,0,0))).Weight += weight;
+		getCell(VectorMath.Sum(coord, new Vector3f(0,1,0))).Weight += weight;
+		getCell(VectorMath.Sum(coord, new Vector3f(1,1,0))).Weight += weight;
+		getCell(VectorMath.Sum(coord, new Vector3f(0,0,1))).Weight += weight;
+		getCell(VectorMath.Sum(coord, new Vector3f(1,0,1))).Weight += weight;
+		getCell(VectorMath.Sum(coord, new Vector3f(1,1,1))).Weight += weight;
 	}
-	
+
+	public float getVoxelWeight(Vector3f position) {
+		Cell cell = getCell(position);
+		return cell.Weight;
+	}
+
+	public void addVoxelVelocity(Vector3f position, Vector3f velocity){
+		Vector3f loc = getKey(position);
+				
+		//getVoxel(VectorMath.Sum(loc, new Vector3f(1, 0, 0)));
+			
+		Cell cell = getCell(position);
+		cell.Velocity = VectorMath.Sum(cell.Velocity, velocity);
+	}
+
+	public Vector3f getVoxelVelocity(Vector3f position) {
+		Cell cell = getCell(position);
+		return cell.Velocity;
+	}
 }
