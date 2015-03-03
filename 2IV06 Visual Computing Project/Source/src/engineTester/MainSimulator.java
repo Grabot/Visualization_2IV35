@@ -1,5 +1,6 @@
 package engineTester;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 
 import models.RawModel;
@@ -19,6 +20,7 @@ import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
 import textures.ModelTexture;
+import toolbox.VectorMath;
 
 public class MainSimulator {
 
@@ -49,13 +51,13 @@ public class MainSimulator {
 				new Vector3f(0, 0, 0), scale);
 
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
-		for (int x = -5; x < 5; x++) {
-			for (int z = -5; z < 5; z++) {
-				// hairs.add(new Hair(texturedModel, new Vector3f(x*2, 0, z*2),
-				// 15, 4));
+		for (int x = 0; x < 5; x++) {
+			for (int z = 0; z < 5; z++) {
+				
+				hairs.add(new Hair(texturedModel, new Vector3f(x*2 + (x*z) * 0.5f, 0, z*2), 15, 4));
 			}
 		}
-		hairs.add(new Hair(texturedModel, new Vector3f(0, 0, 0), 15, 4));
+		hairs.add(new Hair(texturedModel, new Vector3f(30, 0, 0), 15, 4));
 
 		for (Hair hair : hairs) {
 			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
@@ -88,7 +90,18 @@ public class MainSimulator {
 				// Start simulation loop //
 				// /////////////////////////
 
-				Vector3f externalForce = new Vector3f(0, (float) -9.81f, 0);
+				Vector3f externalForce;
+				if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+					externalForce = new Vector3f(-8, (float) -9.81f, 0);
+				} 
+				else if (Keyboard.isKeyDown(Keyboard.KEY_H)) {
+					externalForce = new Vector3f(8, (float) -9.81f, 0);
+				} else if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
+					externalForce = new Vector3f(0, (float) -9.81f, 8);
+				}else {
+					externalForce = new Vector3f(0, (float) -9.81f, 0);
+				}
+		
 
 				// Calculate gravity on particle
 				for (Hair hair : hairs) {
@@ -102,8 +115,24 @@ public class MainSimulator {
 					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
 					// Add particle weight to grid
+					volume.Clear();
 					for(Particle particle : hair.getParticles()) {
-						volume.addVoxelWeight(particle.getPredictedPosition(), 1.0f);
+						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
+					}
+					
+					// Apply friction
+					float friction = 0.005f;
+					for(Particle particle : hair.getParticles()) {
+						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
+						//System.out.print(nodeValue.Velocity); 		
+						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1-friction)), VectorMath.Product(nodeValue.Velocity, friction)));
+					}
+					
+					// Apply repulsion
+					//float friction = 0.01f;
+					for(Particle particle : hair.getParticles()) {
+						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
+						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1-friction)), VectorMath.Product(nodeValue.Velocity, friction)));
 					}
 					
 					Equations.UpdateParticlePositions(hair);
@@ -115,13 +144,17 @@ public class MainSimulator {
 			}
 	
 			// draw all hair particles
+			
 			for (Hair hair : hairs) {
+				/*
 				for (Particle particle : hair.getParticles()) {
 					renderer.processEntity(particle);
 				}
+				*/
 				hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
 				renderer.processEntity(hair);
 			}
+			
 
 			// Draw head model
 			// renderer.processEntity(head);
@@ -131,7 +164,7 @@ public class MainSimulator {
 
 			// end time
 			long endTime = System.nanoTime();
-			deltaT = (endTime - startTime) / 360000000f;
+			//deltaT = (endTime - startTime) / 360000000f;
 		}
 
 		// renderer.Dispose();

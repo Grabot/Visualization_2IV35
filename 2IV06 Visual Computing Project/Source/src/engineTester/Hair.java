@@ -16,19 +16,18 @@ public class Hair {
 	private float particleDistance;
 	private RawModel model;
 	private Particle root;
-	private ArrayList<Particle> particles = new ArrayList<Particle>();	
-	
+	private ArrayList<Particle> particles = new ArrayList<Particle>();
+
 	public Hair(TexturedModel model, Vector3f position, int num_of_particles, float particleDistance) {
 		this.particleDistance = particleDistance;
 		for (int i = 0; i < num_of_particles; i++) {
 			if (i == 0) {
-				root = new Particle(model, new Vector3f(
-						position.x - (i * particleDistance), position.y,
+				root = new Particle(model, new Vector3f(position.x, position.y,
 						position.z), true);
 				particles.add(root);
 			} else {
 				particles.add(new Particle(model, new Vector3f(
-						position.x - (i * particleDistance), position.y,
+						position.x + (i * particleDistance), position.y,
 						position.z)));
 			}
 		}
@@ -71,7 +70,7 @@ public class Hair {
 		}
 		return positions;
 	}
-	
+
 	public ArrayList<Particle> getParticles() {
 		return particles;
 	}
