@@ -53,8 +53,9 @@ public class MainSimulator {
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
 		for (int x = 0; x < 5; x++) {
 			for (int z = 0; z < 5; z++) {
-				
-				hairs.add(new Hair(texturedModel, new Vector3f(x*2 + (x*z) * 0.5f, 0, z*2), 15, 4));
+
+				hairs.add(new Hair(texturedModel, new Vector3f(
+						x * 2 + (x * z) * 0.5f, 0, z * 2), 15, 4));
 			}
 		}
 		hairs.add(new Hair(texturedModel, new Vector3f(30, 0, 0), 15, 4));
@@ -66,6 +67,7 @@ public class MainSimulator {
 
 		float deltaT = 1.0f / 20.0f;
 		boolean pause = false;
+		boolean showParticles = false;
 
 		while (!Display.isCloseRequested()) {
 
@@ -73,9 +75,19 @@ public class MainSimulator {
 			long startTime = System.nanoTime();
 
 			camera.move();
-			
+
 			if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
 				pause = !pause;
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			if (Keyboard.isKeyDown(Keyboard.KEY_M)) {
+				showParticles = !showParticles;
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -93,15 +105,13 @@ public class MainSimulator {
 				Vector3f externalForce;
 				if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
 					externalForce = new Vector3f(-8, (float) -9.81f, 0);
-				} 
-				else if (Keyboard.isKeyDown(Keyboard.KEY_H)) {
+				} else if (Keyboard.isKeyDown(Keyboard.KEY_H)) {
 					externalForce = new Vector3f(8, (float) -9.81f, 0);
 				} else if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
 					externalForce = new Vector3f(0, (float) -9.81f, 8);
-				}else {
+				} else {
 					externalForce = new Vector3f(0, (float) -9.81f, 0);
 				}
-		
 
 				// Calculate gravity on particle
 				for (Hair hair : hairs) {
@@ -116,25 +126,25 @@ public class MainSimulator {
 
 					// Add particle weight to grid
 					volume.Clear();
-					for(Particle particle : hair.getParticles()) {
+					for (Particle particle : hair.getParticles()) {
 						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
 					}
-					
+
 					// Apply friction
 					float friction = 0.005f;
-					for(Particle particle : hair.getParticles()) {
+					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
-						//System.out.print(nodeValue.Velocity); 		
-						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1-friction)), VectorMath.Product(nodeValue.Velocity, friction)));
+						// System.out.print(nodeValue.Velocity);
+						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
 					}
-					
+
 					// Apply repulsion
-					//float friction = 0.01f;
-					for(Particle particle : hair.getParticles()) {
+					// float friction = 0.01f;
+					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
-						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1-friction)), VectorMath.Product(nodeValue.Velocity, friction)));
+						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
 					}
-					
+
 					Equations.UpdateParticlePositions(hair);
 				}
 
@@ -142,19 +152,18 @@ public class MainSimulator {
 				// End simulation loop //
 				// ///////////////////////
 			}
-	
+
 			// draw all hair particles
-			
 			for (Hair hair : hairs) {
-				/*
-				for (Particle particle : hair.getParticles()) {
-					renderer.processEntity(particle);
+				if (showParticles) {
+					for (Particle particle : hair.getParticles()) {
+						renderer.processEntity(particle);
+					}
 				}
-				*/
+
 				hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
 				renderer.processEntity(hair);
 			}
-			
 
 			// Draw head model
 			// renderer.processEntity(head);
@@ -164,7 +173,7 @@ public class MainSimulator {
 
 			// end time
 			long endTime = System.nanoTime();
-			//deltaT = (endTime - startTime) / 360000000f;
+			// deltaT = (endTime - startTime) / 360000000f;
 		}
 
 		// renderer.Dispose();

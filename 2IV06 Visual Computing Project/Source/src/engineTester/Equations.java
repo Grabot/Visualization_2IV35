@@ -39,6 +39,7 @@ public class Equations {
 		}
 	}
 
+	
 	public static void CalculateParticleVelocities(Hair hair, float deltaT, float correctionScale) {
 		for (int i = 1; i < hair.getParticles().size(); i++) {
 			Particle parent = hair.getParticles().get(i - 1);
@@ -48,7 +49,6 @@ public class Equations {
 				continue;
 			
 			Vector3f firstPart = VectorMath.Divide(VectorMath.Subtract(parent.getPredictedPosition(), parent.getPosition()), deltaT);
-
 			
 			parent.setVelocity(VectorMath.Sum(firstPart, VectorMath.Product(VectorMath.Divide(particle.getFTLCorrectionVector(), deltaT), correctionScale)));
 		
