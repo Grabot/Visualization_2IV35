@@ -92,10 +92,10 @@ public class Volume {
 		n2.Velocity = VectorMath.Sum(n2.Velocity, VectorMath.Product(velocity, w2));
 		n3.Velocity = VectorMath.Sum(n3.Velocity, VectorMath.Product(velocity, w3));
 		n4.Velocity = VectorMath.Sum(n4.Velocity, VectorMath.Product(velocity, w4));
-		n5.Velocity = VectorMath.Sum(n1.Velocity, VectorMath.Product(velocity, w5));
-		n6.Velocity = VectorMath.Sum(n1.Velocity, VectorMath.Product(velocity, w6));
-		n7.Velocity = VectorMath.Sum(n1.Velocity, VectorMath.Product(velocity, w7));
-		n8.Velocity = VectorMath.Sum(n1.Velocity, VectorMath.Product(velocity, w8));
+		n5.Velocity = VectorMath.Sum(n5.Velocity, VectorMath.Product(velocity, w5));
+		n6.Velocity = VectorMath.Sum(n6.Velocity, VectorMath.Product(velocity, w6));
+		n7.Velocity = VectorMath.Sum(n7.Velocity, VectorMath.Product(velocity, w7));
+		n8.Velocity = VectorMath.Sum(n8.Velocity, VectorMath.Product(velocity, w8));
 	}
 
 	private Vector3f getKey(Vector3f position) {
