@@ -67,7 +67,7 @@ public class MainSimulator {
 
 		float deltaT = 1.0f / 20.0f;
 		boolean pause = false;
-		boolean showParticles = false;
+		boolean showParticles = true;
 
 		while (!Display.isCloseRequested()) {
 
@@ -140,10 +140,10 @@ public class MainSimulator {
 
 					// Apply repulsion
 					// float friction = 0.01f;
-					for (Particle particle : hair.getParticles()) {
-						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
-						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
-					}
+//					for (Particle particle : hair.getParticles()) {
+//						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
+//						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
+//					}
 
 					Equations.UpdateParticlePositions(hair);
 				}

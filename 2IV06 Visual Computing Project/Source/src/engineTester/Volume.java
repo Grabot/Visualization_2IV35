@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.text.Position;
 
@@ -12,8 +13,8 @@ import org.lwjgl.util.vector.Vector3f;
 import toolbox.VectorMath;
 
 public class Volume {
-	private float spacing = 5;
-	private Map<Vector3f, Node> nodes = new HashMap<Vector3f, Node>();
+	private float spacing = 10;
+	private Map<String, Node> nodes = new HashMap<String, Node>();
 
 	public Volume(float spacing) {
 		this.spacing = spacing;
@@ -24,15 +25,16 @@ public class Volume {
 	}
 
 	private Node getNode(Vector3f key) {
-		key = getKey(key);
+		Vector3f newvec = getKey(key);
+		String newkey = newvec.x + newvec.y + newvec.z + "";
 
-		if (!nodes.containsKey(key)) {
+		if (!nodes.containsKey(newkey)) {
 			Node node = new Node();
-			nodes.put(key, node);
+			nodes.put(newkey, node);
 			return node;
 		}
 
-		return (Node) nodes.get(key);
+		return (Node) nodes.get(newkey);
 	}
 
 	public void addValues(Vector3f position, float weight, Vector3f velocity) {
@@ -88,14 +90,17 @@ public class Volume {
 		n8.Weight += w8;
 
 		// Add weight multiplied velocities
-		n1.Velocity = VectorMath.Sum(n1.Velocity, VectorMath.Product(velocity, w1));
-		n2.Velocity = VectorMath.Sum(n2.Velocity, VectorMath.Product(velocity, w2));
-		n3.Velocity = VectorMath.Sum(n3.Velocity, VectorMath.Product(velocity, w3));
-		n4.Velocity = VectorMath.Sum(n4.Velocity, VectorMath.Product(velocity, w4));
-		n5.Velocity = VectorMath.Sum(n5.Velocity, VectorMath.Product(velocity, w5));
-		n6.Velocity = VectorMath.Sum(n6.Velocity, VectorMath.Product(velocity, w6));
-		n7.Velocity = VectorMath.Sum(n7.Velocity, VectorMath.Product(velocity, w7));
-		n8.Velocity = VectorMath.Sum(n8.Velocity, VectorMath.Product(velocity, w8));
+		n1.setVelocity(VectorMath.Sum(n1.Velocity, VectorMath.Product(velocity, w1)));
+		n2.setVelocity(VectorMath.Sum(n2.Velocity, VectorMath.Product(velocity, w2)));
+		n3.setVelocity(VectorMath.Sum(n3.Velocity, VectorMath.Product(velocity, w3)));
+		n4.setVelocity(VectorMath.Sum(n4.Velocity, VectorMath.Product(velocity, w4)));
+		n5.setVelocity(VectorMath.Sum(n5.Velocity, VectorMath.Product(velocity, w5)));
+		n6.setVelocity(VectorMath.Sum(n6.Velocity, VectorMath.Product(velocity, w6)));
+		n7.setVelocity(VectorMath.Sum(n7.Velocity, VectorMath.Product(velocity, w7)));
+		n8.setVelocity(VectorMath.Sum(n8.Velocity, VectorMath.Product(velocity, w8)));
+		
+//		System.out.println(VectorMath.Sum(n1.Velocity, VectorMath.Product(velocity, w1)));
+//		System.out.println(getNode(x1).Velocity);
 	}
 
 	private Vector3f getKey(Vector3f position) {
@@ -103,14 +108,21 @@ public class Volume {
 		vec.x = (float) Math.floor(position.x / spacing) * spacing;
 		vec.y = (float) Math.floor(position.y / spacing) * spacing;
 		vec.z = (float) Math.floor(position.z / spacing) * spacing;
+//		System.out.println(spacing);
+//		System.out.println(vec);
 		return vec;
 	}
 
 	public Node getNodeValue(Vector3f position) {
 
 		// TODO: ADD TRILINEAIR
-
-		return getNode(position);
+		Node node = getNode(position);
+		Node new_node = new Node();
+		if (node.Weight != 0) {
+//			System.out.println(node.Weight);
+			new_node.Velocity = VectorMath.Divide(node.Velocity, node.Weight);
+		}
+		return new_node;
 	}
 
 }
