@@ -55,7 +55,7 @@ public class MainSimulator {
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
 		Camera camera = new Camera();
-		camera.setPosition(new Vector3f(0, 0, 200));
+		camera.setPosition(new Vector3f(0, 20, 200));
 
 		float scale = 1;
 		Entity head = new Entity(texturedHairyModel, new Vector3f(0, 0, 0),
@@ -148,7 +148,7 @@ public class MainSimulator {
 				for (Hair hair : hairs) {
 
 					float friction = 0.02f;
-					float repulsion = 0.05f;
+					float repulsion = -0.05f;
 					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle
 								.getPredictedPosition());
