@@ -39,11 +39,14 @@ public class MainSimulator {
 		TexturedModel texturedModel = new TexturedModel(model,
 				new ModelTexture(loader.loadTexture("haircolor")));
 
-		// Obj to put hair on
+		// Head obj
 		TexturedModel texturedHairyModel = new TexturedModel(
 				OBJLoader.loadObjModel("head", loader), new ModelTexture(
 						loader.loadTexture("white")));
 
+		// Wig obj
+		RawModel wigModel = OBJLoader.loadObjModel("wig", loader);
+		
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
 		Camera camera = new Camera();
@@ -64,7 +67,7 @@ public class MainSimulator {
 		}
 		*/
 		
-		for (Vector3f vec : head.getModel().getRawModel().getVertices())
+		for (Vector3f vec : wigModel.getVertices())
 		{
 			if (vec.y > 10 && vec.z > 5) {
 			hairs.add(new Hair(texturedModel, vec, 15, 4));
