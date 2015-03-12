@@ -7,10 +7,6 @@ import models.TexturedModel;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import renderEngine.Loader;
-
-import entities.Entity;
-
 public class Hair {
 
 	private float particleDistance;

@@ -1,5 +1,6 @@
 package engineTester;
 
+import java.io.File;
 import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 
@@ -13,19 +14,22 @@ import org.lwjgl.util.vector.Vector3f;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
-
 import renderEngine.DisplayManager;
 import renderEngine.HairLoader;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
 import textures.ModelTexture;
+import toolbox.OperatingSystem;
 import toolbox.VectorMath;
 
 public class MainSimulator {
 
 	public static void main(String[] args) {
 
+		// Load native library
+		loadNativeLibrary();
+		
 		DisplayManager.createDisplay();
 		Volume volume = new Volume(5);
 		Loader loader = new Loader();
@@ -34,19 +38,19 @@ public class MainSimulator {
 
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
 		TexturedModel texturedModel = new TexturedModel(model,
-				new ModelTexture(loader.loadTexture("white")));
+				new ModelTexture(loader.loadTexture("haircolor")));
 
 		// Obj to put hair on
 		TexturedModel texturedHairyModel = new TexturedModel(
-				OBJLoader.loadObjModel("sphere", loader), new ModelTexture(
-						loader.loadTexture("grass")));
+				OBJLoader.loadObjModel("head", loader), new ModelTexture(
+						loader.loadTexture("white")));
 
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
 		Camera camera = new Camera();
 		camera.setPosition(new Vector3f(0, 0, 200));
 
-		float scale = 20;
+		float scale = 2;
 		Entity head = new Entity(texturedHairyModel, new Vector3f(0, 0, 0),
 				new Vector3f(0, 0, 0), scale);
 
@@ -58,7 +62,6 @@ public class MainSimulator {
 						x * 2 + (x * z) * 0.5f, 0, z * 2), 15, 4));
 			}
 		}
-		hairs.add(new Hair(texturedModel, new Vector3f(30, 0, 0), 15, 4));
 
 		for (Hair hair : hairs) {
 			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
@@ -166,19 +169,25 @@ public class MainSimulator {
 			}
 
 			// Draw head model
-			// renderer.processEntity(head);
+			renderer.processEntity(head);
 
 			renderer.render(light, camera);
 			DisplayManager.updateDisplay();
 
 			// end time
 			long endTime = System.nanoTime();
-			// deltaT = (endTime - startTime) / 360000000f;
+			deltaT = (endTime - startTime) / 360000000f;
 		}
 
 		// renderer.Dispose();
 		loader.Dispose();
 		hairLoader.Dispose();
 		DisplayManager.closeDisplay();
+	}
+	
+	public static void loadNativeLibrary()
+	{
+	    String fileNatives = OperatingSystem.getOSforLWJGLNatives();
+	    System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + File.separator + "lib" + File.separator + "lwjgl-2.9.3" + File.separator + "native" + File.separator + fileNatives);
 	}
 }
