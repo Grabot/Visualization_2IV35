@@ -14,6 +14,7 @@ import toolbox.VectorMath;
 
 public class Volume {
 	private float spacing = 10;
+	private float epsilon = 0.1f;
 	private Map<String, Node> nodes = new HashMap<String, Node>();
 
 	public Volume(float spacing) {
@@ -29,7 +30,7 @@ public class Volume {
 		String newkey = newvec.x + newvec.y + newvec.z + "";
 
 		if (!nodes.containsKey(newkey)) {
-			Node node = new Node();
+			Node node = new Node(newvec);
 			nodes.put(newkey, node);
 			return node;
 		}
@@ -117,12 +118,34 @@ public class Volume {
 
 		// TODO: ADD TRILINEAIR
 		Node node = getNode(position);
-		Node new_node = new Node();
+		Node new_node = new Node(position);
 		if (node.Weight != 0) {
 //			System.out.println(node.Weight);
 			new_node.Velocity = VectorMath.Divide(node.Velocity, node.Weight);
+			new_node.setGradient(node.getGradient());
 		}
 		return new_node;
+	}
+	
+	public void calculateGradients() {
+		ArrayList<Node> nodes_tmp = new ArrayList<Node>(nodes.values());
+		for(Node node:nodes_tmp) {
+			float x1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(spacing, 0, 0))).Weight;
+			float x2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(-spacing, 0, 0))).Weight;
+			float y1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, spacing, 0))).Weight;
+			float y2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, -spacing, 0))).Weight;
+			float z1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, 0, spacing))).Weight;
+			float z2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, 0, -spacing))).Weight;
+			
+			Vector3f gradient = new Vector3f( (x1 - x2)/(2*spacing), (y1 - y2)/(2*spacing), (z1 - z2)/(2*spacing) );
+			gradient = normalizeGradient(gradient);
+			node.setGradient( gradient );
+		}
+	}
+	
+	public Vector3f normalizeGradient(Vector3f gradient) {
+		float length = gradient.length();
+		return VectorMath.Divide(gradient, length + epsilon);
 	}
 
 }

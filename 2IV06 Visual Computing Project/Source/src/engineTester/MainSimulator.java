@@ -144,21 +144,19 @@ public class MainSimulator {
 						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
 					}
 
-					// Apply friction
+					// Apply friction and repulsion
+					volume.calculateGradients();
 					float friction = 0.005f;
+					float repulsion = 0.01f;
 					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
 						// System.out.print(nodeValue.Velocity);
 						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
+//						System.out.println("Before: " + particle.getVelocity());
+						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
+//						System.out.println("After: " + particle.getVelocity());
 					}
-
-					// Apply repulsion
-					// float friction = 0.01f;
-//					for (Particle particle : hair.getParticles()) {
-//						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
-//						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
-//					}
-
+					
 					Equations.UpdateParticlePositions(hair);
 				}
 

@@ -5,6 +5,24 @@ import org.lwjgl.util.vector.Vector3f;
 public class Node {
 	public float Weight = 0;
 	public Vector3f Velocity = new Vector3f(0,0,0);
+	private Vector3f position = new Vector3f(0,0,0);
+	private Vector3f gradient = new Vector3f(0,0,0);
+	
+	public Vector3f getGradient() {
+		return gradient;
+	}
+
+	public void setGradient(Vector3f gradient) {
+		this.gradient = gradient;
+	}
+
+	public Vector3f getPosition() {
+		return position;
+	}
+
+	public Node(Vector3f position) {
+		this.position = position;
+	}
 	
 	public float getWeight() {
 		return Weight;
