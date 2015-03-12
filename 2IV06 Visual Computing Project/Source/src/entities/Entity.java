@@ -9,6 +9,7 @@ public class Entity {
 	private Vector3f position;
 	private Vector3f rotation;
 	private float scale;
+	private boolean wireframe = false;
 	
 	public Entity(TexturedModel model, Vector3f position, Vector3f rotation, float scale) {
 		this.model = model;
@@ -17,6 +18,15 @@ public class Entity {
 		this.scale = scale;
 	}
 
+	public void setWireFrame(boolean value){
+		wireframe = value;
+	}
+	
+	public boolean getWireFrame()
+	{
+		return wireframe;
+	}
+	
 	public void increasePosition(float dx, float dy, float dz)
 	{
 		this.position.x += dx;

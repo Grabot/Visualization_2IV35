@@ -14,12 +14,12 @@ public class Particle extends Entity {
 	private Vector3f FTLCorrectionVector = new Vector3f(0, 0, 0);
 
 	public Particle(TexturedModel model, Vector3f position) {
-		super(model, position, new Vector3f(0, 0, 0), 1);
+		super(model, position, new Vector3f(0, 0, 0), 0.5f);
 		this.predictedPosition = position;
 	}
 
 	public Particle(TexturedModel model, Vector3f position, boolean isRoot) {
-		super(model, position, new Vector3f(0, 0, 0), 1);
+		super(model, position, new Vector3f(0, 0, 0), 0.5f);
 		this.predictedPosition = position;
 		this.isRoot = isRoot;
 	}
@@ -33,7 +33,9 @@ public class Particle extends Entity {
 	}
 	
 	public void setVelocity(Vector3f value) {
-		this.velocity = value;
+		if (!isRoot()) {
+			this.velocity = value;
+		}
 	}
 
 	public Vector3f getVelocity() {

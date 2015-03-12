@@ -8,6 +8,10 @@ public class VectorMath {
 		return new Vector3f(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
 	}
 
+	public static Vector3f Sum(Vector3f v1, float value) {
+		return new Vector3f(v1.x + value, v1.y + value, v1.z + value);
+	}
+	
 	public static Vector3f Subtract(Vector3f v1, Vector3f v2) {
 		return new Vector3f(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
 	}

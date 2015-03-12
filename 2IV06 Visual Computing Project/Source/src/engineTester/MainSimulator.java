@@ -1,6 +1,7 @@
 package engineTester;
 
 import java.io.File;
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 
 import models.RawModel;
@@ -30,7 +31,7 @@ public class MainSimulator {
 		loadNativeLibrary();
 		
 		DisplayManager.createDisplay();
-		Volume volume = new Volume(5);
+		Volume volume = new Volume();
 		Loader loader = new Loader();
 		HairLoader hairLoader = new HairLoader();
 		MasterRenderer renderer = new MasterRenderer();
@@ -39,13 +40,18 @@ public class MainSimulator {
 		TexturedModel texturedModel = new TexturedModel(model,
 				new ModelTexture(loader.loadTexture("haircolor")));
 
+		RawModel cellModel = OBJLoader.loadObjModel("cube", loader);
+		TexturedModel cellTexturedModel = new TexturedModel(cellModel,
+				new ModelTexture(loader.loadTexture("green")));
+
+		
 		// Head obj
 		TexturedModel texturedHairyModel = new TexturedModel(
 				OBJLoader.loadObjModel("head", loader), new ModelTexture(
 						loader.loadTexture("white")));
 
 		// Wig obj
-		RawModel wigModel = OBJLoader.loadObjModel("wig", loader);
+		RawModel wigModel = OBJLoader.loadObjModel("wigd2", loader);
 		
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
@@ -56,32 +62,29 @@ public class MainSimulator {
 		Entity head = new Entity(texturedHairyModel, new Vector3f(0, 0, 0),
 				new Vector3f(0, 0, 0), scale);
 
-		ArrayList<Hair> hairs = new ArrayList<Hair>();
-		/*
-		for (int x = 0; x < 5; x++) {
-			for (int z = 0; z < 5; z++) {
-
-				hairs.add(new Hair(texturedModel, new Vector3f(
-						x * 2 + (x * z) * 0.5f, 0, z * 2), 15, 4));
-			}
-		}
-		*/
+		ArrayList<Hair> hairs = new ArrayList<Hair>();	
 		
 		for (Vector3f vec : wigModel.getVertices())
 		{
-			if (vec.y > 10 && vec.z > 5) {
-			hairs.add(new Hair(texturedModel, vec, 15, 4));
-			}
+				hairs.add(new Hair(texturedModel, vec, 15, 4));
 		}
+//				hairs.add(new Hair(texturedModel, new Vector3f(0, 0, 0), 1, 0));
+//
+//				hairs.add(new Hair(texturedModel, new Vector3f(5f, 5f, 5f), 15, 10));
+//				hairs.add(new Hair(texturedModel, new Vector3f(15f, 5f, 5f), 15, 10));
+				//hairs.add(new Hair(texturedModel, new Vector3f(17.5f, 5f, 5f), 15, 5));
 		
 		for (Hair hair : hairs) {
 			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
 			hair.setRawModel(hairModel);
 		}
+		
+		System.out.println("Hairs: " + hairs.size());
+		System.out.println("Particles: " + hairs.size() * 15);
 
 		float deltaT = 1.0f / 20.0f;
 		boolean pause = false;
-		boolean showParticles = false;
+		boolean showParticles = true;
 
 		while (!Display.isCloseRequested()) {
 
@@ -128,6 +131,7 @@ public class MainSimulator {
 				}
 
 				// Calculate gravity on particle
+				volume.Clear();
 				for (Hair hair : hairs) {
 
 					// Calculate all predicted positions of hair particles
@@ -135,19 +139,17 @@ public class MainSimulator {
 
 					// Solve constraints
 					Equations.FixedDistanceContraint(hair);
-
 					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
-					// Add particle weight to grid
-					volume.Clear();
+					// Add particle weight to grids
 					for (Particle particle : hair.getParticles()) {
 						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
 					}
 
 					// Apply friction and repulsion
-					volume.calculateGradients();
-					float friction = 0.005f;
-					float repulsion = 0.005f;
+					//volume.calculateGradients();
+					float friction = 0.02f;
+					float repulsion = 100f;
 					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
 						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
@@ -174,6 +176,16 @@ public class MainSimulator {
 				renderer.processEntity(hair);
 			}
 
+			// draw all grid cells
+			ArrayList<Node> nodes = volume.getGridCells();
+			for (Node node : nodes) {
+				Entity entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0,0,0), volume.getSpacing());
+				
+				entity.setWireFrame(true);
+				renderer.processEntity(entity);
+			}
+			
+			
 			// Draw head model
 			renderer.processEntity(head);
 

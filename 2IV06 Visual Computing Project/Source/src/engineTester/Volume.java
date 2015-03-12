@@ -17,21 +17,38 @@ public class Volume {
 	private float epsilon = 0.1f;
 	private Map<String, Node> nodes = new HashMap<String, Node>();
 
-	public Volume(float spacing) {
-		this.spacing = spacing;
+	public Volume() {
+
 	}
 
 	public void Clear() {
 		nodes.clear();
 	}
 
+	public float getSpacing() {
+		return spacing;
+	}
+
+	public ArrayList<Node> getGridCells() {
+
+		return new ArrayList<Node>(nodes.values());
+	}
+
 	private Node getNode(Vector3f key) {
+		return getNode(key, true);
+	}
+
+	private Node getNode(Vector3f key, boolean create) {
 		Vector3f newvec = getKey(key);
-		String newkey = newvec.x + newvec.y + newvec.z + "";
+		String newkey = newvec.x + ":" + newvec.y + ":" + newvec.z + "";
 
 		if (!nodes.containsKey(newkey)) {
 			Node node = new Node(newvec);
-			nodes.put(newkey, node);
+
+			if (create) {
+				nodes.put(newkey, node);
+			}
+
 			return node;
 		}
 
@@ -58,7 +75,7 @@ public class Volume {
 		float w8 = weight * (1 - xd) * (1 - yd) * (1 - zd);
 
 		// All node postitions
-		Vector3f x1 = position;
+		Vector3f x1 = nodePosition;
 		Vector3f x2 = VectorMath.Sum(nodePosition, new Vector3f(spacing, 0, 0));
 		Vector3f x3 = VectorMath.Sum(nodePosition, new Vector3f(0, spacing, 0));
 		Vector3f x4 = VectorMath.Sum(nodePosition, new Vector3f(spacing,
@@ -72,6 +89,7 @@ public class Volume {
 				spacing, spacing));
 
 		Node n1 = getNode(x1);
+
 		Node n2 = getNode(x2);
 		Node n3 = getNode(x3);
 		Node n4 = getNode(x4);
@@ -91,58 +109,70 @@ public class Volume {
 		n8.Weight += w8;
 
 		// Add weight multiplied velocities
-		n1.setVelocity(VectorMath.Sum(n1.Velocity, VectorMath.Product(velocity, w1)));
-		n2.setVelocity(VectorMath.Sum(n2.Velocity, VectorMath.Product(velocity, w2)));
-		n3.setVelocity(VectorMath.Sum(n3.Velocity, VectorMath.Product(velocity, w3)));
-		n4.setVelocity(VectorMath.Sum(n4.Velocity, VectorMath.Product(velocity, w4)));
-		n5.setVelocity(VectorMath.Sum(n5.Velocity, VectorMath.Product(velocity, w5)));
-		n6.setVelocity(VectorMath.Sum(n6.Velocity, VectorMath.Product(velocity, w6)));
-		n7.setVelocity(VectorMath.Sum(n7.Velocity, VectorMath.Product(velocity, w7)));
-		n8.setVelocity(VectorMath.Sum(n8.Velocity, VectorMath.Product(velocity, w8)));
-		
-//		System.out.println(VectorMath.Sum(n1.Velocity, VectorMath.Product(velocity, w1)));
-//		System.out.println(getNode(x1).Velocity);
+		n1.setVelocity(VectorMath.Sum(n1.Velocity,
+				VectorMath.Product(velocity, w1)));
+		n2.setVelocity(VectorMath.Sum(n2.Velocity,
+				VectorMath.Product(velocity, w2)));
+		n3.setVelocity(VectorMath.Sum(n3.Velocity,
+				VectorMath.Product(velocity, w3)));
+		n4.setVelocity(VectorMath.Sum(n4.Velocity,
+				VectorMath.Product(velocity, w4)));
+		n5.setVelocity(VectorMath.Sum(n5.Velocity,
+				VectorMath.Product(velocity, w5)));
+		n6.setVelocity(VectorMath.Sum(n6.Velocity,
+				VectorMath.Product(velocity, w6)));
+		n7.setVelocity(VectorMath.Sum(n7.Velocity,
+				VectorMath.Product(velocity, w7)));
+		n8.setVelocity(VectorMath.Sum(n8.Velocity,
+				VectorMath.Product(velocity, w8)));
 	}
 
-	private Vector3f getKey(Vector3f position) {
+	public Vector3f getKey(Vector3f position) {
 		Vector3f vec = new Vector3f();
 		vec.x = (float) Math.floor(position.x / spacing) * spacing;
 		vec.y = (float) Math.floor(position.y / spacing) * spacing;
 		vec.z = (float) Math.floor(position.z / spacing) * spacing;
-//		System.out.println(spacing);
-//		System.out.println(vec);
+		// System.out.println(spacing);
+		// System.out.println(vec);
 		return vec;
 	}
 
 	public Node getNodeValue(Vector3f position) {
 
 		// TODO: ADD TRILINEAIR
+
 		Node node = getNode(position);
-		Node new_node = new Node(position);
+		Node new_node = new Node(getKey(position));
 		if (node.Weight != 0) {
-//			System.out.println(node.Weight);
 			new_node.Velocity = VectorMath.Divide(node.Velocity, node.Weight);
 			new_node.setGradient(node.getGradient());
 		}
 		return new_node;
 	}
-	
+
 	public void calculateGradients() {
-		ArrayList<Node> nodes_tmp = new ArrayList<Node>(nodes.values());
-		for(Node node:nodes_tmp) {
-			float x1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(spacing, 0, 0))).Weight;
-			float x2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(-spacing, 0, 0))).Weight;
-			float y1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, spacing, 0))).Weight;
-			float y2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, -spacing, 0))).Weight;
-			float z1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, 0, spacing))).Weight;
-			float z2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, 0, -spacing))).Weight;
-			
-			Vector3f gradient = new Vector3f( (x1 - x2)/(2*spacing), (y1 - y2)/(2*spacing), (z1 - z2)/(2*spacing) );
+		for (Node node : nodes.values()) {
+			float x1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
+					spacing, 0, 0)), false).Weight;
+			float x2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
+					-1 * spacing, 0, 0)), false).Weight;
+			float y1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
+					0, spacing, 0)), false).Weight;
+			float y2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
+					0, -spacing, 0)), false).Weight;
+			float z1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
+					0, 0, spacing)), false).Weight;
+			float z2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
+					0, 0, -spacing)), false).Weight;
+
+			Vector3f gradient = new Vector3f((x1 - x2) / (2 * spacing),
+					(y1 - y2) / (2 * spacing), (z1 - z2) / (2 * spacing));
 			gradient = normalizeGradient(gradient);
-			node.setGradient( gradient );
+			node.setGradient(gradient);
+			
 		}
 	}
-	
+
 	public Vector3f normalizeGradient(Vector3f gradient) {
 		float length = gradient.length();
 		return VectorMath.Divide(gradient, length + epsilon);
