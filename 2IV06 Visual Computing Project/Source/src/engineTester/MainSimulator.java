@@ -1,7 +1,6 @@
 package engineTester;
 
 import java.io.File;
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 
 import models.RawModel;
@@ -50,11 +49,12 @@ public class MainSimulator {
 		Camera camera = new Camera();
 		camera.setPosition(new Vector3f(0, 0, 200));
 
-		float scale = 2;
+		float scale = 1;
 		Entity head = new Entity(texturedHairyModel, new Vector3f(0, 0, 0),
 				new Vector3f(0, 0, 0), scale);
 
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
+		/*
 		for (int x = 0; x < 5; x++) {
 			for (int z = 0; z < 5; z++) {
 
@@ -62,7 +62,15 @@ public class MainSimulator {
 						x * 2 + (x * z) * 0.5f, 0, z * 2), 15, 4));
 			}
 		}
-
+		*/
+		
+		for (Vector3f vec : head.getModel().getRawModel().getVertices())
+		{
+			if (vec.y > 10 && vec.z > 5) {
+			hairs.add(new Hair(texturedModel, vec, 15, 4));
+			}
+		}
+		
 		for (Hair hair : hairs) {
 			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
 			hair.setRawModel(hairModel);
@@ -70,7 +78,7 @@ public class MainSimulator {
 
 		float deltaT = 1.0f / 20.0f;
 		boolean pause = false;
-		boolean showParticles = true;
+		boolean showParticles = false;
 
 		while (!Display.isCloseRequested()) {
 

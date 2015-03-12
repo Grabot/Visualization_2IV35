@@ -7,6 +7,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import models.RawModel;
 
@@ -15,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -31,7 +33,21 @@ public class Loader {
 		storeDataInAttributeList(1, 2, textureCoords);
 		storeDataInAttributeList(2, 3, normals);
 		unbindVAO();
-		return new RawModel(vaoID, indices.length);
+		
+		// Convert float[] to vector3f
+		Vector3f vec;
+		ArrayList<Vector3f> vertices = new ArrayList<Vector3f>();
+		for (int i = 0; i < positions.length / 3; i++) {
+			vec = new Vector3f();
+			
+			vec.x = positions[i * 3];
+			vec.y = positions[i * 3 + 1];
+			vec.z = positions[i * 3 + 2];
+			
+			vertices.add(vec);
+		}
+		
+		return new RawModel(vaoID, indices.length, vertices);
 	}
 	
 	public int loadTexture(String filename) {
