@@ -23,7 +23,7 @@ public class Hair {
 				particles.add(root);
 			} else {
 				particles.add(new Particle(model, new Vector3f(
-						position.x + (i * particleDistance), position.y,
+						position.x , position.y- (i * particleDistance),
 						position.z)));
 			}
 		}

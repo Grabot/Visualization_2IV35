@@ -13,7 +13,7 @@ import org.lwjgl.util.vector.Vector3f;
 import toolbox.VectorMath;
 
 public class Volume {
-	private float spacing = 10;
+	private float spacing = 10f;
 	private float epsilon = 0.1f;
 	private Map<String, Node> nodes = new HashMap<String, Node>();
 
