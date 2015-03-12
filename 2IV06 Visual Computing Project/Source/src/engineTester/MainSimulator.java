@@ -68,11 +68,6 @@ public class MainSimulator {
 		{
 				hairs.add(new Hair(texturedModel, vec, 15, 4));
 		}
-//				hairs.add(new Hair(texturedModel, new Vector3f(0, 0, 0), 1, 0));
-//
-//				hairs.add(new Hair(texturedModel, new Vector3f(5f, 5f, 5f), 15, 10));
-//				hairs.add(new Hair(texturedModel, new Vector3f(15f, 5f, 5f), 15, 10));
-				//hairs.add(new Hair(texturedModel, new Vector3f(17.5f, 5f, 5f), 15, 5));
 		
 		for (Hair hair : hairs) {
 			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
@@ -130,6 +125,8 @@ public class MainSimulator {
 					externalForce = new Vector3f(0, (float) -9.81f, 0);
 				}
 
+				volume.Clear();
+
 				// Calculate gravity on particle
 				volume.Clear();
 				for (Hair hair : hairs) {
@@ -141,15 +138,15 @@ public class MainSimulator {
 					Equations.FixedDistanceContraint(hair);
 					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
-					// Add particle weight to grids
+					// Add particle weight to grid
 					for (Particle particle : hair.getParticles()) {
 						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
 					}
 
 					// Apply friction and repulsion
-					//volume.calculateGradients();
+					volume.calculateAverageVelocityAndGradients();
 					float friction = 0.02f;
-					float repulsion = 100f;
+					float repulsion = 0.05f;
 					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
 						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));

@@ -18,12 +18,12 @@ public class Hair {
 		this.particleDistance = particleDistance;
 		for (int i = 0; i < num_of_particles; i++) {
 			if (i == 0) {
-				root = new Particle(model, new Vector3f(position.x, position.y,
+				this.root = new Particle(model, new Vector3f(position.x, position.y,
 						position.z), true);
 				particles.add(root);
 			} else {
 				particles.add(new Particle(model, new Vector3f(
-						position.x , position.y- (i * particleDistance),
+						position.x- (i * particleDistance) , position.y,
 						position.z)));
 			}
 		}

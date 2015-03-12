@@ -18,7 +18,6 @@ public class Volume {
 	private Map<String, Node> nodes = new HashMap<String, Node>();
 
 	public Volume() {
-
 	}
 
 	public void Clear() {
@@ -44,11 +43,9 @@ public class Volume {
 
 		if (!nodes.containsKey(newkey)) {
 			Node node = new Node(newvec);
-
 			if (create) {
 				nodes.put(newkey, node);
 			}
-
 			return node;
 		}
 
@@ -149,27 +146,23 @@ public class Volume {
 		}
 		return new_node;
 	}
-
-	public void calculateGradients() {
-		for (Node node : nodes.values()) {
-			float x1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
-					spacing, 0, 0)), false).Weight;
-			float x2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
-					-1 * spacing, 0, 0)), false).Weight;
-			float y1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
-					0, spacing, 0)), false).Weight;
-			float y2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
-					0, -spacing, 0)), false).Weight;
-			float z1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
-					0, 0, spacing)), false).Weight;
-			float z2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(
-					0, 0, -spacing)), false).Weight;
-
-			Vector3f gradient = new Vector3f((x1 - x2) / (2 * spacing),
-					(y1 - y2) / (2 * spacing), (z1 - z2) / (2 * spacing));
-			gradient = normalizeGradient(gradient);
-			node.setGradient(gradient);
+	
+	public void calculateAverageVelocityAndGradients() {
+		for(Node node:nodes.values()) {
+			// Gradient
+			float x1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(spacing, 0, 0)), false).Weight;
+			float x2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(-spacing, 0, 0)), false).Weight;
+			float y1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, spacing, 0)), false).Weight;
+			float y2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, -spacing, 0)), false).Weight;
+			float z1 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, 0, spacing)), false).Weight;
+			float z2 = getNode(VectorMath.Sum(node.getPosition(), new Vector3f(0, 0, -spacing)), false).Weight;
 			
+			Vector3f gradient = new Vector3f( (x1 - x2)/(2*spacing), (y1 - y2)/(2*spacing), (z1 - z2)/(2*spacing) );
+			gradient = normalizeGradient(gradient);
+			node.setGradient( gradient );
+
+			// Velocity
+//			node.Velocity = VectorMath.Divide(node.Velocity, node.Weight);
 		}
 	}
 

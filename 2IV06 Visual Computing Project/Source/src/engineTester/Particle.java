@@ -33,7 +33,7 @@ public class Particle extends Entity {
 	}
 	
 	public void setVelocity(Vector3f value) {
-		if (!isRoot()) {
+		if(!isRoot()) {
 			this.velocity = value;
 		}
 	}

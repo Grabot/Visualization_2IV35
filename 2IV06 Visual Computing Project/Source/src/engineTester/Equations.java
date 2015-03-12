@@ -5,6 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 import toolbox.VectorMath;
 
 public class Equations {
+	private static float time_damping = 0.99f;
 
 	// Verlet integration to calculate predicted position
 	public static void CalculatePredictedPositions(Hair hair, Vector3f force,
@@ -12,13 +13,10 @@ public class Equations {
 		for (int i = 1; i < hair.getParticles().size(); i++) {
 			Particle particle = hair.getParticles().get(i);
 
-			particle.setPredictedPosition(new Vector3f(particle.getPosition().x
-					+ deltaT * particle.getVelocity().x * 0.99f + deltaT
-					* deltaT * force.x, particle.getPosition().y + deltaT
-					* particle.getVelocity().y * 0.99f + deltaT * deltaT
-					* force.y, particle.getPosition().z + deltaT
-					* particle.getVelocity().z * 0.99f + deltaT * deltaT
-					* force.z));
+			particle.setPredictedPosition(new Vector3f(
+					particle.getPosition().x + deltaT * particle.getVelocity().x * time_damping + deltaT * deltaT * force.x,
+					particle.getPosition().y + deltaT * particle.getVelocity().y * time_damping + deltaT * deltaT * force.y,
+					particle.getPosition().z + deltaT * particle.getVelocity().z * time_damping + deltaT * deltaT * force.z));
 		}
 	}
 
@@ -51,18 +49,14 @@ public class Equations {
 			Particle parent = hair.getParticles().get(i - 1);
 			Particle particle = hair.getParticles().get(i);
 
-			if (parent.isRoot())
+			if(parent.isRoot()) {
 				continue;
-
-			Vector3f firstPart = VectorMath.Divide(
-					VectorMath.Subtract(parent.getPredictedPosition(),
-							parent.getPosition()), deltaT);
-
-			parent.setVelocity(VectorMath.Sum(firstPart,
-					VectorMath.Product(VectorMath.Divide(
-							particle.getFTLCorrectionVector(), deltaT),
-							correctionScale)));
-
+			}
+			
+			Vector3f firstPart = VectorMath.Divide(VectorMath.Subtract(parent.getPredictedPosition(), parent.getPosition()), deltaT);
+			
+			parent.setVelocity(VectorMath.Sum(firstPart, VectorMath.Product(VectorMath.Divide(particle.getFTLCorrectionVector(), deltaT), correctionScale)));
+		
 			// if last particle
 			if (i == hair.getParticles().size() - 1) {
 				particle.setVelocity(VectorMath.Divide(
