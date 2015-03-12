@@ -2,18 +2,13 @@ package engineTester;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-
-import javax.swing.text.Position;
-
 import org.lwjgl.util.vector.Vector3f;
 
 import toolbox.VectorMath;
 
 public class Volume {
-	private float spacing = 10f;
+	private float spacing = 5f;
 	private float epsilon = 0.1f;
 	private Map<String, Node> nodes = new HashMap<String, Node>();
 
@@ -37,9 +32,20 @@ public class Volume {
 		return getNode(key, true);
 	}
 
+	private String getUniqueCode(Vector3f vec) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(String.valueOf(vec.x));
+		stringBuilder.append(":");
+		stringBuilder.append(String.valueOf(vec.y));
+		stringBuilder.append(":");
+		stringBuilder.append(String.valueOf(vec.z));
+		
+		return stringBuilder.toString();
+	}
+	
 	private Node getNode(Vector3f key, boolean create) {
 		Vector3f newvec = getKey(key);
-		String newkey = newvec.x + ":" + newvec.y + ":" + newvec.z + "";
+		String newkey = getUniqueCode(newvec);
 
 		if (!nodes.containsKey(newkey)) {
 			Node node = new Node(newvec);
@@ -129,8 +135,6 @@ public class Volume {
 		vec.x = (float) Math.floor(position.x / spacing) * spacing;
 		vec.y = (float) Math.floor(position.y / spacing) * spacing;
 		vec.z = (float) Math.floor(position.z / spacing) * spacing;
-		// System.out.println(spacing);
-		// System.out.println(vec);
 		return vec;
 	}
 

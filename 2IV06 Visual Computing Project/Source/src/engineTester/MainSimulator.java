@@ -1,7 +1,6 @@
 package engineTester;
 
 import java.io.File;
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 
 import models.RawModel;
@@ -30,6 +29,10 @@ public class MainSimulator {
 		// Load native library
 		loadNativeLibrary();
 
+		boolean pause = false;
+		boolean showParticles = false;
+		boolean showGrid = false;
+
 		DisplayManager.createDisplay();
 		Volume volume = new Volume();
 		Loader loader = new Loader();
@@ -37,20 +40,16 @@ public class MainSimulator {
 		MasterRenderer renderer = new MasterRenderer();
 
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
-		TexturedModel texturedModel = new TexturedModel(model,
-				new ModelTexture(loader.loadTexture("haircolor")));
+		TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("haircolor")));
 
 		RawModel cellModel = OBJLoader.loadObjModel("cube", loader);
-		TexturedModel cellTexturedModel = new TexturedModel(cellModel,
-				new ModelTexture(loader.loadTexture("green")));
+		TexturedModel cellTexturedModel = new TexturedModel(cellModel, new ModelTexture(loader.loadTexture("green")));
 
 		// Head obj
-		TexturedModel texturedHairyModel = new TexturedModel(
-				OBJLoader.loadObjModel("head", loader), new ModelTexture(
-						loader.loadTexture("white")));
+		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
 
 		// Wig obj
-		RawModel wigModel = OBJLoader.loadObjModel("wigd2", loader);
+		RawModel wigModel = OBJLoader.loadObjModel("wigd4", loader);
 
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
@@ -58,27 +57,23 @@ public class MainSimulator {
 		camera.setPosition(new Vector3f(0, 20, 200));
 
 		float scale = 1;
-		Entity head = new Entity(texturedHairyModel, new Vector3f(0, 0, 0),
-				new Vector3f(0, 0, 0), scale);
+		Entity head = new Entity(texturedHairyModel, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), scale);
 
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
 
 		for (Vector3f vec : wigModel.getVertices()) {
-			hairs.add(new Hair(texturedModel, vec, 10, 5));
+			hairs.add(new Hair(texturedModel, vec, 5, 10));
 		}
 
 		for (Hair hair : hairs) {
-			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(),
-					hair.getIndices());
+			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
 			hair.setRawModel(hairModel);
 		}
 
 		System.out.println("Hairs: " + hairs.size());
-		System.out.println("Particles: " + hairs.size() * 15);
+		System.out.println("Particles: " + hairs.size() * hairs.get(0).getParticles().size());
 
 		float deltaT = 1.0f / 20.0f;
-		boolean pause = false;
-		boolean showParticles = true;
 
 		while (!Display.isCloseRequested()) {
 
@@ -99,6 +94,16 @@ public class MainSimulator {
 
 			if (Keyboard.isKeyDown(Keyboard.KEY_M)) {
 				showParticles = !showParticles;
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			if (Keyboard.isKeyDown(Keyboard.KEY_N)) {
+				showGrid = !showGrid;
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -129,8 +134,7 @@ public class MainSimulator {
 				for (Hair hair : hairs) {
 
 					// Calculate all predicted positions of hair particles
-					Equations.CalculatePredictedPositions(hair, externalForce,
-							deltaT);
+					Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
 
 					// Solve constraints
 					Equations.FixedDistanceContraint(hair);
@@ -138,8 +142,7 @@ public class MainSimulator {
 
 					// Add particle weight to grid
 					for (Particle particle : hair.getParticles()) {
-						volume.addValues(particle.getPredictedPosition(), 1.0f,
-								particle.getVelocity());
+						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
 					}
 				}
 
@@ -148,18 +151,11 @@ public class MainSimulator {
 				for (Hair hair : hairs) {
 
 					float friction = 0.02f;
-					float repulsion = -0.05f;
+					float repulsion = -1f;
 					for (Particle particle : hair.getParticles()) {
-						Node nodeValue = volume.getNodeValue(particle
-								.getPredictedPosition());
-						particle.setVelocity(VectorMath.Sum(VectorMath.Product(
-								particle.getVelocity(), (1 - friction)),
-								VectorMath
-										.Product(nodeValue.Velocity, friction)));
-						particle.setVelocity(VectorMath.Sum(particle
-								.getVelocity(), VectorMath.Divide(VectorMath
-								.Product(nodeValue.getGradient(), repulsion),
-								deltaT)));
+						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
+						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
+						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
 					}
 
 					Equations.UpdateParticlePositions(hair);
@@ -178,24 +174,23 @@ public class MainSimulator {
 					}
 				}
 
-				hairLoader.updateDataInAttributeList(hair.getRawModel()
-						.getPositionsVboID(), 0, 3, hair.getVertices());
+				hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
 				renderer.processEntity(hair);
 			}
 
 			// draw all grid cells
-			ArrayList<Node> nodes = volume.getGridCells();
-			for (Node node : nodes) {
-				Entity entity = new Entity(cellTexturedModel, VectorMath.Sum(
-						node.getPosition(), (0.5f * volume.getSpacing())),
-						new Vector3f(0, 0, 0), volume.getSpacing());
+			if (showGrid) {
+				ArrayList<Node> nodes = volume.getGridCells();
+				for (Node node : nodes) {
+					Entity entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
 
-				entity.setWireFrame(true);
-				renderer.processEntity(entity);
+					entity.setWireFrame(true);
+					renderer.processEntity(entity);
+				}
 			}
 
 			// Draw head model
-			renderer.processEntity(head);
+			// renderer.processEntity(head);
 
 			renderer.render(light, camera);
 			DisplayManager.updateDisplay();
@@ -203,6 +198,7 @@ public class MainSimulator {
 			// end time
 			long endTime = System.nanoTime();
 			deltaT = (endTime - startTime) / 360000000f;
+			System.out.println(deltaT);
 		}
 
 		// renderer.Dispose();
@@ -213,9 +209,6 @@ public class MainSimulator {
 
 	public static void loadNativeLibrary() {
 		String fileNatives = OperatingSystem.getOSforLWJGLNatives();
-		System.setProperty("org.lwjgl.librarypath",
-				System.getProperty("user.dir") + File.separator + "lib"
-						+ File.separator + "lwjgl-2.9.3" + File.separator
-						+ "native" + File.separator + fileNatives);
+		System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + File.separator + "lib" + File.separator + "lwjgl-2.9.3" + File.separator + "native" + File.separator + fileNatives);
 	}
 }
