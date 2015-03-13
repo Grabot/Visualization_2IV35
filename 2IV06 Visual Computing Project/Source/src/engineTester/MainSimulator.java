@@ -30,8 +30,8 @@ public class MainSimulator {
 		loadNativeLibrary();
 
 		boolean pause = false;
-		boolean showParticles = false;
-		boolean showGrid = false;
+		boolean showParticles = true;
+		boolean showGrid = true;
 
 		DisplayManager.createDisplay();
 		Volume volume = new Volume();
@@ -61,8 +61,12 @@ public class MainSimulator {
 
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
 
+		int i = 0;
 		for (Vector3f vec : wigModel.getVertices()) {
-			hairs.add(new Hair(texturedModel, vec, 5, 10));
+			if(i%5 == 0) {
+				hairs.add(new Hair(texturedModel, vec, 5, 10));
+			}
+			i++;
 		}
 
 		for (Hair hair : hairs) {
@@ -150,8 +154,8 @@ public class MainSimulator {
 				volume.calculateAverageVelocityAndGradients();
 				for (Hair hair : hairs) {
 
-					float friction = 0.02f;
-					float repulsion = -1f;
+					float friction = 0.2f;
+					float repulsion = -0.1f;
 					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
 						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
@@ -198,7 +202,7 @@ public class MainSimulator {
 			// end time
 			long endTime = System.nanoTime();
 			deltaT = (endTime - startTime) / 360000000f;
-			System.out.println(deltaT);
+			// System.out.println(deltaT);
 		}
 
 		// renderer.Dispose();
