@@ -5,7 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 import toolbox.VectorMath;
 
 public class Equations {
-	private static float time_damping = 0.99f;
+	private static float time_damping = 1f;
 
 	// Verlet integration to calculate predicted position
 	public static void CalculatePredictedPositions(Hair hair, Vector3f force,

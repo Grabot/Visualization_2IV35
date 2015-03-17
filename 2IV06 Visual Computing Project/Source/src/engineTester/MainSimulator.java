@@ -154,7 +154,7 @@ public class MainSimulator {
 				volume.calculateAverageVelocityAndGradients();
 				for (Hair hair : hairs) {
 
-					float friction = 0.2f;
+					float friction = 0.5f;
 					float repulsion = -0.1f;
 					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());

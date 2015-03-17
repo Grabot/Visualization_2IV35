@@ -43,6 +43,10 @@ public class Volume {
 		return stringBuilder.toString();
 	}
 	
+	private Node getNode(float x, float y, float z) {
+		return getNode(new Vector3f(x,y,z));
+	}
+	
 	private Node getNode(Vector3f key, boolean create) {
 		Vector3f newvec = getKey(key);
 		String newkey = getUniqueCode(newvec);
@@ -139,13 +143,55 @@ public class Volume {
 	}
 
 	public Node getNodeValue(Vector3f position) {
+		
+		float x = position.x;
+        float y = position.y;
+        float z = position.z;
+        
+        Vector3f n0 = getKey(position);
+        
+        float x0 = n0.x;
+        float y0 = n0.y;
+        float z0 = n0.z;
+        
+        float xd = (x - x0) / spacing;
+        float yd = (y - y0) / spacing;
+        float zd = (z - z0) / spacing;
+        
+        Node n000 = getNode(x0, y0, z0);
+        Node n010 = getNode(x0, y0 + spacing, z0);
+        Node n001 = getNode(x0, y0, z0 + spacing);
+        Node n011 = getNode(x0, y0 + spacing, z0 + spacing);
+        Node n100 = getNode(x0 + spacing, y0, z0);
+        Node n110 = getNode(x0 + spacing, y0 + spacing, z0);
+        Node n101 = getNode(x0 + spacing, y0, z0 + spacing);
+        Node n111 = getNode(x0 + spacing, y0 + spacing, z0 + spacing);
 
-		// TODO: ADD TRILINEAIR
+        float c00 = n000.Weight * (1 - xd) + n100.Weight * xd;
+        float c10 = n010.Weight * (1 - xd) + n110.Weight * xd;
+        float c01 = n001.Weight * (1 - xd) + n101.Weight * xd;
+        float c11 = n011.Weight * (1 - xd) + n111.Weight * xd;
+        
+        float c0 = c00 * (1 - yd) + c10 * yd;
+        float c1 = c01 * (1 - yd) + c11 * yd;
+        
+        float c = c0 * (1 - zd) + c1 * zd;
 
+        Vector3f v00 = VectorMath.Sum(VectorMath.Product(n000.Velocity, (1 - xd)), VectorMath.Product(n100.Velocity, xd));
+        Vector3f v10 = VectorMath.Sum(VectorMath.Product(n010.Velocity, (1 - xd)), VectorMath.Product(n110.Velocity, xd));
+        Vector3f v01 = VectorMath.Sum(VectorMath.Product(n001.Velocity, (1 - xd)), VectorMath.Product(n101.Velocity, xd));
+        Vector3f v11 = VectorMath.Sum(VectorMath.Product(n011.Velocity, (1 - xd)), VectorMath.Product(n111.Velocity, xd));
+
+        Vector3f v0 = VectorMath.Sum(VectorMath.Product(v00, (1 - yd)), VectorMath.Product(v10, yd));
+        Vector3f v1 = VectorMath.Sum(VectorMath.Product(v01, (1 - yd)), VectorMath.Product(v11, yd));
+        
+        Vector3f v = VectorMath.Sum(VectorMath.Product(v0, (1 - zd)), VectorMath.Product(v1, zd));
+        
 		Node node = getNode(position);
 		Node new_node = new Node(getKey(position));
 		if (node.Weight != 0) {
-			new_node.Velocity = VectorMath.Divide(node.Velocity, node.Weight);
+			new_node.Weight = c;
+			new_node.Velocity = VectorMath.Divide(v, c);
 			new_node.setGradient(node.getGradient());
 		}
 		return new_node;
