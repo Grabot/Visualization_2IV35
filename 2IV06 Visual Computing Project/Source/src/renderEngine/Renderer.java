@@ -1,12 +1,5 @@
 package renderEngine;
 
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-
 import java.util.List;
 import java.util.Map;
 
@@ -18,15 +11,18 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import shaders.StaticShader;
 import toolbox.Maths;
 import engineTester.Hair;
-import entities.Camera;
 import entities.Entity;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.util.ResourceLoader;
+import java.awt.Font;
+import org.newdawn.slick.TrueTypeFont;
 
 public class Renderer {
 
@@ -36,7 +32,7 @@ public class Renderer {
 
 	private Matrix4f projectionMatrix;
 	private StaticShader shader;
-
+	
 	public Renderer(StaticShader shader) {
 		this.shader = shader;
 
@@ -102,23 +98,84 @@ public class Renderer {
 
 	public void renderGUI()
 	{
-		GL11.glBegin(GL11.GL_QUADS);
-        // >> glVertex commands are used within glBegin/glEnd pairs to specify point, line, and polygon vertices.
-        // >> glColor sets the current colour. (All subsequent calls to glVertex will be assigned this colour)
-        // >> The number after 'glVertex'/'glColor' indicates the amount of components. (xyzw/rgba)
-        // >> The character after the number indicates the type of arguments.
-        // >>      (for 'glVertex' = d: Double, f: Float, i: Integer)
-        // >>      (for 'glColor'  = d: Double, f: Float, b: Signed Byte, ub: Unsigned Byte)
-		GL11.glColor3f(1.0f, 1.0f, 0.0f);                    // Pure Green
-		GL11.glVertex2i(50, 50);                               // Upper-left
-		GL11.glColor3f(1.0f, 0.0f, 0.0f); // Red 
-		GL11.glVertex2d(114.0, 50.0);                         // Upper-right
-		GL11.glColor3f(0.0f, 1.0f, 0.0f); // Green
-		GL11.glVertex2f(114.0f, 98.0f);                     // Bottom-right
-		GL11.glColor3f(0.0f, 0.0f, 1.0f); // Blue
-		GL11.glVertex2i(50, 98);                             // Bottom-left
-        // If we put another four calls to glVertex2i here, a second quadrilateral will be drawn.
-		GL11.glEnd();
+		//GL11.glBegin(GL11.GL_QUADS);
+        //GL11.glVertex2f(0, 0);			// bottom left
+		//GL11.glVertex2f(100, 0);		// bottom-right
+		//GL11.glVertex2f(100, 100);		// top-right
+		//GL11.glVertex2f(0, 100);		// top-left
+		int x = 100;
+		int y = 90;
+		GL11.glBegin(GL11.GL_POINTS);
+		//f
+		for (int i = 0; i <= 8; i++) {
+			GL11.glVertex2f(x + 1, y + i);
+		}
+		for (int i = 1; i <= 6; i++) {
+            GL11.glVertex2f(x + i, y + 8);
+		}
+		for (int i = 2; i <= 5; i++) {
+            GL11.glVertex2f(x + i, y + 4);
+		}
+		x+=8;
+		//p
+		for (int i = 0; i <= 8; i++) {
+			GL11.glVertex2f(x + 1, y + i);
+		}
+		for (int i = 2; i <= 5; i++) {
+			GL11.glVertex2f(x + i, y + 8);
+			GL11.glVertex2f(x + i, y + 4);
+		}
+		GL11.glVertex2f(x + 6, y + 7);
+		GL11.glVertex2f(x + 6, y + 5);
+		GL11.glVertex2f(x + 6, y + 6);
+		x += 8;
+		//s
+		for (int i = 2; i <= 7; i++) {
+			GL11.glVertex2f(x + i, y + 8);
+		}
+		GL11.glVertex2f(x + 1, y + 7);
+		GL11.glVertex2f(x + 1, y + 6);
+		GL11.glVertex2f(x + 1, y + 5);
+		for (int i = 2; i <= 6; i++) {
+			GL11.glVertex2f(x + i, y + 4);
+			GL11.glVertex2f(x + i, y);
+		}
+		GL11.glVertex2f(x + 7, y + 3);
+		GL11.glVertex2f(x + 7, y + 2);
+		GL11.glVertex2f(x + 7, y + 1);
+		GL11.glVertex2f(x + 1, y + 1);
+		GL11.glVertex2f(x + 1, y + 2);
+		x -= 12;
+		y -= 12;
+		for (int i = 1; i <= 7; i++) {
+			GL11.glVertex2f(x + 7, y + i);
+		}
+		for (int i = 5; i <= 7; i++) {
+			GL11.glVertex2f(x + 1, y + i);
+		}
+		for (int i = 2; i <= 6; i++) {
+			GL11.glVertex2f(x + i, y + 8);
+			GL11.glVertex2f(x + i, y + 0);
+		}
+		for (int i = 2; i <= 6; i++) {
+			GL11.glVertex2f(x + i, y + 4);
+		}
+		GL11.glVertex2f(x + 1, y + 0);
+		x += 8;
+		for (int i = 1; i <= 7; i++) {
+			GL11.glVertex2f(x + 1, y + i);
+			GL11.glVertex2f(x + 7, y + i);
+		}
+		for (int i = 2; i <= 6; i++) {
+			GL11.glVertex2f(x + i, y + 8);
+			GL11.glVertex2f(x + i, y + 0);
+		}
+		for (int i = 2; i <= 6; i++) {
+			GL11.glVertex2f(x + i, y + 4);
+		}
+           
+        GL11.glEnd();
+        
 	}
 	
 	public void render(Map<TexturedModel, List<Entity>> entities) {
