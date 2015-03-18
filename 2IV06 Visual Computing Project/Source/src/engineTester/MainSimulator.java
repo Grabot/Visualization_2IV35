@@ -177,7 +177,6 @@ public class MainSimulator {
 						renderer.processEntity(particle);
 					}
 				}
-
 				hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
 				renderer.processEntity(hair);
 			}
@@ -202,7 +201,7 @@ public class MainSimulator {
 			// end time
 			long endTime = System.nanoTime();
 			deltaT = (endTime - startTime) / 360000000f;
-			// System.out.println(deltaT);
+			System.out.println(1/deltaT);
 		}
 
 		// renderer.Dispose();
