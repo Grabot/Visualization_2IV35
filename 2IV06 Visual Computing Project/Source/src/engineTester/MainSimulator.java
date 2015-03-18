@@ -185,7 +185,7 @@ public class MainSimulator {
 			e1.printStackTrace();
 		}
 
-		boolean gpu = false;
+		boolean gpu = true;
 		boolean pause = false;
 		boolean showParticles = true;
 		boolean showGrid = true;
@@ -377,14 +377,14 @@ public class MainSimulator {
 					}
 
 					
-					// Add particle weight to grid
-					//for (Particle particle : hair.getParticles()) {
-					//	volume.addValues(particle);
-					//}
+//					 Add particle weight to grid
+					for (Particle particle : hair.getParticles()) {
+						volume.addValues(particle);
+					}
 				}
 
 				// Apply friction and repulsion
-				/*
+				
 				volume.calculateAverageVelocityAndGradients();
 				for (Hair hair : hairs) {
 
@@ -396,7 +396,7 @@ public class MainSimulator {
 						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
 					}
 				}
-				*/
+				
 				
 				// ///////////////////////
 				// End simulation loop //
