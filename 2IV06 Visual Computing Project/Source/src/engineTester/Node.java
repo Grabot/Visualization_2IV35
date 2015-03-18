@@ -1,5 +1,9 @@
 package engineTester;
 
+import java.util.ArrayList;
+
+import objects.Particle;
+
 import org.lwjgl.util.vector.Vector3f;
 
 public class Node {
@@ -7,6 +11,11 @@ public class Node {
 	public Vector3f Velocity = new Vector3f(0,0,0);
 	private Vector3f position = new Vector3f(0,0,0);
 	private Vector3f gradient = new Vector3f(0,0,0);
+	private ArrayList<Particle> particles = new ArrayList<Particle>();
+	
+	public ArrayList<Particle> getParticles() {
+		return particles;
+	}
 	
 	public Vector3f getGradient() {
 		return gradient;

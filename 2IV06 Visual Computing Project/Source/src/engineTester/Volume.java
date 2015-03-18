@@ -3,6 +3,9 @@ package engineTester;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import objects.Particle;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import toolbox.VectorMath;
@@ -58,8 +61,12 @@ public class Volume {
 		return (Node) nodes.get(newkey);
 	}
 
-	public void addValues(Vector3f position, float weight, Vector3f velocity) {
+	public void addValues(Particle particle) {
 
+		Vector3f position = particle.getPosition();
+		Vector3f velocity = particle.getVelocity();
+		float weight = 1;
+		
 		Vector3f nodePosition = getKey(position);
 
 		// Difference between coordinates
@@ -128,6 +135,8 @@ public class Volume {
 				VectorMath.Product(velocity, w7)));
 		n8.setVelocity(VectorMath.Sum(n8.Velocity,
 				VectorMath.Product(velocity, w8)));
+		
+		n1.getParticles().add(particle);
 	}
 
 	public Vector3f getKey(Vector3f position) {

@@ -89,6 +89,7 @@ public class MainSimulator {
 	static CLMem startindexMem;
 	static CLMem endindexMem;
 	static CLMem predPosMem;
+
 	public static void prepareGPU() throws LWJGLException, IOException {
 
 		CLPlatform platform = CLPlatform.getPlatforms().get(0);
@@ -106,7 +107,7 @@ public class MainSimulator {
 		Util.checkCLError(CL10.clBuildProgram(program, devices.get(0), "", null));
 
 		kernel = CL10.clCreateKernel(program, "sum", null);
-		
+
 		startindexMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_startindex, null);
 		CL10.clEnqueueWriteBuffer(queue, startindexMem, 1, 0, buf_startindex, null, null);
 		endindexMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_endindex, null);
@@ -116,7 +117,6 @@ public class MainSimulator {
 
 	public static void OpenCLTest() {
 
-		
 		CLMem forceMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_force, null);
 		CL10.clEnqueueWriteBuffer(queue, forceMem, 1, 0, buf_force, null, null);
 		CLMem deltaTMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_deltaT, null);
@@ -126,7 +126,7 @@ public class MainSimulator {
 		CL10.clEnqueueWriteBuffer(queue, posMem, 1, 0, buf_pos, null, null);
 		CLMem velMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_vel, null);
 		CL10.clEnqueueWriteBuffer(queue, velMem, 1, 0, buf_vel, null, null);
-		
+
 		// CL10.clEnqueueWriteBuffer(queue, predPosMem, 1, 0, buf_pred_pos,
 		// null, null);
 
@@ -185,9 +185,10 @@ public class MainSimulator {
 			e1.printStackTrace();
 		}
 
+		boolean gpu = false;
 		boolean pause = false;
 		boolean showParticles = true;
-		boolean showGrid = false;
+		boolean showGrid = true;
 
 		DisplayManager.createDisplay();
 		Volume volume = new Volume();
@@ -252,16 +253,26 @@ public class MainSimulator {
 		}
 
 		long gpustartTime = System.nanoTime();
-		OpenCLTest();
+		for (int i = 0; i < 10; i++) {
+			OpenCLTest();
+		}
 
 		long gpuendTime = System.nanoTime();
 		System.out.print("GPU time: ");
 		System.out.println(gpuendTime - gpustartTime);
 
 		long cpustartTime = System.nanoTime();
-		for (Hair hair : hairs) {
-			Equations.CalculatePredictedPositions(hair, new Vector3f(0, 9.8f, 0), 0.25f);
-			Equations.FixedDistanceContraint(hair, 5.0f);
+		for (int i = 0; i < 10; i++) {
+			for (Hair hair : hairs) {
+				// Calculate all predicted positions of hair particles
+				Equations.CalculatePredictedPositions(hair, new Vector3f(0, -9.81f, 0), 0.05f);
+
+				// Solve constraints
+				Equations.FixedDistanceContraint(hair, 5);
+				Equations.CalculateParticleVelocities(hair, 0.05f, 0.9f);
+
+				Equations.UpdateParticlePositions(hair);
+			}
 		}
 		long cpuendTime = System.nanoTime();
 		System.out.print("CPU time: ");
@@ -280,12 +291,26 @@ public class MainSimulator {
 
 			// start time
 			long startTime = System.nanoTime();
-			OpenCLTest();
 
 			camera.move();
 
 			if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
 				pause = !pause;
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			if (Keyboard.isKeyDown(Keyboard.KEY_Y)) {
+				gpu = !gpu;
+				if (gpu) {
+					System.out.println("GPU Computation Enabled");
+				} else {
+					System.out.println("GPU Computation Disabled");
+				}
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -316,34 +341,50 @@ public class MainSimulator {
 
 			if (!pause) {
 
+				Vector3f externalForce;
+				if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+					externalForce = new Vector3f(-8, (float) -9.81f, 0);
+				} else if (Keyboard.isKeyDown(Keyboard.KEY_H)) {
+					externalForce = new Vector3f(8, (float) -9.81f, 0);
+				} else if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
+					externalForce = new Vector3f(0, (float) -9.81f, 8);
+				} else {
+					externalForce = new Vector3f(0, (float) -9.81f, 0);
+				}
+				buf_force = UtilCL.toFloatBuffer(new float[] { externalForce.x, externalForce.y, externalForce.z, 0 });
+
 				// /////////////////////////
 				// Start simulation loop //
 				// /////////////////////////
 
-				Vector3f externalForce = new Vector3f(0, (float) -9.81f, 0);
+				if (gpu) {
+					OpenCLTest();
+				}
 
 				// Calculate gravity on particle
 				volume.Clear();
 				for (Hair hair : hairs) {
 
-					/*
-					// Calculate all predicted positions of hair particles
-					Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
+					if (!gpu) {
+						// Calculate all predicted positions of hair particles
+						Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
 
-					// Solve constraints
-					Equations.FixedDistanceContraint(hair, 5);
-					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
+						// Solve constraints
+						Equations.FixedDistanceContraint(hair, 5);
+						Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
-					Equations.UpdateParticlePositions(hair);
-					 */
+						Equations.UpdateParticlePositions(hair);
+					}
+
 					
 					// Add particle weight to grid
-					for (Particle particle : hair.getParticles()) {
-						volume.addValues(particle.getPosition(), 1.0f, particle.getVelocity());
-					}
+					//for (Particle particle : hair.getParticles()) {
+					//	volume.addValues(particle);
+					//}
 				}
 
 				// Apply friction and repulsion
+				/*
 				volume.calculateAverageVelocityAndGradients();
 				for (Hair hair : hairs) {
 
@@ -355,7 +396,8 @@ public class MainSimulator {
 						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
 					}
 				}
-
+				*/
+				
 				// ///////////////////////
 				// End simulation loop //
 				// ///////////////////////

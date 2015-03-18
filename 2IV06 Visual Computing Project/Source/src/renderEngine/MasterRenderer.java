@@ -27,7 +27,7 @@ public class MasterRenderer {
 		//renderer.render(hairs);
 		
 		shader.stop();
-		entities.clear();
+		//entities.clear();
 		//hairs.clear();
 	}
 	
