@@ -1,17 +1,21 @@
 package renderEngine;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+
 import engineTester.Hair;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
-
 import models.TexturedModel;
-
 import shaders.StaticShader;
 
 public class MasterRenderer {
@@ -22,6 +26,7 @@ public class MasterRenderer {
 	private List<Hair> hairs = new ArrayList<Hair>();
 
 	public void render(Light light, Camera camera){
+		
 		renderer.prepare();
 		shader.start();
 		shader.loadLight(light);
@@ -29,6 +34,12 @@ public class MasterRenderer {
 		
 		renderer.render(entities);
 		renderer.render(hairs);
+
+		shader.loadGUI(camera);
+		renderer.renderGUI();
+		//load gui stuff here
+		
+		
 		
 		shader.stop();
 		entities.clear();

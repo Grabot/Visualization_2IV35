@@ -1,5 +1,12 @@
 package renderEngine;
 
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+
 import java.util.List;
 import java.util.Map;
 
@@ -11,13 +18,14 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import shaders.StaticShader;
 import toolbox.Maths;
-
 import engineTester.Hair;
+import entities.Camera;
 import entities.Entity;
 
 public class Renderer {
@@ -48,7 +56,7 @@ public class Renderer {
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 	}
-
+	
 	public void render(RawModel model) {
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(new Vector3f(
 				0, 0, 0), new Vector3f(0, 0, 0), 1);
@@ -92,6 +100,27 @@ public class Renderer {
 		GL30.glBindVertexArray(0);
 	}
 
+	public void renderGUI()
+	{
+		GL11.glBegin(GL11.GL_QUADS);
+        // >> glVertex commands are used within glBegin/glEnd pairs to specify point, line, and polygon vertices.
+        // >> glColor sets the current colour. (All subsequent calls to glVertex will be assigned this colour)
+        // >> The number after 'glVertex'/'glColor' indicates the amount of components. (xyzw/rgba)
+        // >> The character after the number indicates the type of arguments.
+        // >>      (for 'glVertex' = d: Double, f: Float, i: Integer)
+        // >>      (for 'glColor'  = d: Double, f: Float, b: Signed Byte, ub: Unsigned Byte)
+		GL11.glColor3f(1.0f, 1.0f, 0.0f);                    // Pure Green
+		GL11.glVertex2i(50, 50);                               // Upper-left
+		GL11.glColor3f(1.0f, 0.0f, 0.0f); // Red 
+		GL11.glVertex2d(114.0, 50.0);                         // Upper-right
+		GL11.glColor3f(0.0f, 1.0f, 0.0f); // Green
+		GL11.glVertex2f(114.0f, 98.0f);                     // Bottom-right
+		GL11.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+		GL11.glVertex2i(50, 98);                             // Bottom-left
+        // If we put another four calls to glVertex2i here, a second quadrilateral will be drawn.
+		GL11.glEnd();
+	}
+	
 	public void render(Map<TexturedModel, List<Entity>> entities) {
 		for (TexturedModel model : entities.keySet()) {
 			prepareTexturedModel(model);
