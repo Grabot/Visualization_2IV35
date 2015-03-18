@@ -78,6 +78,9 @@ public class MainSimulator {
 		System.out.println("Particles: " + hairs.size() * hairs.get(0).getParticles().size());
 
 		float deltaT = 1.0f / 20.0f;
+		int j = 0;
+		int fps_avg = 0;
+		float time_before = System.nanoTime();
 
 		while (!Display.isCloseRequested()) {
 
@@ -135,6 +138,7 @@ public class MainSimulator {
 
 				// Calculate gravity on particle
 				volume.Clear();
+				
 				for (Hair hair : hairs) {
 
 					// Calculate all predicted positions of hair particles
@@ -152,6 +156,7 @@ public class MainSimulator {
 
 				// Apply friction and repulsion
 				volume.calculateAverageVelocityAndGradients();
+				
 				for (Hair hair : hairs) {
 
 					float friction = 0.5f;
@@ -202,7 +207,16 @@ public class MainSimulator {
 			// end time
 			long endTime = System.nanoTime();
 			deltaT = (endTime - startTime) / 360000000f;
-			// System.out.println(deltaT);
+//			System.out.println(deltaT);
+			
+			// Average FPS over the last 10 frames
+			fps_avg += (1/deltaT);
+			j++;
+			if (j==10) {
+				System.out.println("AVG FPS ----> " + fps_avg/10);
+				j = 0;
+				fps_avg = 0;
+			}
 		}
 
 		// renderer.Dispose();

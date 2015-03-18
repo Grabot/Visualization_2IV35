@@ -10,7 +10,7 @@ import toolbox.VectorMath;
 public class Volume {
 	private float spacing = 5f;
 	private float epsilon = 0.1f;
-	private Map<String, Node> nodes = new HashMap<String, Node>();
+	private HashMap<String, Node> nodes = new HashMap<String, Node>();
 
 	public Volume() {
 	}
@@ -167,15 +167,15 @@ public class Volume {
         Node n101 = getNode(x0 + spacing, y0, z0 + spacing);
         Node n111 = getNode(x0 + spacing, y0 + spacing, z0 + spacing);
 
-        float c00 = n000.Weight * (1 - xd) + n100.Weight * xd;
-        float c10 = n010.Weight * (1 - xd) + n110.Weight * xd;
-        float c01 = n001.Weight * (1 - xd) + n101.Weight * xd;
-        float c11 = n011.Weight * (1 - xd) + n111.Weight * xd;
-        
-        float c0 = c00 * (1 - yd) + c10 * yd;
-        float c1 = c01 * (1 - yd) + c11 * yd;
-        
-        float c = c0 * (1 - zd) + c1 * zd;
+//        float c00 = n000.Weight * (1 - xd) + n100.Weight * xd;
+//        float c10 = n010.Weight * (1 - xd) + n110.Weight * xd;
+//        float c01 = n001.Weight * (1 - xd) + n101.Weight * xd;
+//        float c11 = n011.Weight * (1 - xd) + n111.Weight * xd;
+//        
+//        float c0 = c00 * (1 - yd) + c10 * yd;
+//        float c1 = c01 * (1 - yd) + c11 * yd;
+//        
+//        float c = c0 * (1 - zd) + c1 * zd;
 
         Vector3f v00 = VectorMath.Sum(VectorMath.Product(n000.Velocity, (1 - xd)), VectorMath.Product(n100.Velocity, xd));
         Vector3f v10 = VectorMath.Sum(VectorMath.Product(n010.Velocity, (1 - xd)), VectorMath.Product(n110.Velocity, xd));
@@ -187,12 +187,10 @@ public class Volume {
         
         Vector3f v = VectorMath.Sum(VectorMath.Product(v0, (1 - zd)), VectorMath.Product(v1, zd));
         
-		Node node = getNode(position);
 		Node new_node = new Node(getKey(position));
-		if (node.Weight != 0) {
-			new_node.Weight = c;
-			new_node.Velocity = VectorMath.Divide(v, c);
-			new_node.setGradient(node.getGradient());
+		if (n000.Weight != 0) {
+			new_node.Velocity = v;
+			new_node.setGradient(n000.getGradient());
 		}
 		return new_node;
 	}
@@ -212,7 +210,7 @@ public class Volume {
 			node.setGradient( gradient );
 
 			// Velocity
-//			node.Velocity = VectorMath.Divide(node.Velocity, node.Weight);
+			node.Velocity = VectorMath.Divide(node.Velocity, node.Weight);
 		}
 	}
 
