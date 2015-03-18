@@ -19,11 +19,6 @@ import toolbox.Maths;
 import engineTester.Hair;
 import entities.Entity;
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.util.ResourceLoader;
-import java.awt.Font;
-import org.newdawn.slick.TrueTypeFont;
-
 public class Renderer {
 
 	private static final float FOV = 70;
@@ -98,13 +93,34 @@ public class Renderer {
 
 	public void renderGUI()
 	{
-		//GL11.glBegin(GL11.GL_QUADS);
-        //GL11.glVertex2f(0, 0);			// bottom left
-		//GL11.glVertex2f(100, 0);		// bottom-right
-		//GL11.glVertex2f(100, 100);		// top-right
-		//GL11.glVertex2f(0, 100);		// top-left
+		//Generally a good idea to enable texturing first
+
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		
+		//GL11.glBindTexture( GL11.GL_TEXTURE_2D, texture );
+		
+		GL11.glBegin( GL11.GL_QUADS );
+		GL11.glTexCoord2d(0.0,0.0); 
+		GL11.glVertex2d(-20.0,-20.0);
+		GL11.glTexCoord2d(1.0,0.0); 
+		GL11.glVertex2d(20.0,-20.0);
+		GL11.glTexCoord2d(1.0,1.0); 
+		GL11.glVertex2d(20.0,20.0);
+		GL11.glTexCoord2d(0.0,1.0); 
+		GL11.glVertex2d(-20.0,20.0);
+		GL11.glEnd();
+		
+		/*
+		GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2d(-139.0, -78.0);			// bottom left
+		GL11.glVertex2d(139.0, -78.0);		// bottom-right
+		GL11.glVertex2d(139.0, 78.0);		// top-right
+		GL11.glVertex2d(-139.0, 78.0);		// top-left
+		GL11.glEnd();
+		*/
+		
 		int x = 100;
-		int y = 90;
+		int y = 60;
 		GL11.glBegin(GL11.GL_POINTS);
 		//f
 		for (int i = 0; i <= 8; i++) {

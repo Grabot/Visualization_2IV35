@@ -60,7 +60,6 @@ public class StaticShader extends ShaderProgram {
 	{
 		Matrix4f solidview = m4f;
 		solidview.setIdentity();
-		solidview.m31 = -20;
 		solidview.m32 = -200;
 		super.loadMatrix(location_viewMatrix, solidview);
 	}
