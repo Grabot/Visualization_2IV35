@@ -13,13 +13,15 @@ public class Particle extends Entity implements IParticle {
 	private int index;
 	private FloatBuffer buf_positions;
 	private FloatBuffer buf_velocities;
+	private Vector3f position = new Vector3f(0,0,0);
 	private Vector3f predictedPosition = new Vector3f(0,0,0);
 	private Vector3f FTLCorrectionVector = new Vector3f(0,0,0);
 
 	public Particle(TexturedModel model, int index, FloatBuffer positions, FloatBuffer velocities) {
-		super(model, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 0.5f);
+		super(model, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 0.25f);
 		this.index = index;
 		this.buf_positions = positions;
+		this.position = getPosition();
 		this.buf_velocities = velocities;
 	}
 

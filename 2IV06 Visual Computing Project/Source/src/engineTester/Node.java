@@ -8,13 +8,15 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Node {
 	public float Weight = 0;
+	public boolean containsObject = false;
 	public Vector3f Velocity = new Vector3f(0,0,0);
 	private Vector3f position = new Vector3f(0,0,0);
 	private Vector3f gradient = new Vector3f(0,0,0);
-	private ArrayList<Particle> particles = new ArrayList<Particle>();
 	
-	public ArrayList<Particle> getParticles() {
-		return particles;
+	public void Clear() {
+		Weight = 0;
+		Velocity = new Vector3f(0,0,0);
+		gradient = new Vector3f(0,0,0);
 	}
 	
 	public Vector3f getGradient() {

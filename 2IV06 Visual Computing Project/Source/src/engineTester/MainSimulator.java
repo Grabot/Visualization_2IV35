@@ -1,6 +1,5 @@
 package engineTester;
 
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -8,8 +7,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import javax.swing.text.Position;
 
 import models.RawModel;
 import models.TexturedModel;
@@ -23,7 +20,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.openal.OpenALException;
 import org.lwjgl.opencl.CL;
 import org.lwjgl.opencl.CL10;
 import org.lwjgl.opencl.CLCommandQueue;
@@ -181,11 +177,10 @@ public class MainSimulator {
 			CL.create();
 			displayInfo();
 		} catch (LWJGLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		boolean gpu = true;
+		boolean gpu = false;
 		boolean pause = false;
 		boolean showParticles = true;
 		boolean showGrid = true;
@@ -199,8 +194,11 @@ public class MainSimulator {
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
 		TexturedModel particleModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("haircolor")));
 
-		RawModel cellModel = OBJLoader.loadObjModel("cube", loader);
-		TexturedModel cellTexturedModel = new TexturedModel(cellModel, new ModelTexture(loader.loadTexture("green")));
+		RawModel greenCellModel = OBJLoader.loadObjModel("cube", loader);
+		TexturedModel greenCellTexturedModel = new TexturedModel(greenCellModel, new ModelTexture(loader.loadTexture("green")));
+
+		RawModel redCellModel = OBJLoader.loadObjModel("cube", loader);
+		TexturedModel redCellTexturedModel = new TexturedModel(redCellModel, new ModelTexture(loader.loadTexture("red")));
 
 		// Head obj
 		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
@@ -222,7 +220,7 @@ public class MainSimulator {
 			hairFactory.addHairDescription(new HairDescription(vec, 10));
 		}
 
-		Hairs hairs = hairFactory.Build();
+		final Hairs hairs = hairFactory.Build();
 
 		/*
 		 * for (Hair hair : hairs) { RawModel hairModel =
@@ -248,7 +246,6 @@ public class MainSimulator {
 		try {
 			prepareGPU();
 		} catch (LWJGLException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -269,23 +266,36 @@ public class MainSimulator {
 
 				// Solve constraints
 				Equations.FixedDistanceContraint(hair, 5);
+
+				// Add collision detection
+				for (Particle particle : hair.getParticles()) {
+					if (volume.getNode(particle.getPredictedPosition()).containsObject)
+					{
+						particle.setPredictedPosition(particle.getPosition());
+					}
+				}
+
 				Equations.CalculateParticleVelocities(hair, 0.05f, 0.9f);
 
 				Equations.UpdateParticlePositions(hair);
 			}
 		}
 		long cpuendTime = System.nanoTime();
+
 		System.out.print("CPU time: ");
 		System.out.println(cpuendTime - cpustartTime);
-
-		// FloatBuffer new_pos_buf_cpu = UtilCL.toFloatBuffer(particles);
-		// Print the result memory
-		// UtilCL.print(new_pos_buf_cpu);
 
 		System.out.println("Hairs: " + hairs.size());
 		System.out.println("Particles: " + hairs.size() * hairs.get(0).getParticles().size());
 
 		float deltaT = 1.0f / 20.0f;
+		float friction = 0.02f;
+		float repulsion = -0.2f;
+
+		// Find all nodes within object
+		for (int i = 0; i < texturedHairyModel.getRawModel().getVertices().size(); i++) {
+			volume.getNode(texturedHairyModel.getRawModel().getVertices().get(i)).containsObject = true;
+		}
 
 		while (!Display.isCloseRequested()) {
 
@@ -299,7 +309,6 @@ public class MainSimulator {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -314,7 +323,6 @@ public class MainSimulator {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -324,7 +332,6 @@ public class MainSimulator {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -334,7 +341,6 @@ public class MainSimulator {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -361,6 +367,16 @@ public class MainSimulator {
 					OpenCLTest();
 				}
 
+				/*
+				 * ArrayList<Thread> threads = new ArrayList<Thread>(); for (int
+				 * i = 0; i < 8; i++) { Thread thread = new Thread(new
+				 * ParticleThread((hairs.size() / 8) * i, (hairs.size() / 8) *
+				 * (i + 1), hairs)); threads.add(thread); //thread.start(); }
+				 * 
+				 * for (Thread thread : threads) { try { thread.join(); } catch
+				 * e.printStackTrace(); } }
+				 */
+
 				// Calculate gravity on particle
 				volume.Clear();
 				for (Hair hair : hairs) {
@@ -376,28 +392,23 @@ public class MainSimulator {
 						Equations.UpdateParticlePositions(hair);
 					}
 
-					
-//					 Add particle weight to grid
+					// Add particle weight to grid
 					for (Particle particle : hair.getParticles()) {
-						volume.addValues(particle);
+						volume.addValues(particle.getPosition(), 1.0f, particle.getVelocity());
 					}
 				}
 
 				// Apply friction and repulsion
-				
 				volume.calculateAverageVelocityAndGradients();
-				for (Hair hair : hairs) {
 
-					float friction = 0.02f;
-					float repulsion = -0.2f;
+				for (Hair hair : hairs) {
 					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle.getPosition());
 						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
 						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
 					}
 				}
-				
-				
+
 				// ///////////////////////
 				// End simulation loop //
 				// ///////////////////////
@@ -421,7 +432,12 @@ public class MainSimulator {
 			if (showGrid) {
 				ArrayList<Node> nodes = volume.getGridCells();
 				for (Node node : nodes) {
-					Entity entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
+					Entity entity;
+					if (node.containsObject) {
+						entity = new Entity(redCellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
+					} else {
+						entity = new Entity(greenCellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
+					}
 
 					entity.setWireFrame(true);
 					renderer.processEntity(entity);
@@ -429,7 +445,7 @@ public class MainSimulator {
 			}
 
 			// Draw head model
-			// renderer.processEntity(head);
+			renderer.processEntity(head);
 
 			renderer.render(light, camera);
 			DisplayManager.updateDisplay();
@@ -451,5 +467,37 @@ public class MainSimulator {
 	public static void loadNativeLibrary() {
 		String fileNatives = OperatingSystem.getOSforLWJGLNatives();
 		System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + File.separator + "lib" + File.separator + "lwjgl-2.9.3" + File.separator + "native" + File.separator + fileNatives);
+	}
+
+	static class ParticleThread implements Runnable {
+
+		ArrayList<Hair> hairs;
+		int startindex = 0;
+		int endindex = 0;
+
+		ParticleThread(int startindex, int endindex, ArrayList<Hair> hairs) {
+			this.startindex = startindex;
+			this.endindex = endindex;
+			this.hairs = hairs;
+		}
+
+		@Override
+		public void run() {
+			for (int i = startindex; i < endindex; i++) {
+				Hair hair = hairs.get(i);
+
+				// Calculate all predicted positions of hair particles
+				Equations.CalculatePredictedPositions(hair, new Vector3f(0, -9.81f, 0), 0.05f);
+
+				// Solve constraints
+				Equations.FixedDistanceContraint(hair, 5);
+
+				Equations.CalculateParticleVelocities(hair, 0.05f, 0.9f);
+
+				for (Particle particle : hair.getParticles()) {
+					particle.setPredictedPosition(particle.getPosition());
+				}
+			}
+		}
 	}
 }
