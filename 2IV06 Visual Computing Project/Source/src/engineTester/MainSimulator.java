@@ -152,6 +152,8 @@ public class MainSimulator {
 					for (Particle particle : hair.getParticles()) {
 						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
 					}
+
+					Equations.UpdateParticlePositions(hair);
 				}
 
 				// Apply friction and repulsion
@@ -166,12 +168,10 @@ public class MainSimulator {
 						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
 						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
 					}
-
-					Equations.UpdateParticlePositions(hair);
 				}
 
 				// ///////////////////////
-				// End simulation loop //
+				// End simulation loop  //
 				// ///////////////////////
 			}
 
