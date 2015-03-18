@@ -17,7 +17,6 @@ import org.lwjgl.util.vector.Vector3f;
 import shaders.StaticShader;
 import toolbox.Maths;
 
-import engineTester.Hair;
 import entities.Entity;
 
 public class Renderer {
@@ -108,6 +107,7 @@ public class Renderer {
 		}
 	}
 
+	/*
 	public void render(List<Hair> hairs) {
 		for (Hair hair : hairs) {
 			RawModel rawModel = hair.getRawModel();
@@ -125,6 +125,7 @@ public class Renderer {
 			GL30.glBindVertexArray(0);
 		}
 	}
+	*/
 
 	private void prepareTexturedModel(TexturedModel model) {
 		RawModel rawModel = model.getRawModel();

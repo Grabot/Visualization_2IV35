@@ -1,5 +1,8 @@
 package engineTester;
 
+import objects.Hair;
+import objects.Particle;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import toolbox.VectorMath;
@@ -10,6 +13,7 @@ public class Equations {
 	// Verlet integration to calculate predicted position
 	public static void CalculatePredictedPositions(Hair hair, Vector3f force,
 			float deltaT) {
+		hair.getParticles().get(0).setPredictedPosition(hair.getParticles().get(0).getPosition());
 		for (int i = 1; i < hair.getParticles().size(); i++) {
 			Particle particle = hair.getParticles().get(i);
 
@@ -21,7 +25,7 @@ public class Equations {
 	}
 
 	// Equidistance contraint
-	public static void FixedDistanceContraint(Hair hair) {
+	public static void FixedDistanceContraint(Hair hair, float particleDistance) {
 		for (int i = 1; i < hair.getParticles().size(); i++) {
 			Particle parent = hair.getParticles().get(i - 1);
 			Particle particle = hair.getParticles().get(i);
@@ -31,8 +35,6 @@ public class Equations {
 
 			Vector3f delta = VectorMath.Subtract(x2, x1);
 			delta.normalise();
-
-			float particleDistance = hair.getParticleDistance();
 
 			particle.setPredictedPosition(new Vector3f(x1.x + delta.x
 					* particleDistance, x1.y + delta.y * particleDistance, x1.z
@@ -49,10 +51,6 @@ public class Equations {
 			Particle parent = hair.getParticles().get(i - 1);
 			Particle particle = hair.getParticles().get(i);
 
-			if(parent.isRoot()) {
-				continue;
-			}
-			
 			Vector3f firstPart = VectorMath.Divide(VectorMath.Subtract(parent.getPredictedPosition(), parent.getPosition()), deltaT);
 			
 			parent.setVelocity(VectorMath.Sum(firstPart, VectorMath.Product(VectorMath.Divide(particle.getFTLCorrectionVector(), deltaT), correctionScale)));

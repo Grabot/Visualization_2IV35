@@ -5,13 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import engineTester.Hair;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
-
 import models.TexturedModel;
-
 import shaders.StaticShader;
 
 public class MasterRenderer {
@@ -19,7 +16,6 @@ public class MasterRenderer {
 	private StaticShader shader = new StaticShader();
 	private Renderer renderer = new Renderer(shader);
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
-	private List<Hair> hairs = new ArrayList<Hair>();
 
 	public void render(Light light, Camera camera){
 		renderer.prepare();
@@ -28,11 +24,11 @@ public class MasterRenderer {
 		shader.loadViewMatrix(camera);
 		
 		renderer.render(entities);
-		renderer.render(hairs);
+		//renderer.render(hairs);
 		
 		shader.stop();
 		entities.clear();
-		hairs.clear();
+		//hairs.clear();
 	}
 	
 	public void processEntity(Entity entity){
@@ -47,9 +43,11 @@ public class MasterRenderer {
 		}
 	}
 	
+	/*
 	public void processEntity(Hair hair){
 		hairs.add(hair);
 	}
+	*/
 	
 	public void Dispose(){
 		shader.Dispose();

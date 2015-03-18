@@ -1,0 +1,24 @@
+kernel void sum(global const int *startindex, global const int *endindex, 
+				global const float3 *force, global const float *deltaT,
+				global const float4 *pos, global float3 *vel, global float4 *pred_pos)
+{ 
+  unsigned int xid = get_global_id(0);
+
+	
+  
+  for (int i = startindex[xid]; i < endindex[xid]; i++) {
+  	pred_pos[i] = pos[i] + deltaT[0] * vel[i] + deltaT[0] * deltaT[0] * force[0];
+  	
+  	if (i > startindex[xid] + 1)
+  	{
+  		float3 position = pred_pos[i];
+  		float3 delta = normalize(pred_pos[i-1] - pred_pos[i]);
+  		pred_pos[i] = pred_pos[i] + delta * particledistance;
+  		float3 ftl_correction_vector = position - pred_pos[i];
+  		
+  		vel[i] = (pred_pos[i-1] - pos[i-1]) / deltaT[0];
+  	}
+  }
+  
+  
+}
