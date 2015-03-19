@@ -64,7 +64,7 @@ public class MainSimulator {
 		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
 
 		// Wig obj
-		RawModel wigModel = OBJLoader.loadObjModel("wigd4", loader);
+		RawModel wigModel = OBJLoader.loadObjModel("wigd2", loader);
 
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
@@ -76,12 +76,8 @@ public class MainSimulator {
 
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
 
-		int i = 0;
 		for (Vector3f vec : wigModel.getVertices()) {
-			if(i%3 == 0) {
 				hairs.add(new Hair(texturedModel, vec, 5, 10));
-			}
-			i++;
 		}
 
 		for (Hair hair : hairs) {
