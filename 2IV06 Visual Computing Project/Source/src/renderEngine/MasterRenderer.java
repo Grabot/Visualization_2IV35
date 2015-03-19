@@ -34,12 +34,6 @@ public class MasterRenderer {
 		
 		renderer.render(entities);
 		renderer.render(hairs);
-
-		shader.loadGUI(camera);
-		renderer.renderGUI();
-		//load gui stuff here
-		
-		
 		
 		shader.stop();
 		entities.clear();

@@ -210,7 +210,7 @@ public class MainSimulator {
 			}
 
 			// Draw head model
-			// renderer.processEntity(head);
+			renderer.processEntity(head);
 
 			renderer.render(light, camera);
 			guiRenderer.render(guis);
