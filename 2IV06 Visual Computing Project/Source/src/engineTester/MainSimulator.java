@@ -204,7 +204,7 @@ public class MainSimulator {
 		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
 
 		// Wig obj
-		RawModel wigModel = OBJLoader.loadObjModel("wigd2", loader);
+		RawModel wigModel = OBJLoader.loadObjModel("wigd4", loader);
 
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
@@ -357,13 +357,13 @@ public class MainSimulator {
 				} else {
 					externalForce = new Vector3f(0, (float) -9.81f, 0);
 				}
-				buf_force = UtilCL.toFloatBuffer(new float[] { externalForce.x, externalForce.y, externalForce.z, 0 });
-
+				
 				// /////////////////////////
 				// Start simulation loop //
 				// /////////////////////////
 
 				if (gpu) {
+					buf_force = UtilCL.toFloatBuffer(new float[] { externalForce.x, externalForce.y, externalForce.z, 0 });
 					OpenCLTest();
 				}
 
@@ -378,7 +378,8 @@ public class MainSimulator {
 				 */
 
 				// Calculate gravity on particle
-				volume.Clear();
+				// volume.Clear();
+				/*
 				for (Hair hair : hairs) {
 
 					if (!gpu) {
@@ -408,7 +409,8 @@ public class MainSimulator {
 						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
 					}
 				}
-
+				 */
+				
 				// ///////////////////////
 				// End simulation loop //
 				// ///////////////////////
@@ -455,7 +457,7 @@ public class MainSimulator {
 			deltaT = (endTime - startTime) / 360000000f;
 			buf_deltaT = UtilCL.toFloatBuffer(new float[] { deltaT });
 
-			System.out.println(1 / deltaT);
+			System.out.println(deltaT);
 		}
 
 		renderer.Dispose();
