@@ -2,17 +2,21 @@ package engineTester;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import models.RawModel;
 import models.TexturedModel;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import guis.GuiRenderer;
+import guis.GuiTexture;
 import renderEngine.DisplayManager;
 import renderEngine.HairLoader;
 import renderEngine.Loader;
@@ -38,7 +42,14 @@ public class MainSimulator {
 		Loader loader = new Loader();
 		HairLoader hairLoader = new HairLoader();
 		MasterRenderer renderer = new MasterRenderer();
-
+		
+		// Guis
+		List<GuiTexture> guis = new ArrayList<GuiTexture>();
+		GuiTexture gui = new GuiTexture(loader.loadTexture("windowTexture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+		guis.add(gui);
+		
+		GuiRenderer guiRenderer = new GuiRenderer(loader);
+		
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
 		TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("haircolor")));
 
@@ -202,6 +213,7 @@ public class MainSimulator {
 			// renderer.processEntity(head);
 
 			renderer.render(light, camera);
+			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
 
 			// end time
@@ -219,7 +231,8 @@ public class MainSimulator {
 			}
 		}
 
-		// renderer.Dispose();
+		guiRenderer.Dispose();
+		renderer.Dispose();
 		loader.Dispose();
 		hairLoader.Dispose();
 		DisplayManager.closeDisplay();
