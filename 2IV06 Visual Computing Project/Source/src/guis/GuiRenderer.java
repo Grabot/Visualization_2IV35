@@ -1,23 +1,33 @@
 package guis;
 
+import java.awt.Font;
 import java.util.List;
+
+import models.RawModel;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
+import org.newdawn.slick.TrueTypeFont;
 
 import renderEngine.Loader;
 import toolbox.Maths;
-import models.RawModel;
 
 public class GuiRenderer {
 
 	public final RawModel quad;
 	private GuiShader shader;
 	
+	private Font font;
+	private TrueTypeFont ttf;
+	
 	public GuiRenderer(Loader loader) {
+
+		font = new Font("Verdana", Font.BOLD, 20);
+	    ttf = new TrueTypeFont(font, true);
+	    
 		float[] positions = {-1, 1, -1, -1, 1, 1, 1, -1};
 		quad = loader.loadToVao(positions);
 		shader = new GuiShader();
@@ -38,6 +48,8 @@ public class GuiRenderer {
 		}
 		GL20.glDisableVertexAttribArray(0);
 		GL30.glBindVertexArray(0);
+		
+		 ttf.drawString(0,0,"Hello, World!");
 	}
 	
 	public void Dispose() {

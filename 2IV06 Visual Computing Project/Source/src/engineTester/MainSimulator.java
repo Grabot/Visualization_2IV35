@@ -1,5 +1,11 @@
 package engineTester;
 
+import entities.Camera;
+import entities.Entity;
+import entities.Light;
+import guis.GuiRenderer;
+import guis.GuiTexture;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,16 +13,12 @@ import java.util.List;
 import models.RawModel;
 import models.TexturedModel;
 
+import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import entities.Camera;
-import entities.Entity;
-import entities.Light;
-import guis.GuiRenderer;
-import guis.GuiTexture;
 import renderEngine.DisplayManager;
 import renderEngine.HairLoader;
 import renderEngine.Loader;
@@ -28,8 +30,8 @@ import toolbox.VectorMath;
 
 public class MainSimulator {
 
-	public static void main(String[] args) {
-
+	private void run()
+	{
 		// Load native library
 		loadNativeLibrary();
 
@@ -47,11 +49,13 @@ public class MainSimulator {
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 		GuiTexture gui = new GuiTexture(loader.loadTexture("windowTexture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 		guis.add(gui);
+		//GuiTexture cube = new GuiTexture(loader.loadTexture("laser_shooter_new"), new Vector2f(0, 0), new Vector2f(1, 1));
+		//guis.add(cube);
 		
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 		
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
-		TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("haircolor")));
+		TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("haircolorSlow")));
 
 		RawModel cellModel = OBJLoader.loadObjModel("cube", loader);
 		TexturedModel cellTexturedModel = new TexturedModel(cellModel, new ModelTexture(loader.loadTexture("green")));
@@ -74,7 +78,7 @@ public class MainSimulator {
 
 		int i = 0;
 		for (Vector3f vec : wigModel.getVertices()) {
-			if(i%5 == 0) {
+			if(i%3 == 0) {
 				hairs.add(new Hair(texturedModel, vec, 5, 10));
 			}
 			i++;
@@ -90,13 +94,13 @@ public class MainSimulator {
 
 		float deltaT = 1.0f / 20.0f;
 		int j = 0;
-		int fps_avg = 0;
+		float fps_avg = 0;
 		float time_before = System.nanoTime();
-
+		
 		while (!Display.isCloseRequested()) {
 
 			// start time
-			long startTime = System.nanoTime();
+			long startTime = Sys.getTime();
 
 			camera.move();
 
@@ -215,20 +219,24 @@ public class MainSimulator {
 			renderer.render(light, camera);
 			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
-
+			
 			// end time
-			long endTime = System.nanoTime();
-			deltaT = (endTime - startTime) / 360000000f;
-//			System.out.println(deltaT);
+			long endTime = Sys.getTime();;
+			deltaT = (endTime - startTime) / 300f;
+			//System.out.println(1/deltaT);
+			float fps = 1f/((endTime - startTime)/1000f);
+			//System.out.println("time: " + fps);
 			
 			// Average FPS over the last 10 frames
-			fps_avg += (1/deltaT);
+			fps_avg += (fps);
 			j++;
 			if (j==10) {
-				System.out.println("AVG FPS ----> " + fps_avg/10);
+				//System.out.println("AVG FPS ----> " + fps_avg/10);
+				Display.setTitle("pfs: " + fps_avg/10);
 				j = 0;
 				fps_avg = 0;
 			}
+			
 		}
 
 		guiRenderer.Dispose();
@@ -237,9 +245,16 @@ public class MainSimulator {
 		hairLoader.Dispose();
 		DisplayManager.closeDisplay();
 	}
+	
 
 	public static void loadNativeLibrary() {
 		String fileNatives = OperatingSystem.getOSforLWJGLNatives();
 		System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + File.separator + "lib" + File.separator + "lwjgl-2.9.3" + File.separator + "native" + File.separator + fileNatives);
+	}
+	
+	public static void main(String[] args) {
+		
+		MainSimulator main = new MainSimulator();
+		main.run();
 	}
 }
