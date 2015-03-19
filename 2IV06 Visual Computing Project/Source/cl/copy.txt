@@ -1,5 +1,5 @@
-kernel void sum(global const int *startindex, global const int *endindex, 
-				global const float4 *force, global const float *deltaT,
+kernel void sum(constant const int *startindex, constant const int *endindex, 
+				constant float4 *force, constant float *deltaT,
 				global float4 *pos, global float4 *vel, global float4 *pred_pos)
 { 
   unsigned int xid = get_global_id(0);

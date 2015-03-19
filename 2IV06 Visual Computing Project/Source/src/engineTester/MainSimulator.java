@@ -91,7 +91,7 @@ public class MainSimulator {
 		CLPlatform platform = CLPlatform.getPlatforms().get(0);
 		// List<CLDevice> devices =
 		// platform.getDevices(CL10.CL_DEVICE_TYPE_GPU);
-		List<CLDevice> devices = platform.getDevices(CL10.CL_DEVICE_TYPE_GPU);
+		List<CLDevice> devices = platform.getDevices(CL10.CL_DEVICE_TYPE_ALL);
 		context = CLContext.create(platform, devices, null, null, null);
 		queue = CL10.clCreateCommandQueue(context, devices.get(0), CL10.CL_QUEUE_PROFILING_ENABLE, null);
 
@@ -180,7 +180,7 @@ public class MainSimulator {
 			e1.printStackTrace();
 		}
 
-		boolean gpu = false;
+		boolean gpu = true;
 		boolean pause = false;
 		boolean showParticles = true;
 		boolean showGrid = true;
@@ -378,8 +378,8 @@ public class MainSimulator {
 				 */
 
 				// Calculate gravity on particle
-				// volume.Clear();
-				/*
+				volume.Clear();
+				
 				for (Hair hair : hairs) {
 
 					if (!gpu) {
@@ -409,7 +409,6 @@ public class MainSimulator {
 						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
 					}
 				}
-				 */
 				
 				// ///////////////////////
 				// End simulation loop //
