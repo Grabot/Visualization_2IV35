@@ -47,10 +47,27 @@ public class MainSimulator {
 		
 		// Guis
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
+
+		GuiTexture Button1Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.9f), new Vector2f(0.2f, 0.1f));
+		guis.add(Button1Off);
+		GuiTexture Button2Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.7f), new Vector2f(0.2f, 0.1f));
+		guis.add(Button2Off);
+		GuiTexture Button3Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.5f), new Vector2f(0.2f, 0.1f));
+		guis.add(Button3Off);
+		GuiTexture Button4Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.3f), new Vector2f(0.2f, 0.1f));
+		guis.add(Button4Off);
+
+		GuiTexture Button1On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.9f), new Vector2f(0.2f, 0.1f));
+		guis.add(Button1On);
+		GuiTexture Button2On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.7f), new Vector2f(0.2f, 0.1f));
+		guis.add(Button2On);
+		GuiTexture Button3On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.5f), new Vector2f(0.2f, 0.1f));
+		guis.add(Button3On);
+		GuiTexture Button4On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.3f), new Vector2f(0.2f, 0.1f));
+		guis.add(Button4On);
+		
 		GuiTexture gui = new GuiTexture(loader.loadTexture("windowTexture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 		guis.add(gui);
-		//GuiTexture cube = new GuiTexture(loader.loadTexture("laser_shooter_new"), new Vector2f(0, 0), new Vector2f(1, 1));
-		//guis.add(cube);
 		
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 		
