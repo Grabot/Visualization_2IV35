@@ -1,9 +1,5 @@
 package engineTester;
 
-import java.util.ArrayList;
-
-import objects.Particle;
-
 import org.lwjgl.util.vector.Vector3f;
 
 public class Node {

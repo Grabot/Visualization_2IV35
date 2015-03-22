@@ -19,6 +19,7 @@ import objects.Particle;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opencl.CL;
 import org.lwjgl.opencl.CL10;
@@ -33,6 +34,8 @@ import org.lwjgl.opencl.Util;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
+import Volume.DynamicVolume;
+import Volume.Volume;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -53,7 +56,7 @@ public class MainSimulator {
 		for (int platformIndex = 0; platformIndex < 1; platformIndex++) {
 			CLPlatform platform = CLPlatform.getPlatforms().get(platformIndex);
 			System.out.println("Platform #" + platformIndex + ":" + platform.getInfoString(CL10.CL_PLATFORM_NAME));
-			List<CLDevice> devices = platform.getDevices(CL10.CL_DEVICE_TYPE_ALL);
+			List<CLDevice> devices = platform.getDevices(CL10.CL_DEVICE_TYPE_GPU);
 			for (int deviceIndex = 0; deviceIndex < devices.size(); deviceIndex++) {
 				CLDevice device = devices.get(deviceIndex);
 				System.out.printf(Locale.ENGLISH, "Device #%d(%s):%s\n", deviceIndex, UtilCL.getDeviceType(device.getInfoInt(CL10.CL_DEVICE_TYPE)), device.getInfoString(CL10.CL_DEVICE_NAME));
@@ -81,11 +84,17 @@ public class MainSimulator {
 	static CLCommandQueue queue;
 	static CLProgram program;
 	static CLKernel kernel;
+	static CLKernel kernel2;
 
 	static CLMem startindexMem;
 	static CLMem endindexMem;
 	static CLMem predPosMem;
-
+	static CLMem forceMem;
+	static CLMem deltaTMem;
+	static CLMem posMem;
+	static CLMem velMem;
+	
+	
 	public static void prepareGPU() throws LWJGLException, IOException {
 
 		CLPlatform platform = CLPlatform.getPlatforms().get(0);
@@ -96,40 +105,51 @@ public class MainSimulator {
 		queue = CL10.clCreateCommandQueue(context, devices.get(0), CL10.CL_QUEUE_PROFILING_ENABLE, null);
 
 		// Load the source from a resource file
-		String source = UtilCL.getResourceAsString("cl/copy.txt");
+		String source = UtilCL.getResourceAsString("cl/copy.c");
+		String source2 = UtilCL.getResourceAsString("cl/copy.c");
 
 		// Create our program and kernel
 		program = CL10.clCreateProgramWithSource(context, source, null);
 		Util.checkCLError(CL10.clBuildProgram(program, devices.get(0), "", null));
 
-		kernel = CL10.clCreateKernel(program, "sum", null);
+		kernel = CL10.clCreateKernel(program, "HairCalculations", null);
+		kernel2 = CL10.clCreateKernel(program, "HairCalculations", null);
 
 		startindexMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_startindex, null);
 		CL10.clEnqueueWriteBuffer(queue, startindexMem, 1, 0, buf_startindex, null, null);
 		endindexMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_endindex, null);
 		CL10.clEnqueueWriteBuffer(queue, endindexMem, 1, 0, buf_endindex, null, null);
 		predPosMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_pred_pos, null);
+
+		forceMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_force, null);
+		CL10.clEnqueueWriteBuffer(queue, forceMem, 1, 0, buf_force, null, null);
+		deltaTMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_deltaT, null);
+		CL10.clEnqueueWriteBuffer(queue, deltaTMem, 1, 0, buf_deltaT, null, null);
+
+		posMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_pos, null);
+		CL10.clEnqueueWriteBuffer(queue, posMem, 1, 0, buf_pos, null, null);
+		velMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_vel, null);
+		CL10.clEnqueueWriteBuffer(queue, velMem, 1, 0, buf_vel, null, null);
+		CL10.clFinish(queue);
 	}
 
 	public static void OpenCLTest() {
 
-		CLMem forceMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_force, null);
-		CL10.clEnqueueWriteBuffer(queue, forceMem, 1, 0, buf_force, null, null);
-		CLMem deltaTMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_deltaT, null);
-		CL10.clEnqueueWriteBuffer(queue, deltaTMem, 1, 0, buf_deltaT, null, null);
-
-		CLMem posMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_pos, null);
-		CL10.clEnqueueWriteBuffer(queue, posMem, 1, 0, buf_pos, null, null);
-		CLMem velMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_vel, null);
-		CL10.clEnqueueWriteBuffer(queue, velMem, 1, 0, buf_vel, null, null);
-
 		// CL10.clEnqueueWriteBuffer(queue, predPosMem, 1, 0, buf_pred_pos,
 		// null, null);
+		
+//		forceMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_force, null);
+		CL10.clEnqueueWriteBuffer(queue, forceMem, 1, 0, buf_force, null, null);
+	//	deltaTMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_deltaT, null);
+		CL10.clEnqueueWriteBuffer(queue, deltaTMem, 1, 0, buf_deltaT, null, null);
+		//posMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_pos, null);
+		CL10.clEnqueueWriteBuffer(queue, posMem, 1, 0, buf_pos, null, null);
+		//velMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_vel, null);
+		CL10.clEnqueueWriteBuffer(queue, velMem, 1, 0, buf_vel, null, null);
+//		// sum has to match a kernel method name in the OpenCL source
+		CL10.clFinish(queue);		
 
-		CL10.clFinish(queue);
-
-		// sum has to match a kernel method name in the OpenCL source
-
+		
 		// Execution our kernel
 		PointerBuffer kernel1DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
 		kernel1DGlobalWorkSize.put(0, buf_startindex.capacity());
@@ -151,20 +171,39 @@ public class MainSimulator {
 		CL10.clEnqueueReadBuffer(queue, velMem, 1, 0, buf_vel, null, null);
 		CL10.clFinish(queue);
 
+		/*
+		kernel1DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
+		kernel1DGlobalWorkSize.put(0, buf_pos.capacity());
+
+		kernel.setArg(1, posMem);
+		kernel.setArg(2, velMem);
+		kernel.setArg(3, predPosMem);
+		CL10.clEnqueueNDRangeKernel(queue, kernel2, 1, null, kernel1DGlobalWorkSize, null, null, null);
+
+		// Read the results memory back into our result buffer
+
+		CL10.clEnqueueReadBuffer(queue, posMem, 1, 0, buf_pos, null, null);
+		CL10.clEnqueueReadBuffer(queue, velMem, 1, 0, buf_vel, null, null);
+		CL10.clFinish(queue);
+*/
+		
+		
+		
+		//CL10.clReleaseMemObject(posMem);
 		// Print the result memory
 		// UtilCL.print(buf_vel);
 		// UtilCL.print(buf_pos);
 
 		// buf_pos = buf_pred_pos;
-		/*
-		 * // Clean up OpenCL resources CL10.clReleaseKernel(kernel);
-		 * CL10.clReleaseProgram(program); CL10.clReleaseMemObject(posMem);
-		 * CL10.clReleaseMemObject(velMem); CL10.clReleaseMemObject(forceMem);
-		 * CL10.clReleaseMemObject(deltaTMem);
-		 * CL10.clReleaseMemObject(newPosMem);
-		 * CL10.clReleaseCommandQueue(queue); CL10.clReleaseContext(context);
-		 * CL.destroy();
-		 */
+	
+	 // Clean up OpenCL resources CL10.clReleaseKernel(kernel);
+	 //CL10.clReleaseProgram(program); CL10.clReleaseMemObject(posMem);
+	 //CL10.clReleaseMemObject(velMem); CL10.clReleaseMemObject(forceMem);
+	 ///CL10.clReleaseMemObject(deltaTMem);
+	 //CL10.clReleaseMemObject(newPosMem);
+	 
+	// CL.destroy();
+		
 	}
 
 	public static void main(String[] args) {
@@ -180,13 +219,13 @@ public class MainSimulator {
 			e1.printStackTrace();
 		}
 
-		boolean gpu = true;
+		boolean gpu = false;
 		boolean pause = false;
 		boolean showParticles = true;
 		boolean showGrid = true;
 
 		DisplayManager.createDisplay();
-		Volume volume = new Volume();
+		FixedVolume volume = new FixedVolume();
 		Loader loader = new Loader();
 		HairLoader hairLoader = new HairLoader();
 		MasterRenderer renderer = new MasterRenderer();
@@ -209,15 +248,15 @@ public class MainSimulator {
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
 		Camera camera = new Camera();
-		camera.setPosition(new Vector3f(0, 20, 200));
+		camera.setPosition(new Vector3f(125, 125, 500));
 
 		float scale = 1;
-		Entity head = new Entity(texturedHairyModel, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), scale);
+		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
 
 		HairFactory hairFactory = new HairFactory(particleModel, 5);
 
 		for (Vector3f vec : wigModel.getVertices()) {
-			hairFactory.addHairDescription(new HairDescription(vec, 10));
+			hairFactory.addHairDescription(new HairDescription(VectorMath.Sum(vec, head.getPosition()), 10));
 		}
 
 		final Hairs hairs = hairFactory.Build();
@@ -235,55 +274,13 @@ public class MainSimulator {
 		// buf_size = UtilCL.toIntBuffer(new int[] { hairs.size() });
 
 		buf_force = UtilCL.toFloatBuffer(new float[] { 0, -9.8f, 0, 0 });
-		buf_deltaT = UtilCL.toFloatBuffer(new float[] { 0.05f });
+		buf_deltaT = UtilCL.toFloatBuffer(new float[] { 0.25f });
 
 		buf_startindex = hairs.getStartIndexesBuffer();
 		buf_endindex = hairs.getEndIndexesBuffer();
 		buf_pos = hairs.getPositionsBuffer();
 		buf_vel = hairs.getVelocityBuffer();
 		buf_pred_pos = hairs.getPredictedPositionsBuffer();
-
-		try {
-			prepareGPU();
-		} catch (LWJGLException | IOException e) {
-			e.printStackTrace();
-		}
-
-		long gpustartTime = System.nanoTime();
-		for (int i = 0; i < 10; i++) {
-			OpenCLTest();
-		}
-
-		long gpuendTime = System.nanoTime();
-		System.out.print("GPU time: ");
-		System.out.println(gpuendTime - gpustartTime);
-
-		long cpustartTime = System.nanoTime();
-		for (int i = 0; i < 10; i++) {
-			for (Hair hair : hairs) {
-				// Calculate all predicted positions of hair particles
-				Equations.CalculatePredictedPositions(hair, new Vector3f(0, -9.81f, 0), 0.05f);
-
-				// Solve constraints
-				Equations.FixedDistanceContraint(hair, 5);
-
-				// Add collision detection
-				for (Particle particle : hair.getParticles()) {
-					if (volume.getNode(particle.getPredictedPosition()).containsObject)
-					{
-						particle.setPredictedPosition(particle.getPosition());
-					}
-				}
-
-				Equations.CalculateParticleVelocities(hair, 0.05f, 0.9f);
-
-				Equations.UpdateParticlePositions(hair);
-			}
-		}
-		long cpuendTime = System.nanoTime();
-
-		System.out.print("CPU time: ");
-		System.out.println(cpuendTime - cpustartTime);
 
 		System.out.println("Hairs: " + hairs.size());
 		System.out.println("Particles: " + hairs.size() * hairs.get(0).getParticles().size());
@@ -294,13 +291,23 @@ public class MainSimulator {
 
 		// Find all nodes within object
 		for (int i = 0; i < texturedHairyModel.getRawModel().getVertices().size(); i++) {
-			volume.getNode(texturedHairyModel.getRawModel().getVertices().get(i)).containsObject = true;
+			//volume.getNode(texturedHairyModel.getRawModel().getVertices().get(i)).containsObject = true;
 		}
 
+		try {
+			prepareGPU();
+		} catch (LWJGLException | IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		int j = 0;
+		float fps_avg = 0;
+		float time_before = System.nanoTime();
+		
 		while (!Display.isCloseRequested()) {
 
 			// start time
-			long startTime = System.nanoTime();
+			long startTime = Sys.getTime();
 
 			camera.move();
 
@@ -349,40 +356,33 @@ public class MainSimulator {
 
 				Vector3f externalForce;
 				if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-					externalForce = new Vector3f(-8, (float) -9.81f, 0);
+					externalForce = new Vector3f(-80, (float) -9.81f, 0);
 				} else if (Keyboard.isKeyDown(Keyboard.KEY_H)) {
-					externalForce = new Vector3f(8, (float) -9.81f, 0);
+					externalForce = new Vector3f(80, (float) -9.81f, 0);
 				} else if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
 					externalForce = new Vector3f(0, (float) -9.81f, 8);
 				} else {
 					externalForce = new Vector3f(0, (float) -9.81f, 0);
 				}
-				
+
 				// /////////////////////////
 				// Start simulation loop //
 				// /////////////////////////
 
 				if (gpu) {
-					buf_force = UtilCL.toFloatBuffer(new float[] { externalForce.x, externalForce.y, externalForce.z, 0 });
+					buf_force.put(0, externalForce.x);
+					buf_force.put(1, externalForce.y);
+					buf_force.put(2, externalForce.z);
 					OpenCLTest();
 				}
 
-				/*
-				 * ArrayList<Thread> threads = new ArrayList<Thread>(); for (int
-				 * i = 0; i < 8; i++) { Thread thread = new Thread(new
-				 * ParticleThread((hairs.size() / 8) * i, (hairs.size() / 8) *
-				 * (i + 1), hairs)); threads.add(thread); //thread.start(); }
-				 * 
-				 * for (Thread thread : threads) { try { thread.join(); } catch
-				 * e.printStackTrace(); } }
-				 */
-
 				// Calculate gravity on particle
 				volume.Clear();
-				
+
+				if (!gpu) {
 				for (Hair hair : hairs) {
 
-					if (!gpu) {
+					
 						// Calculate all predicted positions of hair particles
 						Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
 
@@ -392,13 +392,17 @@ public class MainSimulator {
 
 						Equations.UpdateParticlePositions(hair);
 					}
-
-					// Add particle weight to grid
-					for (Particle particle : hair.getParticles()) {
-						volume.addValues(particle.getPosition(), 1.0f, particle.getVelocity());
-					}
 				}
 
+				// Add particle weight to grid
+				/*
+				for (Hair hair : hairs) {
+					for (Particle particle : hair.getParticles()) {
+						volume.addValues(particle.getPosition(), 1.0f, particle.getVelocity());
+						}
+					}
+							
+				
 				// Apply friction and repulsion
 				volume.calculateAverageVelocityAndGradients();
 
@@ -409,6 +413,7 @@ public class MainSimulator {
 						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
 					}
 				}
+			*/
 				
 				// ///////////////////////
 				// End simulation loop //
@@ -416,11 +421,18 @@ public class MainSimulator {
 			}
 
 			// draw all hair particles
+			int i = 0;
 			if (showParticles) {
-				for (Hair hair : hairs) {
-					for (Particle particle : hair.getParticles()) {
-						renderer.processEntity(particle);
+					for (Hair hair : hairs) {
+						if ((i % 17) == 0) {
+						
+						for (Particle particle : hair.getParticles()) {
+							particle.setWireFrame(true);
+							renderer.processEntity(particle);
+							i++;
+						}
 					}
+						i++;
 				}
 			}
 
@@ -429,21 +441,26 @@ public class MainSimulator {
 			// renderer.processEntity(hair);
 			// }
 
+			/*
 			// draw all grid cells
 			if (showGrid) {
-				ArrayList<Node> nodes = volume.getGridCells();
+				List<Node> nodes = volume.getGridCells();
 				for (Node node : nodes) {
+					if(node != null) {
 					Entity entity;
-					if (node.containsObject) {
+					if (node.Weight > 0) {
 						entity = new Entity(redCellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
+						entity.setWireFrame(true);
+						renderer.processEntity(entity);
 					} else {
-						entity = new Entity(greenCellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
+						//entity = new Entity(greenCellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
 					}
 
-					entity.setWireFrame(true);
-					renderer.processEntity(entity);
+					
+					}
 				}
 			}
+			*/
 
 			// Draw head model
 			renderer.processEntity(head);
@@ -452,11 +469,24 @@ public class MainSimulator {
 			DisplayManager.updateDisplay();
 
 			// end time
-			long endTime = System.nanoTime();
-			deltaT = (endTime - startTime) / 360000000f;
-			buf_deltaT = UtilCL.toFloatBuffer(new float[] { deltaT });
+			long endTime = Sys.getTime();
+			
+			deltaT = (endTime - startTime) / 300f;
+			buf_deltaT.put(0,deltaT);
+			// System.out.println(1/deltaT);
+			float fps = 1f / ((endTime - startTime) / 1000f);
+			// System.out.println("time: " + fps);
 
-			System.out.println(deltaT);
+			// Average FPS over the last 10 frames
+			fps_avg += (fps);
+			j++;
+			if (j == 10) {
+				// System.out.println("AVG FPS ----> " + fps_avg/10);
+				Display.setTitle("pfs: " + fps_avg / 10);
+				j = 0;
+				fps_avg = 0;
+			}
+
 		}
 
 		renderer.Dispose();
