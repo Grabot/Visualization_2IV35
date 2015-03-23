@@ -1,6 +1,7 @@
 package guis;
 
 import java.awt.Font;
+import java.io.InputStream;
 import java.util.List;
 
 import models.RawModel;
@@ -11,189 +12,125 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.util.ResourceLoader;
 
 import renderEngine.Loader;
 import toolbox.Maths;
 
 public class GuiRenderer {
 
+	private TrueTypeFont trueTypeFont;
+
 	public final RawModel quad;
 	private GuiShader shader;
-	
+
 	private Font font;
 	private TrueTypeFont ttf;
-	
+
 	private int x;
 	private int y;
 
 	private int realX = -90;
 	private int realY = -90;
-	
+
 	private boolean leftButtonDown;
 	private boolean rightButtonDown;
-	
+
 	private boolean button1pressed = false;
 	private boolean button2pressed = false;
 	private boolean button3pressed = false;
 	private boolean button4pressed = false;
-	
+
 	public GuiRenderer(Loader loader) {
 
+		try {
+			InputStream inputStream = ResourceLoader.getResourceAsStream("assets/OpenSans-Regular.ttf");
+
+			Font awtFont2 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+			awtFont2 = awtFont2.deriveFont(20f); // set font size
+			trueTypeFont = new TrueTypeFont(awtFont2, true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
 		font = new Font("Verdana", Font.BOLD, 20);
-	    ttf = new TrueTypeFont(font, true);
-	    
-		float[] positions = {-1, 1, -1, -1, 1, 1, 1, -1};
+		ttf = new TrueTypeFont(font, false);
+
+		float[] positions = { -1, 1, -1, -1, 1, 1, 1, -1 };
 		quad = loader.loadToVao(positions);
 		shader = new GuiShader();
 	}
-	
+
 	public void render(List<GuiTexture> guis) {
 		shader.start();
 		getInput();
+		//GL11.glClearDepth(1);  
+		
+		// Temp for testing purposes only
+		GL11.glClearColor(0, 0, 0, 1);
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		// Temp for testing purposes only
+		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
-		for( int i = 0; i < guis.size(); i++ )
-		{
-			if( i == 0 || i == 4 )
-			{
-				//button 1
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 645 && realY <= 720) )
-				{					
-					button1pressed = true;
-					System.out.println("button1 pressed");
+		
+
+		
 					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(0).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(0).getPosition(), guis.get(0).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-				else
-				{
-					button1pressed = false;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(4).getTexture());
+					GL11.glEnable(GL11.GL_TEXTURE_2D);
+					trueTypeFont.drawString(50, 50, "", Color.white);
+					GL11.glDisable(GL11.GL_TEXTURE_2D);
+					
+					
+					//GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+					//GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					
 					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(4).getPosition(), guis.get(4).getScale());
-					shader.loadTransformation(matrix);
+					//shader.loadTransformation(matrix);
+					shader.loadTransformation(Matrix4f.setIdentity(new Matrix4f()));
 					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-			}
-			else if( i == 1 || i == 5 )
-			{
-				//button 2
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 570 && realY <= 645) )
-				{					
-					button2pressed = true;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(1).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(1).getPosition(), guis.get(1).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-				else
-				{
-					button2pressed = false;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(5).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(5).getPosition(), guis.get(5).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-			}
-			else if( i == 2 || i == 6 )
-			{
-				//button 3
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 495 && realY <= 570) )
-				{					
-					button3pressed = true;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(2).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(2).getPosition(), guis.get(2).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-				else
-				{
-					button3pressed = false;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(6).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(6).getPosition(), guis.get(6).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-			}
-			else if( i == 3 || i == 7 )
-			{
-				//button 4
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 420 && realY <= 495) )
-				{					
-					button4pressed = true;
-					System.out.println("button1 pressed");
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(3).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(3).getPosition(), guis.get(3).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-				else
-				{
-					button4pressed = false;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(7).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(7).getPosition(), guis.get(7).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-			}
-			else
-			{
-				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(i).getTexture());
-				Matrix4f matrix = Maths.createTransformationMatrix(guis.get(i).getPosition(), guis.get(i).getScale());
-				shader.loadTransformation(matrix);
-				GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-			}
-		}
-		/*
-		for(GuiTexture gui : guis){
-			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gui.getTexture());
-			Matrix4f matrix = Maths.createTransformationMatrix(gui.getPosition(), gui.getScale());
-			shader.loadTransformation(matrix);
-			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-		}
-		*/
+
+					/*
+		 * for(GuiTexture gui : guis){ GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		 * GL11.glBindTexture(GL11.GL_TEXTURE_2D, gui.getTexture()); Matrix4f
+		 * matrix = Maths.createTransformationMatrix(gui.getPosition(),
+		 * gui.getScale()); shader.loadTransformation(matrix);
+		 * GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		 * }
+		 */
 		GL20.glDisableVertexAttribArray(0);
 		GL30.glBindVertexArray(0);
-		
+
 	}
-	
-	private void getInput()
-	{
+
+	private void getInput() {
 		leftButtonDown = Mouse.isButtonDown(0); // is left mouse button down.
 		rightButtonDown = Mouse.isButtonDown(1); // is right mouse button down.
-		
+
 		x = Mouse.getX(); // will return the X coordinate on the Display.
 		y = Mouse.getY(); // will return the Y coordinate on the Display.
-		
-		if( leftButtonDown )
-		{
+
+		if (leftButtonDown) {
 			realX = x;
 			realY = y;
-			System.out.println("x: " + realX );
-			System.out.println("y: " + realY );
-		}
-		else
-		{
+			System.out.println("x: " + realX);
+			System.out.println("y: " + realY);
+		} else {
 			realX = -90;
 			realY = -90;
 		}
 	}
-	
+
 	public void Dispose() {
 		shader.Dispose();
 	}
-	
+
 }
