@@ -6,7 +6,9 @@ import entities.Light;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 
+import java.awt.Font;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,12 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.util.ResourceLoader;
 
+import Volume.FixedVolume;
+import Volume.Volume;
 import renderEngine.DisplayManager;
 import renderEngine.HairLoader;
 import renderEngine.Loader;
@@ -30,8 +37,9 @@ import toolbox.VectorMath;
 
 public class MainSimulator {
 
-	private void run()
-	{
+
+	
+	private void run() {
 		// Load native library
 		loadNativeLibrary();
 
@@ -40,14 +48,16 @@ public class MainSimulator {
 		boolean showGrid = true;
 
 		DisplayManager.createDisplay();
-		Volume volume = new Volume();
+		Volume volume = new FixedVolume();
 		Loader loader = new Loader();
 		HairLoader hairLoader = new HairLoader();
 		MasterRenderer renderer = new MasterRenderer();
-		
+
 		// Guis
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
+
+		   
 		GuiTexture Button1Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.9f), new Vector2f(0.2f, 0.1f));
 		guis.add(Button1Off);
 		GuiTexture Button2Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.7f), new Vector2f(0.2f, 0.1f));
@@ -65,12 +75,12 @@ public class MainSimulator {
 		guis.add(Button3On);
 		GuiTexture Button4On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.3f), new Vector2f(0.2f, 0.1f));
 		guis.add(Button4On);
-		
+
 		GuiTexture gui = new GuiTexture(loader.loadTexture("windowTexture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 		guis.add(gui);
-		
+
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
-		
+
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
 		TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("haircolorSlow")));
 
@@ -86,15 +96,15 @@ public class MainSimulator {
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
 		Camera camera = new Camera();
-		camera.setPosition(new Vector3f(0, 20, 200));
+		camera.setPosition(new Vector3f(80, 100, 300));
 
 		float scale = 1;
-		Entity head = new Entity(texturedHairyModel, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), scale);
+		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
 
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
 
 		for (Vector3f vec : wigModel.getVertices()) {
-				hairs.add(new Hair(texturedModel, vec, 5, 10));
+			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 5, 10));
 		}
 
 		for (Hair hair : hairs) {
@@ -109,7 +119,7 @@ public class MainSimulator {
 		int j = 0;
 		float fps_avg = 0;
 		float time_before = System.nanoTime();
-		
+
 		while (!Display.isCloseRequested()) {
 
 			// start time
@@ -166,7 +176,7 @@ public class MainSimulator {
 
 				// Calculate gravity on particle
 				volume.Clear();
-				
+
 				for (Hair hair : hairs) {
 
 					// Calculate all predicted positions of hair particles
@@ -186,7 +196,7 @@ public class MainSimulator {
 
 				// Apply friction and repulsion
 				volume.calculateAverageVelocityAndGradients();
-				
+
 				for (Hair hair : hairs) {
 
 					float friction = 0.5f;
@@ -199,7 +209,7 @@ public class MainSimulator {
 				}
 
 				// ///////////////////////
-				// End simulation loop  //
+				// End simulation loop //
 				// ///////////////////////
 			}
 
@@ -217,39 +227,42 @@ public class MainSimulator {
 
 			// draw all grid cells
 			if (showGrid) {
-				ArrayList<Node> nodes = volume.getGridCells();
+				List<Node> nodes = volume.getGridCells();
 				for (Node node : nodes) {
-					Entity entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
+					if (node.Weight > 0) {
+						Entity entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
 
-					entity.setWireFrame(true);
-					renderer.processEntity(entity);
+						entity.setWireFrame(true);
+						renderer.processEntity(entity);
+					}
 				}
 			}
 
 			// Draw head model
 			renderer.processEntity(head);
 
-			renderer.render(light, camera);
+			//renderer.render(light, camera);
 			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
-			
+
 			// end time
-			long endTime = Sys.getTime();;
+			long endTime = Sys.getTime();
+			;
 			deltaT = (endTime - startTime) / 300f;
-			//System.out.println(1/deltaT);
-			float fps = 1f/((endTime - startTime)/1000f);
-			//System.out.println("time: " + fps);
-			
+			// System.out.println(1/deltaT);
+			float fps = 1f / ((endTime - startTime) / 1000f);
+			// System.out.println("time: " + fps);
+
 			// Average FPS over the last 10 frames
 			fps_avg += (fps);
 			j++;
-			if (j==10) {
-				//System.out.println("AVG FPS ----> " + fps_avg/10);
-				Display.setTitle("pfs: " + fps_avg/10);
+			if (j == 10) {
+				// System.out.println("AVG FPS ----> " + fps_avg/10);
+				Display.setTitle("pfs: " + fps_avg / 10);
 				j = 0;
 				fps_avg = 0;
 			}
-			
+
 		}
 
 		guiRenderer.Dispose();
@@ -258,15 +271,14 @@ public class MainSimulator {
 		hairLoader.Dispose();
 		DisplayManager.closeDisplay();
 	}
-	
 
 	public static void loadNativeLibrary() {
 		String fileNatives = OperatingSystem.getOSforLWJGLNatives();
 		System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + File.separator + "lib" + File.separator + "lwjgl-2.9.3" + File.separator + "native" + File.separator + fileNatives);
 	}
-	
+
 	public static void main(String[] args) {
-		
+
 		MainSimulator main = new MainSimulator();
 		main.run();
 	}
