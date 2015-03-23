@@ -50,14 +50,14 @@ public class GuiRenderer {
 
 			Font awtFont2 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 			awtFont2 = awtFont2.deriveFont(20f); // set font size
+			
 			trueTypeFont = new TrueTypeFont(awtFont2, true);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		
-		font = new Font("Verdana", Font.BOLD, 20);
+		font = new Font("Verdana", Font.BOLD, 2);
 		ttf = new TrueTypeFont(font, false);
 
 		float[] positions = { -1, 1, -1, -1, 1, 1, 1, -1 };
@@ -68,37 +68,47 @@ public class GuiRenderer {
 	public void render(List<GuiTexture> guis) {
 		shader.start();
 		getInput();
-		//GL11.glClearDepth(1);  
-		
+		// GL11.glClearDepth(1);
+
 		// Temp for testing purposes only
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+		
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		// Temp for testing purposes only
+
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glShadeModel(GL11.GL_SMOOTH);        
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_LIGHTING);      
 		
-		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);                
+        GL11.glClearDepth(1);     
+ 
+		
+		
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
-		
 
-		
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glEnable(GL11.GL_TEXTURE_2D);
-					trueTypeFont.drawString(50, 50, "", Color.white);
-					GL11.glDisable(GL11.GL_TEXTURE_2D);
-					
-					
-					//GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-					//GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(4).getPosition(), guis.get(4).getScale());
-					//shader.loadTransformation(matrix);
-					shader.loadTransformation(Matrix4f.setIdentity(new Matrix4f()));
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_BLEND);
+		trueTypeFont.drawString(50, 50, "test", Color.white);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-					/*
+		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+		// GL13.glActiveTexture(GL13.GL_TEXTURE0);
+
+		// Matrix4f matrix =
+		// Maths.createTransformationMatrix(guis.get(4).getPosition(),
+		// guis.get(4).getScale());
+		// shader.loadTransformation(matrix);
+		shader.loadTransformation(Matrix4f.setIdentity(new Matrix4f()));
+		GL11.glDrawArrays(GL11.GL_QUADS, 0, quad.getVertexCount());
+
+		/*
 		 * for(GuiTexture gui : guis){ GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		 * GL11.glBindTexture(GL11.GL_TEXTURE_2D, gui.getTexture()); Matrix4f
 		 * matrix = Maths.createTransformationMatrix(gui.getPosition(),
