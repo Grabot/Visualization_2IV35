@@ -37,8 +37,6 @@ import toolbox.VectorMath;
 
 public class MainSimulator {
 
-
-	
 	private void run() {
 		// Load native library
 		loadNativeLibrary();
@@ -241,13 +239,13 @@ public class MainSimulator {
 			// Draw head model
 			renderer.processEntity(head);
 
-			//renderer.render(light, camera);
+			renderer.render(light, camera);
 			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
 
 			// end time
 			long endTime = Sys.getTime();
-			;
+
 			deltaT = (endTime - startTime) / 300f;
 			// System.out.println(1/deltaT);
 			float fps = 1f / ((endTime - startTime) / 1000f);

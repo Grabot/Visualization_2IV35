@@ -55,15 +55,6 @@ public class StaticShader extends ShaderProgram {
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 	
-	private static final Matrix4f m4f = new Matrix4f();
-	public void loadGUI(Camera camera)
-	{
-		Matrix4f solidview = m4f;
-		solidview.setIdentity();
-		solidview.m32 = -200;
-		super.loadMatrix(location_viewMatrix, solidview);
-	}
-	
 	public void loadProjectionMatrix(Matrix4f matrix)
 	{
 		super.loadMatrix(location_projectionMatrix, matrix);
