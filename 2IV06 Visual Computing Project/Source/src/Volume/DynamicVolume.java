@@ -1,18 +1,20 @@
-package engineTester;
+package Volume;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.lwjgl.util.vector.Vector3f;
 
+import engineTester.Node;
 import toolbox.VectorMath;
 
-public class Volume {
+public class DynamicVolume {
 	private float spacing = 5f;
 	private float epsilon = 0.1f;
 	private HashMap<String, Node> nodes = new HashMap<String, Node>();
 
-	public Volume() {
+	public DynamicVolume() {
 	}
 
 	public void Clear() {

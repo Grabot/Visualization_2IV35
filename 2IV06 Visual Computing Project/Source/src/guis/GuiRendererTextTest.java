@@ -19,7 +19,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import renderEngine.Loader;
 import toolbox.Maths;
 
-public class GuiRenderer {
+public class GuiRendererTextTest {
 
 	private TrueTypeFont trueTypeFont;
 
@@ -43,7 +43,7 @@ public class GuiRenderer {
 	private boolean button3pressed = false;
 	private boolean button4pressed = false;
 
-	public GuiRenderer(Loader loader) {
+	public GuiRendererTextTest(Loader loader) {
 
 		try {
 			InputStream inputStream = ResourceLoader.getResourceAsStream("assets/OpenSans-Regular.ttf");
