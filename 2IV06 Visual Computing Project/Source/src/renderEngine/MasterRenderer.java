@@ -1,15 +1,9 @@
 package renderEngine;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 
 import engineTester.Hair;
 import entities.Camera;

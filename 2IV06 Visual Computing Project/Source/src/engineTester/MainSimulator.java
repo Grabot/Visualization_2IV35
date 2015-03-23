@@ -6,9 +6,7 @@ import entities.Light;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 
-import java.awt.Font;
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +18,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.TrueTypeFont;
-import org.newdawn.slick.util.ResourceLoader;
-
 import Volume.FixedVolume;
 import Volume.Volume;
 import renderEngine.DisplayManager;
@@ -116,8 +110,7 @@ public class MainSimulator {
 		float deltaT = 1.0f / 20.0f;
 		int j = 0;
 		float fps_avg = 0;
-		float time_before = System.nanoTime();
-
+		
 		while (!Display.isCloseRequested()) {
 
 			// start time
@@ -130,7 +123,6 @@ public class MainSimulator {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -140,7 +132,6 @@ public class MainSimulator {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -150,7 +141,6 @@ public class MainSimulator {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
