@@ -18,6 +18,8 @@ public abstract class Volume {
 	public float getSpacing() {
 		return spacing;
 	}
+	
+	public abstract int getGridSize();
 
 	public abstract List<Node> getGridCells();
 

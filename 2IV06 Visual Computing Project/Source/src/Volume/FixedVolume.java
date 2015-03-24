@@ -12,10 +12,24 @@ public class FixedVolume extends Volume {
 	private int width = 32;
 	private int height = 32;
 	private int depth = 32;
-
-	private Node[] nodes = new Node[width * height * depth];
+	private Node[] nodes;
+	
+	public FixedVolume(float spacing) {
+		this.width = (int) (this.spacing/spacing*this.width);
+		this.height = (int) (this.spacing/spacing*this.height);
+		this.depth = (int) (this.spacing/spacing*this.depth);
+		this.spacing = spacing;
+		init();
+	}
 
 	public FixedVolume() {
+		init();
+	}
+	
+	private void init() {
+
+		 nodes = new Node[width * height * depth];
+
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < depth; z++) {
@@ -24,6 +38,10 @@ public class FixedVolume extends Volume {
 				}
 			}
 		}
+	}
+	
+	public int getGridSize() {
+		return width;
 	}
 
 	public int getKey(Vector3f position) {

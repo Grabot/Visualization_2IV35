@@ -38,12 +38,14 @@ public class MainSimulator {
 		boolean pause = false;
 		boolean showParticles = true;
 		boolean showGrid = true;
+		boolean showGridCollision = true;
 
 		float friction = 0.5f;
 		float repulsion = -0.05f;
 
 		DisplayManager.createDisplay();
 		Volume volume = new FixedVolume();
+		Volume volume_collision = new FixedVolume(1);
 		Loader loader = new Loader();
 		HairLoader hairLoader = new HairLoader();
 		MasterRenderer renderer = new MasterRenderer();
@@ -92,21 +94,37 @@ public class MainSimulator {
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
 		Camera camera = new Camera();
-		camera.setPosition(new Vector3f(80, 100, 300));
+		camera.setPosition(new Vector3f(80, 100, 220));
 
 		float scale = 1;
 		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
-		
+
 		// Set grid cell to inside when it contains head
 		for ( Vector3f vec : head.getModel().getRawModel().getVertices()) {
 			vec = VectorMath.Sum(vec, head.getPosition());
-			volume.getNode(vec).inside = true;
+			volume_collision.getNode(vec).inside = true;
+		}
+		// Set grid cell to inside when it contains head
+		for ( int z = 0; z < volume_collision.getGridSize(); z++ ) {
+			for ( int y = 0; y < volume_collision.getGridSize(); y++ ) {
+				for ( int i = 0; i < volume_collision.getGridSize(); i++) {
+					if (volume_collision.getNode(new Vector3f(i * volume_collision.getSpacing(), y* volume_collision.getSpacing(), z* volume_collision.getSpacing())).inside) {
+						for ( int j = volume_collision.getGridSize()-1; j > i; j--) {
+							if(volume_collision.getNode(new Vector3f(j * volume_collision.getSpacing(), y* volume_collision.getSpacing(),z* volume_collision.getSpacing())).inside) {
+								for ( int k = i; k < j; k++) {
+									volume_collision.getNode(new Vector3f(k * volume_collision.getSpacing(), y* volume_collision.getSpacing(), z* volume_collision.getSpacing())).inside = true;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
 
 		for (Vector3f vec : wigModel.getVertices()) {
-			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 5, 10));
+			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 10, 5));
 		}
 
 		for (Hair hair : hairs) {
@@ -155,6 +173,15 @@ public class MainSimulator {
 				}
 			}
 
+			if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
+				showGridCollision = !showGridCollision;
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
 			if (!pause) {
 
 				// /////////////////////////
@@ -188,7 +215,7 @@ public class MainSimulator {
 						Equations.FixedDistanceContraint(hair);
 						// collision 
 						for ( Particle particle : hair.getParticles() ) {
-							if (volume.getNode(particle.getPredictedPosition()).inside && !particle.isRoot()) {
+							if (volume_collision.getNode(particle.getPredictedPosition()).inside && !particle.isRoot()) {
 								particle.setPredictedPosition( particle.getPosition() );
 								satisfied = true;
 							}
@@ -237,18 +264,25 @@ public class MainSimulator {
 			if (showGrid) {
 				List<Node> nodes = volume.getGridCells();
 				for (Node node : nodes) {
-					if (node.Weight > -1) {
+					if (node.Weight > 0) {	
 						Entity entity;
-						if ( node.inside) {
-							entity = new Entity(cellTexturedModel_red, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
-							entity.setWireFrame(true);
-							renderer.processEntity(entity);
-							
-						} else {
-							//entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
-						}
-							
+						entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
+						entity.setWireFrame(true);
+						renderer.processEntity(entity);	
 					}
+				}
+			}
+
+			// draw all collision cells
+			if (showGrid) {
+				List<Node> nodes = volume_collision.getGridCells();
+				for (Node node : nodes) {
+					Entity entity;
+					if ( node.inside) {
+						entity = new Entity(cellTexturedModel_red, VectorMath.Sum(node.getPosition(), (0.5f * volume_collision.getSpacing())), new Vector3f(0, 0, 0), volume_collision.getSpacing());
+						entity.setWireFrame(true);
+						renderer.processEntity(entity);
+					} 	
 				}
 			}
 
