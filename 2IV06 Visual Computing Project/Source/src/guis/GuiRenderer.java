@@ -49,6 +49,7 @@ public class GuiRenderer {
 	}
 	
 	public void render(List<GuiTexture> guis) {
+
 		shader.start();
 		getInput();
 		GL11.glEnable(GL11.GL_BLEND);
@@ -57,16 +58,18 @@ public class GuiRenderer {
 		GL20.glEnableVertexAttribArray(0);
 		for( int i = 0; i < guis.size(); i++ )
 		{
-			if( i == 0 || i == 4 )
+			
+			if( i <= 3 )
 			{
-				//button 1
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 645 && realY <= 720) )
+				/*
+				//buttons
+				if(( realX >= 0 && realX <= 255 ) && (realY >= (645 - (75 * i )) && realY <= (720 - (75 * i ))) )
 				{					
 					button1pressed = true;
-					System.out.println("button1 pressed");
+					System.out.println("button " + i + " pressed");
 					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(0).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(0).getPosition(), guis.get(0).getScale());
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(i).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(i).getPosition(), guis.get(i).getScale());
 					shader.loadTransformation(matrix);
 					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 				}
@@ -74,87 +77,36 @@ public class GuiRenderer {
 				{
 					button1pressed = false;
 					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(4).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(4).getPosition(), guis.get(4).getScale());
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(i+4).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(i+4).getPosition(), guis.get(i+4).getScale());
 					shader.loadTransformation(matrix);
 					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 				}
 			}
-			else if( i == 1 || i == 5 )
-			{
-				//button 2
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 570 && realY <= 645) )
-				{					
-					button2pressed = true;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(1).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(1).getPosition(), guis.get(1).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-				else
-				{
-					button2pressed = false;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(5).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(5).getPosition(), guis.get(5).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
+			*/
 			}
-			else if( i == 2 || i == 6 )
+			else if( i >= 9 && i <= 13 )
 			{
-				//button 3
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 495 && realY <= 570) )
-				{					
-					button3pressed = true;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(2).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(2).getPosition(), guis.get(2).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-				else
-				{
-					button3pressed = false;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(6).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(6).getPosition(), guis.get(6).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-			}
-			else if( i == 3 || i == 7 )
-			{
-				//button 4
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 420 && realY <= 495) )
-				{					
-					button4pressed = true;
-					System.out.println("button1 pressed");
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(3).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(3).getPosition(), guis.get(3).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-				else
-				{
-					button4pressed = false;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(7).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(7).getPosition(), guis.get(7).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-			}
-			else
-			{
+				//words
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(i).getTexture());
 				Matrix4f matrix = Maths.createTransformationMatrix(guis.get(i).getPosition(), guis.get(i).getScale());
 				shader.loadTransformation(matrix);
 				GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 			}
+			/*
+			else if( i >= 12 )
+			{
+				//numbers
+				System.out.println("i: " + i );
+				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(i).getTexture());
+				Matrix4f matrix = Maths.createTransformationMatrix(guis.get(i).getPosition(), guis.get(i).getScale());
+				shader.loadTransformation(matrix);
+				GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+			}
+			*/
+			
 		}
 		/*
 		for(GuiTexture gui : guis){
