@@ -1,6 +1,7 @@
 package guis;
 
 import java.awt.Font;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,6 @@ import org.newdawn.slick.TrueTypeFont;
 import renderEngine.Loader;
 import toolbox.Maths;
 import engineTester.Hair;
-import engineTester.MainSimulator;
 
 public class GuiRenderer {
 
@@ -74,7 +74,8 @@ public class GuiRenderer {
 		{
 			hairArray[i] = Character.getNumericValue(String.valueOf(Math.abs((long)hairs.size())).charAt(i));
 		}
-		for( int i = 0; i < String.valueOf(Math.abs((long)hairs.size())).length(); i++ )
+		int numberOfParticles = String.valueOf(hairs.size() * hairs.get(0).getParticles().size()).length();
+		for( int i = 0; i < numberOfParticles; i++ )
 		{
 			particleArray[i] = Character.getNumericValue(String.valueOf(Math.abs((long)(hairs.size() * hairs.get(0).getParticles().size()))).charAt(i));
 		}
@@ -348,10 +349,11 @@ public class GuiRenderer {
 		{
 			fpsArray[i] = -1;
 		}
-		fpsValue = String.format("%.1f", fps);
-		fpsArray[0] = Character.getNumericValue(fpsValue.charAt(0));
-		fpsArray[1] = Character.getNumericValue(fpsValue.charAt(1));
-		fpsArray[2] = Character.getNumericValue(fpsValue.charAt(3));
+		DecimalFormat df = new DecimalFormat("00.0");
+		String output = df.format(fps);
+		fpsArray[0] = Character.getNumericValue(output.charAt(0));
+		fpsArray[1] = Character.getNumericValue(output.charAt(1));
+		fpsArray[2] = Character.getNumericValue(output.charAt(3));
 	}
 	private void getInput()
 	{

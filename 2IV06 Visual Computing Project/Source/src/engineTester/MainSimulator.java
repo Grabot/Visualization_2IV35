@@ -45,8 +45,8 @@ public class MainSimulator {
 		float repulsion = -0.05f;
 
 		DisplayManager.createDisplay();
-		//Volume volume = new FixedVolume();
-		//Volume volume_collision = new FixedVolume(1);
+		Volume volume = new FixedVolume();
+		Volume volume_collision = new FixedVolume(1);
 		Loader loader = new Loader();
 		HairLoader hairLoader = new HairLoader();
 		MasterRenderer renderer = new MasterRenderer();
@@ -145,7 +145,7 @@ public class MainSimulator {
 		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
 
 		// Set grid cell to inside when it contains head
-/*
+
 		for ( Vector3f vec : head.getModel().getRawModel().getVertices()) {
 			vec = VectorMath.Sum(vec, head.getPosition());
 			volume_collision.getNode(vec).inside = true;
@@ -184,10 +184,10 @@ public class MainSimulator {
 				}
 			}
 		}
-		*/
+		
 		
 		for (Vector3f vec : wigModel.getVertices()) {
-			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 5, 5));
+			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 7, 10));
 		}
 
 		for (Hair hair : hairs) {
@@ -265,7 +265,7 @@ public class MainSimulator {
 				}
 
 				// Calculate gravity on particle
-				//volume.Clear();
+				volume.Clear();
 
 				for (Hair hair : hairs) {
 
@@ -276,31 +276,27 @@ public class MainSimulator {
 						// Solve constraints
 						Equations.FixedDistanceContraint(hair);
 						// collision 
-						/*
 						for ( Particle particle : hair.getParticles() ) {
 							if (volume_collision.getNode(particle.getPredictedPosition()).inside && !particle.isRoot()) {
 								particle.setPredictedPosition( particle.getPosition() );
 							}
 						}
-						 */
 
 						
 					}
 					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
 					// Add particle weight to grid
-					/*
 					for (Particle particle : hair.getParticles()) {
 						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
 					}
-					*/
+					
 					Equations.UpdateParticlePositions(hair);
 				}
 
 				// Apply friction and repulsion
-				//volume.calculateAverageVelocityAndGradients();
+				volume.calculateAverageVelocityAndGradients();
 
-				/*
 				for (Hair hair : hairs) {
 					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
@@ -308,7 +304,6 @@ public class MainSimulator {
 						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
 					}
 				}
-				*/
 
 				// ///////////////////////
 				// End simulation loop //
@@ -328,7 +323,6 @@ public class MainSimulator {
 			}
 
 			// draw all grid cells
-			/*
 			if (!showGrid) {
 				List<Node> nodes = volume.getGridCells();
 				for (Node node : nodes) {
@@ -340,9 +334,7 @@ public class MainSimulator {
 					}
 				}
 			}
-			*/
-
-			/*
+			
 			// draw all collision cells
 			if (!showGridCollision) {
 				List<Node> nodes = volume_collision.getGridCells();
@@ -355,7 +347,6 @@ public class MainSimulator {
 					} 	
 				}
 			}
-			*/
 
 			// Draw head model
 			renderer.processEntity(head);
@@ -369,15 +360,12 @@ public class MainSimulator {
 			long endTime = Sys.getTime();
 
 			deltaT = (endTime - startTime) / 300f;
-			// System.out.println(1/deltaT);
 			float fps = 1f / ((endTime - startTime) / 1000f);
-			// System.out.println("time: " + fps);
 
 			// Average FPS over the last 10 frames
 			fps_avg += (fps);
 			j++;
 			if (j == 10) {
-				// System.out.println("AVG FPS ----> " + fps_avg/10);
 				Display.setTitle("pfs: " + fps_avg / 10);
 				guiRenderer.setFPS(fps_avg/10);
 				j = 0;
