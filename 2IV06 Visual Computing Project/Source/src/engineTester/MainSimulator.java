@@ -54,22 +54,22 @@ public class MainSimulator {
 		// Guis
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
-		GuiTexture Button1Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.9f), new Vector2f(0.2f, 0.1f));
+		GuiTexture Button1Off = new GuiTexture(loader.loadTexture("ArrowUpNotPressed"), new Vector2f(-0.8f, 0.2f), new Vector2f(0.06f, 0.1f));
 		guis.add(Button1Off);
-		GuiTexture Button2Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.7f), new Vector2f(0.2f, 0.1f));
+		GuiTexture Button2Off = new GuiTexture(loader.loadTexture("ArrowLeftNotPressed"), new Vector2f(-0.9f, 0f), new Vector2f(0.06f, 0.1f));
 		guis.add(Button2Off);
-		GuiTexture Button3Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.5f), new Vector2f(0.2f, 0.1f));
+		GuiTexture Button3Off = new GuiTexture(loader.loadTexture("ArrowRightNotPressed"), new Vector2f(-0.7f, 0f), new Vector2f(0.06f, 0.1f));
 		guis.add(Button3Off);
-		GuiTexture Button4Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.3f), new Vector2f(0.2f, 0.1f));
+		GuiTexture Button4Off = new GuiTexture(loader.loadTexture("ArrowDownNotPressed"), new Vector2f(-0.8f, -0.2f), new Vector2f(0.06f, 0.1f));
 		guis.add(Button4Off);
 		
-		GuiTexture Button1On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.9f), new Vector2f(0.2f, 0.1f));
+		GuiTexture Button1On = new GuiTexture(loader.loadTexture("ArrowUpPressed"), new Vector2f(-0.8f, 0.2f), new Vector2f(0.06f, 0.1f));
 		guis.add(Button1On);
-		GuiTexture Button2On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.7f), new Vector2f(0.2f, 0.1f));
+		GuiTexture Button2On = new GuiTexture(loader.loadTexture("ArrowLeftPressed"), new Vector2f(-0.9f, 0f), new Vector2f(0.06f, 0.1f));
 		guis.add(Button2On);
-		GuiTexture Button3On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.5f), new Vector2f(0.2f, 0.1f));
+		GuiTexture Button3On = new GuiTexture(loader.loadTexture("ArrowRightPressed"), new Vector2f(-0.7f, 0f), new Vector2f(0.06f, 0.1f));
 		guis.add(Button3On);
-		GuiTexture Button4On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.3f), new Vector2f(0.2f, 0.1f));
+		GuiTexture Button4On = new GuiTexture(loader.loadTexture("ArrowDownPressed"), new Vector2f(-0.8f, -0.2f), new Vector2f(0.06f, 0.1f));
 		guis.add(Button4On);
 
 		GuiTexture gui = new GuiTexture(loader.loadTexture("windowTexture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
