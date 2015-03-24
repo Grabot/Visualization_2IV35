@@ -6,6 +6,7 @@ import entities.Light;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 
+import java.awt.event.FocusEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+
 import Volume.FixedVolume;
 import Volume.Volume;
 import renderEngine.DisplayManager;
@@ -45,71 +47,25 @@ public class MainSimulator {
 		HairLoader hairLoader = new HairLoader();
 		MasterRenderer renderer = new MasterRenderer();
 
-		// Guis
-		List<GuiTexture> guis = new ArrayList<GuiTexture>();
-
-
-		   
-		GuiTexture Button1Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.9f), new Vector2f(0.2f, 0.1f));
-		guis.add(Button1Off);
-		GuiTexture Button2Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.7f), new Vector2f(0.2f, 0.1f));
-		guis.add(Button2Off);
-		GuiTexture Button3Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.5f), new Vector2f(0.2f, 0.1f));
-		guis.add(Button3Off);
-		GuiTexture Button4Off = new GuiTexture(loader.loadTexture("buttonNotPressed"), new Vector2f(-0.8f, 0.3f), new Vector2f(0.2f, 0.1f));
-		guis.add(Button4Off);
-
-		GuiTexture Button1On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.9f), new Vector2f(0.2f, 0.1f));
-		guis.add(Button1On);
-		GuiTexture Button2On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.7f), new Vector2f(0.2f, 0.1f));
-		guis.add(Button2On);
-		GuiTexture Button3On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.5f), new Vector2f(0.2f, 0.1f));
-		guis.add(Button3On);
-		GuiTexture Button4On = new GuiTexture(loader.loadTexture("buttonPressed"), new Vector2f(-0.8f, 0.3f), new Vector2f(0.2f, 0.1f));
-		guis.add(Button4On);
-
-		GuiTexture gui = new GuiTexture(loader.loadTexture("windowTexture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-		guis.add(gui);
-
-		GuiRenderer guiRenderer = new GuiRenderer(loader);
-
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
 		TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("haircolorSlow")));
 
-		RawModel cellModel = OBJLoader.loadObjModel("cube", loader);
-		TexturedModel cellTexturedModel = new TexturedModel(cellModel, new ModelTexture(loader.loadTexture("green")));
-
-		// Head obj
-		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
-
-		// Wig obj
-		RawModel wigModel = OBJLoader.loadObjModel("wigd2", loader);
-
+		TexturedModel cubeModel = new TexturedModel(OBJLoader.loadObjModel("cube", loader), new ModelTexture(loader.loadTexture("green")));
+		Entity cube = new Entity(cubeModel, new Vector3f(0,0,0), new Vector3f(0,0,0), 4);
+		
+		Particle particle = new Particle(texturedModel, new Vector3f(0, 20, 0), false);
+		
+		
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
 		Camera camera = new Camera();
-		camera.setPosition(new Vector3f(80, 100, 300));
-
-		float scale = 1;
-		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
-
-		ArrayList<Hair> hairs = new ArrayList<Hair>();
-
-		for (Vector3f vec : wigModel.getVertices()) {
-			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 5, 10));
-		}
-
-		for (Hair hair : hairs) {
-			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
-			hair.setRawModel(hairModel);
-		}
-
-		System.out.println("Hairs: " + hairs.size());
-		System.out.println("Particles: " + hairs.size() * hairs.get(0).getParticles().size());
+		camera.setPosition(new Vector3f(0, 0, 50));
 
 		float deltaT = 1.0f / 20.0f;
 		int j = 0;
 		float fps_avg = 0;
+		
+		Vector3f force = new Vector3f(0, -9.81f, 0);
 		
 		while (!Display.isCloseRequested()) {
 
@@ -118,119 +74,31 @@ public class MainSimulator {
 
 			camera.move();
 
-			if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
-				pause = !pause;
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (Keyboard.isKeyDown(Keyboard.KEY_M)) {
-				showParticles = !showParticles;
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (Keyboard.isKeyDown(Keyboard.KEY_N)) {
-				showGrid = !showGrid;
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
 			if (!pause) {
 
 				// /////////////////////////
 				// Start simulation loop //
 				// /////////////////////////
+				
+				particle.setPredictedPosition(new Vector3f(
+						particle.getPosition().x + deltaT * particle.getVelocity().x  + deltaT * deltaT * force.x,
+						particle.getPosition().y + deltaT * particle.getVelocity().y  + deltaT * deltaT * force.y,
+						particle.getPosition().z + deltaT * particle.getVelocity().z  + deltaT * deltaT * force.z));
 
-				Vector3f externalForce;
-				if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-					externalForce = new Vector3f(-8, (float) -9.81f, 0);
-				} else if (Keyboard.isKeyDown(Keyboard.KEY_H)) {
-					externalForce = new Vector3f(8, (float) -9.81f, 0);
-				} else if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
-					externalForce = new Vector3f(0, (float) -9.81f, 8);
-				} else {
-					externalForce = new Vector3f(0, (float) -9.81f, 0);
-				}
+				particle.setVelocity(VectorMath.Divide(VectorMath.Subtract(particle.getPredictedPosition(), particle.getPosition()), deltaT));
 
-				// Calculate gravity on particle
-				volume.Clear();
-
-				for (Hair hair : hairs) {
-
-					// Calculate all predicted positions of hair particles
-					Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
-
-					// Solve constraints
-					Equations.FixedDistanceContraint(hair);
-					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
-
-					// Add particle weight to grid
-					for (Particle particle : hair.getParticles()) {
-						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
-					}
-
-					Equations.UpdateParticlePositions(hair);
-				}
-
-				// Apply friction and repulsion
-				volume.calculateAverageVelocityAndGradients();
-
-				for (Hair hair : hairs) {
-
-					float friction = 0.5f;
-					float repulsion = -0.1f;
-					for (Particle particle : hair.getParticles()) {
-						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
-						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
-						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
-					}
-				}
-
+				particle.setPosition(particle.getPredictedPosition());
+				
 				// ///////////////////////
 				// End simulation loop //
 				// ///////////////////////
 			}
 
-			// draw all hair particles
-			for (Hair hair : hairs) {
-				if (showParticles) {
-					for (Particle particle : hair.getParticles()) {
-						renderer.processEntity(particle);
-					}
-				}
-
-				hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
-				renderer.processEntity(hair);
-			}
-
-			// draw all grid cells
-			if (showGrid) {
-				List<Node> nodes = volume.getGridCells();
-				for (Node node : nodes) {
-					if (node.Weight > 0) {
-						Entity entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
-
-						entity.setWireFrame(true);
-						renderer.processEntity(entity);
-					}
-				}
-			}
-
 			// Draw head model
-			renderer.processEntity(head);
+			renderer.processEntity(particle);
+			renderer.processEntity(cube);
 
 			renderer.render(light, camera);
-			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
 
 			// end time
@@ -253,7 +121,6 @@ public class MainSimulator {
 
 		}
 
-		guiRenderer.Dispose();
 		renderer.Dispose();
 		loader.Dispose();
 		hairLoader.Dispose();

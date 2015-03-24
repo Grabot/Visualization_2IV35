@@ -16,7 +16,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import shaders.StaticShader;
 import toolbox.Maths;
-import engineTester.Hair;
 import entities.Entity;
 
 public class Renderer {
@@ -105,24 +104,6 @@ public class Renderer {
 				}				
 			}
 			unbindTexturedModel();
-		}
-	}
-
-	public void render(List<Hair> hairs) {
-		for (Hair hair : hairs) {
-			RawModel rawModel = hair.getRawModel();
-			GL30.glBindVertexArray(rawModel.getVaoID());
-			GL20.glEnableVertexAttribArray(0);
-			Matrix4f transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), new Vector3f(
-					0, 0, 0), 1);
-			shader.loadTransformationMatrix(transformationMatrix);
-			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, hair.getParticles().get(0).getModel().getTexture().getID());
-			GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
-			GL20.glDisableVertexAttribArray(0);
-			// GL20.glDisableVertexAttribArray(1);
-			// GL20.glDisableVertexAttribArray(2);
-			GL30.glBindVertexArray(0);
 		}
 	}
 
