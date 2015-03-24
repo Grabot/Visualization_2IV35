@@ -114,6 +114,24 @@ public class MainSimulator {
 								for ( int k = i; k < j; k++) {
 									volume_collision.getNode(new Vector3f(k * volume_collision.getSpacing(), y* volume_collision.getSpacing(), z* volume_collision.getSpacing())).inside = true;
 								}
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		// Set grid cell to inside when it contains head
+		for ( int z2 = 0; z2 < volume_collision.getGridSize(); z2++ ) {
+			for ( int y = 0; y < volume_collision.getGridSize(); y++ ) {
+				for ( int i = 0; i < volume_collision.getGridSize(); i++) {
+					if (volume_collision.getNode(new Vector3f(z2 * volume_collision.getSpacing(), y* volume_collision.getSpacing(), i* volume_collision.getSpacing())).inside) {
+						for ( int j = volume_collision.getGridSize()-1; j > i; j--) {
+							if(volume_collision.getNode(new Vector3f(z2 * volume_collision.getSpacing(), y* volume_collision.getSpacing(),j* volume_collision.getSpacing())).inside) {
+								for ( int k = i; k < j; k++) {
+									volume_collision.getNode(new Vector3f(z2 * volume_collision.getSpacing(), y* volume_collision.getSpacing(), k* volume_collision.getSpacing())).inside = true;
+								}
+								break;
 							}
 						}
 					}
@@ -207,19 +225,16 @@ public class MainSimulator {
 					// Calculate all predicted positions of hair particles
 					Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
 					
-					boolean satisfied = false;
-					
-					while (!satisfied) {
-						satisfied = true;
+					for (int i = 0; i < 1; i++) {
 						// Solve constraints
 						Equations.FixedDistanceContraint(hair);
 						// collision 
 						for ( Particle particle : hair.getParticles() ) {
 							if (volume_collision.getNode(particle.getPredictedPosition()).inside && !particle.isRoot()) {
 								particle.setPredictedPosition( particle.getPosition() );
-								satisfied = true;
 							}
 						}
+						// Equations.FixedDistanceContraint(hair);
 						
 					}
 					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
