@@ -7,6 +7,7 @@ public class Node {
 	public Vector3f Velocity = new Vector3f(0,0,0);
 	private Vector3f position = new Vector3f(0,0,0);
 	private Vector3f gradient = new Vector3f(0,0,0);
+	public boolean inside = false;
 	
 	public Vector3f getGradient() {
 		return gradient;

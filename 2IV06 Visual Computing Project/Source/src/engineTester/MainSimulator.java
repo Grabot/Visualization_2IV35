@@ -81,6 +81,7 @@ public class MainSimulator {
 
 		RawModel cellModel = OBJLoader.loadObjModel("cube", loader);
 		TexturedModel cellTexturedModel = new TexturedModel(cellModel, new ModelTexture(loader.loadTexture("green")));
+		TexturedModel cellTexturedModel_red = new TexturedModel(cellModel, new ModelTexture(loader.loadTexture("red")));
 
 		// Head obj
 		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
@@ -95,6 +96,12 @@ public class MainSimulator {
 
 		float scale = 1;
 		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
+		
+		// Set grid cell to inside when it contains head
+		for ( Vector3f vec : head.getModel().getRawModel().getVertices()) {
+			vec = VectorMath.Sum(vec, head.getPosition());
+			volume.getNode(vec).inside = true;
+		}
 
 		ArrayList<Hair> hairs = new ArrayList<Hair>();
 
@@ -172,9 +179,22 @@ public class MainSimulator {
 
 					// Calculate all predicted positions of hair particles
 					Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
-
-					// Solve constraints
-					Equations.FixedDistanceContraint(hair);
+					
+					boolean satisfied = false;
+					
+					while (!satisfied) {
+						satisfied = true;
+						// Solve constraints
+						Equations.FixedDistanceContraint(hair);
+						// collision 
+						for ( Particle particle : hair.getParticles() ) {
+							if (volume.getNode(particle.getPredictedPosition()).inside && !particle.isRoot()) {
+								particle.setPredictedPosition( particle.getPosition() );
+								satisfied = true;
+							}
+						}
+						
+					}
 					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
 					// Add particle weight to grid
@@ -217,11 +237,17 @@ public class MainSimulator {
 			if (showGrid) {
 				List<Node> nodes = volume.getGridCells();
 				for (Node node : nodes) {
-					if (node.Weight > 0) {
-						Entity entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
-
-						entity.setWireFrame(true);
-						renderer.processEntity(entity);
+					if (node.Weight > -1) {
+						Entity entity;
+						if ( node.inside) {
+							entity = new Entity(cellTexturedModel_red, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
+							entity.setWireFrame(true);
+							renderer.processEntity(entity);
+							
+						} else {
+							//entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
+						}
+							
 					}
 				}
 			}
