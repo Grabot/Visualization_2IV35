@@ -39,6 +39,9 @@ public class MainSimulator {
 		boolean showParticles = true;
 		boolean showGrid = true;
 
+		float friction = 0.5f;
+		float repulsion = -0.05f;
+
 		DisplayManager.createDisplay();
 		Volume volume = new FixedVolume();
 		Loader loader = new Loader();
@@ -186,9 +189,6 @@ public class MainSimulator {
 				volume.calculateAverageVelocityAndGradients();
 
 				for (Hair hair : hairs) {
-
-					float friction = 0.5f;
-					float repulsion = -0.1f;
 					for (Particle particle : hair.getParticles()) {
 						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
 						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
