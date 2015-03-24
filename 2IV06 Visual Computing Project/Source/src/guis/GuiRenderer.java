@@ -1,6 +1,7 @@
 package guis;
 
 import java.awt.Font;
+import java.util.ArrayList;
 import java.util.List;
 
 import models.RawModel;
@@ -15,6 +16,8 @@ import org.newdawn.slick.TrueTypeFont;
 
 import renderEngine.Loader;
 import toolbox.Maths;
+import engineTester.Hair;
+import engineTester.MainSimulator;
 
 public class GuiRenderer {
 
@@ -38,8 +41,16 @@ public class GuiRenderer {
 	private boolean button3pressed = false;
 	private boolean button4pressed = false;
 	
-	public GuiRenderer(Loader loader) {
-
+	private ArrayList<Hair> hairs = new ArrayList<Hair>();
+	private int[] hairArray = new int[5];
+	private int[] particleArray = new int[6];
+	private int[] fpsArray = new int[3];
+	
+	private String fpsValue = "60,0";
+	
+	public GuiRenderer(Loader loader, ArrayList<Hair> hairs ) 
+	{
+		this.hairs = hairs;
 		font = new Font("Verdana", Font.BOLD, 20);
 	    ttf = new TrueTypeFont(font, true);
 	    
@@ -49,24 +60,46 @@ public class GuiRenderer {
 	}
 	
 	public void render(List<GuiTexture> guis) {
+
+		for( int i = 0; i < hairArray.length; i++ )
+		{
+			hairArray[i] = -1;
+		}
+		for( int i = 0; i < particleArray.length; i++ )
+		{
+			particleArray[i] = -1;
+		}
+		
+		for( int i = 0; i < String.valueOf(Math.abs((long)hairs.size())).length(); i++ )
+		{
+			hairArray[i] = Character.getNumericValue(String.valueOf(Math.abs((long)hairs.size())).charAt(i));
+		}
+		for( int i = 0; i < String.valueOf(Math.abs((long)hairs.size())).length(); i++ )
+		{
+			particleArray[i] = Character.getNumericValue(String.valueOf(Math.abs((long)(hairs.size() * hairs.get(0).getParticles().size()))).charAt(i));
+		}
+
 		shader.start();
 		getInput();
+		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		for( int i = 0; i < guis.size(); i++ )
 		{
-			if( i == 0 || i == 4 )
+			
+			if( i <= 3 )
 			{
-				//button 1
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 645 && realY <= 720) )
+				/*
+				//buttons
+				if(( realX >= 0 && realX <= 255 ) && (realY >= (645 - (75 * i )) && realY <= (720 - (75 * i ))) )
 				{					
 					button1pressed = true;
-					System.out.println("button1 pressed");
+					System.out.println("button " + i + " pressed");
 					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(0).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(0).getPosition(), guis.get(0).getScale());
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(i).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(i).getPosition(), guis.get(i).getScale());
 					shader.loadTransformation(matrix);
 					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 				}
@@ -74,88 +107,224 @@ public class GuiRenderer {
 				{
 					button1pressed = false;
 					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(4).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(4).getPosition(), guis.get(4).getScale());
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(i+4).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(i+4).getPosition(), guis.get(i+4).getScale());
 					shader.loadTransformation(matrix);
 					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 				}
 			}
-			else if( i == 1 || i == 5 )
-			{
-				//button 2
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 570 && realY <= 645) )
-				{					
-					button2pressed = true;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(1).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(1).getPosition(), guis.get(1).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-				else
-				{
-					button2pressed = false;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(5).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(5).getPosition(), guis.get(5).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
+			*/
 			}
-			else if( i == 2 || i == 6 )
+			else if( i >= 9 && i <= 12 )
 			{
-				//button 3
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 495 && realY <= 570) )
-				{					
-					button3pressed = true;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(2).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(2).getPosition(), guis.get(2).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-				else
-				{
-					button3pressed = false;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(6).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(6).getPosition(), guis.get(6).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-			}
-			else if( i == 3 || i == 7 )
-			{
-				//button 4
-				if(( realX >= 0 && realX <= 255 ) && (realY >= 420 && realY <= 495) )
-				{					
-					button4pressed = true;
-					System.out.println("button1 pressed");
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(3).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(3).getPosition(), guis.get(3).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-				else
-				{
-					button4pressed = false;
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(7).getTexture());
-					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(7).getPosition(), guis.get(7).getScale());
-					shader.loadTransformation(matrix);
-					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
-				}
-			}
-			else
-			{
+				//words
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(i).getTexture());
 				Matrix4f matrix = Maths.createTransformationMatrix(guis.get(i).getPosition(), guis.get(i).getScale());
 				shader.loadTransformation(matrix);
 				GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 			}
+			else if( i == 13 )
+			{
+				//first character of the hair number sequence
+				//System.out.println("i: " + i );
+				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+				if( !(hairArray[0] == -1) )
+				{
+					int k = 13;
+					k = (k + hairArray[0] );
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 23 )
+			{
+				//second character of the hair number sequence
+				if( !(hairArray[1] == -1) )
+				{
+					int k = 23;
+					k = (k + hairArray[1]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 33 )
+			{
+				//third character of the hair number sequence
+				if( !(hairArray[2] == -1) )
+				{
+					int k = 33;
+					k = (k + hairArray[2]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 43 )
+			{
+				//fourth character of the hair number sequence
+				if( !(hairArray[3] == -1) )
+				{
+					int k = 43;
+					k = (k + hairArray[3]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 53 )
+			{
+				//fifth character of the hair number sequence
+				if( !(hairArray[4] == -1) )
+				{
+					int k = 53;
+					k = (k + hairArray[4]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 63 )
+			{
+				//first character of the particle number sequence
+				if( !(particleArray[0] == -1) )
+				{
+					int k = 63;
+					k = (k + particleArray[0]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 73 )
+			{
+				//second character of the particle number sequence
+				if( !(particleArray[1] == -1) )
+				{
+					int k = 73;
+					k = (k + particleArray[1]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 83 )
+			{
+				//third character of the particle number sequence
+				if( !(particleArray[2] == -1) )
+				{
+					int k = 83;
+					k = (k + particleArray[2]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 93 )
+			{
+				//fourth character of the particle number sequence
+				if( !(particleArray[3] == -1) )
+				{
+					int k = 93;
+					k = (k + particleArray[3]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 103 )
+			{
+				//fifth character of the particle number sequence
+				if( !(particleArray[4] == -1) )
+				{
+					int k = 103;
+					k = (k + particleArray[4]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 113 )
+			{
+				//sixth character of the particle number sequence
+				if( !(particleArray[5] == -1) )
+				{
+					int k = 113;
+					k = (k + particleArray[5]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 123 )
+			{
+				//sixth character of the particle number sequence
+				if( !(fpsArray[0] == -1) )
+				{
+					int k = 123;
+					k = (k + fpsArray[0]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 133 )
+			{
+				//sixth character of the particle number sequence
+				if( !(fpsArray[1] == -1) )
+				{
+					int k = 133;
+					k = (k + fpsArray[1]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
+			else if( i == 143 )
+			{
+				//sixth character of the particle number sequence
+				if( !(fpsArray[2] == -1) )
+				{
+					int k = 143;
+					k = (k + fpsArray[2]);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(k).getTexture());
+					Matrix4f matrix = Maths.createTransformationMatrix(guis.get(k).getPosition(), guis.get(k).getScale());
+					shader.loadTransformation(matrix);
+					GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+				}
+			}
 		}
+		
+		
 		/*
 		for(GuiTexture gui : guis){
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -165,11 +334,25 @@ public class GuiRenderer {
 			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 		}
 		*/
+		
+		
 		GL20.glDisableVertexAttribArray(0);
 		GL30.glBindVertexArray(0);
 		
 	}
 	
+	public void setFPS( float fps )
+	{
+
+		for( int i = 0; i < fpsArray.length; i++ )
+		{
+			fpsArray[i] = -1;
+		}
+		fpsValue = String.format("%.1f", fps);
+		fpsArray[0] = Character.getNumericValue(fpsValue.charAt(0));
+		fpsArray[1] = Character.getNumericValue(fpsValue.charAt(1));
+		fpsArray[2] = Character.getNumericValue(fpsValue.charAt(3));
+	}
 	private void getInput()
 	{
 		leftButtonDown = Mouse.isButtonDown(0); // is left mouse button down.
