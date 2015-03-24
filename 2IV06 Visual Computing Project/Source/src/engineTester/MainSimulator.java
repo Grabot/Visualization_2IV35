@@ -74,18 +74,69 @@ public class MainSimulator {
 		GuiTexture gui = new GuiTexture(loader.loadTexture("windowTexture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 		guis.add(gui);
 		
-		GuiTexture hairText = new GuiTexture(loader.loadTexture("HairWhite"), new Vector2f(-0.9f, 0.9f), new Vector2f(0.04f, 0.02f));
+		GuiTexture hairText = new GuiTexture(loader.loadTexture("HairWhite2"), new Vector2f(-0.889f, 0.9f), new Vector2f(0.05f, 0.02f));
 		guis.add(hairText);
 		GuiTexture particlesText = new GuiTexture(loader.loadTexture("particlesWhite"), new Vector2f(-0.86f, 0.8f), new Vector2f(0.08f, 0.02f));
 		guis.add(particlesText);
 		GuiTexture fpsText = new GuiTexture(loader.loadTexture("fpsWhite"), new Vector2f(-0.91f, 0.7f), new Vector2f(0.03f, 0.02f));
 		guis.add(fpsText);
 
+		
 		for( int i = 0; i < 10; i++ )
 		{
-			GuiTexture Number = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.9f, 0f), new Vector2f(0.01f, 0.02f));
-			guis.add(Number);
+			for( int j = 0; j < 5; j++ )
+			{
+				GuiTexture HairNumbers = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.81f - (0.02f * j)), 0.9f), new Vector2f(0.01f, 0.02f));
+				guis.add(HairNumbers);
+			}
 		}
+		
+		for( int i = 0; i < 10; i++ )
+		{
+			for( int j = 0; j < 6; j++ )
+			{
+				GuiTexture ParticleNumbers = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.75f - (0.02f * j)), 0.8f), new Vector2f(0.01f, 0.02f));
+				guis.add(ParticleNumbers);
+			}
+		}
+
+		for( int i = 0; i < 10; i++ )
+		{
+				GuiTexture fpsNumber1 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.85f, 0.7f), new Vector2f(0.01f, 0.02f));
+				guis.add(fpsNumber1);
+				
+				GuiTexture fpsNumber2 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.85f - 0.02f), 0.7f), new Vector2f(0.01f, 0.02f));
+				guis.add(fpsNumber2);
+				
+				GuiTexture fpsNumber3 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.85f - 0.05f), 0.7f), new Vector2f(0.01f, 0.02f));
+				guis.add(fpsNumber3);
+		}
+		
+		/*
+		for( int i = 0; i < 10; i++ )
+		{
+			GuiTexture HairNumber2 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.78f, 0.9f), new Vector2f(0.01f, 0.02f));
+			guis.add(HairNumber2);
+		}
+		
+		for( int i = 0; i < 10; i++ )
+		{
+			GuiTexture HairNumber3 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.76f, 0.9f), new Vector2f(0.01f, 0.02f));
+			guis.add(HairNumber3);
+		}
+		
+		for( int i = 0; i < 10; i++ )
+		{
+			GuiTexture HairNumber4 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.74f, 0.9f), new Vector2f(0.01f, 0.02f));
+			guis.add(HairNumber4);
+		}
+		
+		for( int i = 0; i < 10; i++ )
+		{
+			GuiTexture HairNumber5 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.72f, 0.9f), new Vector2f(0.01f, 0.02f));
+			guis.add(HairNumber5);
+		}
+		*/
 		
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 

@@ -85,7 +85,7 @@ public class GuiRenderer {
 			}
 			*/
 			}
-			else if( i >= 9 && i <= 13 )
+			else if( i >= 9 && i <= 11 )
 			{
 				//words
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -94,18 +94,16 @@ public class GuiRenderer {
 				shader.loadTransformation(matrix);
 				GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 			}
-			/*
 			else if( i >= 12 )
 			{
 				//numbers
-				System.out.println("i: " + i );
+				//System.out.println("i: " + i );
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(i).getTexture());
 				Matrix4f matrix = Maths.createTransformationMatrix(guis.get(i).getPosition(), guis.get(i).getScale());
 				shader.loadTransformation(matrix);
 				GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 			}
-			*/
 			
 		}
 		/*
