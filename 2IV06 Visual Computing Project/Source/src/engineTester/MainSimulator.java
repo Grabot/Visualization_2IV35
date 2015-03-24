@@ -274,7 +274,7 @@ public class MainSimulator {
 			}
 
 			// draw all collision cells
-			if (showGrid) {
+			if (showGridCollision) {
 				List<Node> nodes = volume_collision.getGridCells();
 				for (Node node : nodes) {
 					Entity entity;
