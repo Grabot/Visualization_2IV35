@@ -31,6 +31,7 @@ import toolbox.VectorMath;
 
 public class MainSimulator {
 
+	private ArrayList<Hair> hairs = new ArrayList<Hair>();
 	private void run() {
 		// Load native library
 		loadNativeLibrary();
@@ -80,66 +81,48 @@ public class MainSimulator {
 		guis.add(particlesText);
 		GuiTexture fpsText = new GuiTexture(loader.loadTexture("fpsWhite"), new Vector2f(-0.91f, 0.7f), new Vector2f(0.03f, 0.02f));
 		guis.add(fpsText);
+		GuiTexture fpsdot = new GuiTexture(loader.loadTexture("dot"), new Vector2f(-0.815f, 0.68f), new Vector2f(0.004f, 0.005f));
+		guis.add(fpsdot);
 
 		
-		for( int i = 0; i < 10; i++ )
+		for( int i = 0; i < 5; i++ )
 		{
-			for( int j = 0; j < 5; j++ )
+			for( int j = 0; j < 10; j++ )
 			{
-				GuiTexture HairNumbers = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.81f - (0.02f * j)), 0.9f), new Vector2f(0.01f, 0.02f));
+				GuiTexture HairNumbers = new GuiTexture(loader.loadTexture("white" + j), new Vector2f(-(0.81f - (0.02f * i)), 0.9f), new Vector2f(0.01f, 0.02f));
 				guis.add(HairNumbers);
 			}
 		}
 		
-		for( int i = 0; i < 10; i++ )
+		for( int i = 0; i < 6; i++ )
 		{
-			for( int j = 0; j < 6; j++ )
+			for( int j = 0; j < 10; j++ )
 			{
-				GuiTexture ParticleNumbers = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.75f - (0.02f * j)), 0.8f), new Vector2f(0.01f, 0.02f));
+				GuiTexture ParticleNumbers = new GuiTexture(loader.loadTexture("white" + j), new Vector2f(-(0.75f - (0.02f * i)), 0.8f), new Vector2f(0.01f, 0.02f));
 				guis.add(ParticleNumbers);
 			}
 		}
 
 		for( int i = 0; i < 10; i++ )
 		{
-				GuiTexture fpsNumber1 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.85f, 0.7f), new Vector2f(0.01f, 0.02f));
-				guis.add(fpsNumber1);
-				
-				GuiTexture fpsNumber2 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.85f - 0.02f), 0.7f), new Vector2f(0.01f, 0.02f));
-				guis.add(fpsNumber2);
-				
-				GuiTexture fpsNumber3 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.85f - 0.05f), 0.7f), new Vector2f(0.01f, 0.02f));
-				guis.add(fpsNumber3);
+			GuiTexture fpsNumber1 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.85f, 0.7f), new Vector2f(0.01f, 0.02f));
+			guis.add(fpsNumber1);
 		}
-		
-		/*
 		for( int i = 0; i < 10; i++ )
 		{
-			GuiTexture HairNumber2 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.78f, 0.9f), new Vector2f(0.01f, 0.02f));
-			guis.add(HairNumber2);
+			GuiTexture fpsNumber2 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.85f - 0.02f), 0.7f), new Vector2f(0.01f, 0.02f));
+			guis.add(fpsNumber2);
 		}
-		
 		for( int i = 0; i < 10; i++ )
 		{
-			GuiTexture HairNumber3 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.76f, 0.9f), new Vector2f(0.01f, 0.02f));
-			guis.add(HairNumber3);
+			GuiTexture fpsNumber3 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.85f - 0.05f), 0.7f), new Vector2f(0.01f, 0.02f));
+			guis.add(fpsNumber3);
 		}
 		
-		for( int i = 0; i < 10; i++ )
-		{
-			GuiTexture HairNumber4 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.74f, 0.9f), new Vector2f(0.01f, 0.02f));
-			guis.add(HairNumber4);
-		}
 		
-		for( int i = 0; i < 10; i++ )
-		{
-			GuiTexture HairNumber5 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.72f, 0.9f), new Vector2f(0.01f, 0.02f));
-			guis.add(HairNumber5);
-		}
-		*/
 		
-		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
+		
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
 		TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("haircolorSlow")));
 
@@ -185,8 +168,6 @@ public class MainSimulator {
 		}
 		*/
 		
-		ArrayList<Hair> hairs = new ArrayList<Hair>();
-
 		for (Vector3f vec : wigModel.getVertices()) {
 			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 5, 5));
 		}
@@ -195,6 +176,8 @@ public class MainSimulator {
 			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
 			hair.setRawModel(hairModel);
 		}
+
+		GuiRenderer guiRenderer = new GuiRenderer(loader, hairs);
 
 		System.out.println("Hairs: " + hairs.size());
 		System.out.println("Particles: " + hairs.size() * hairs.get(0).getParticles().size());
@@ -364,6 +347,7 @@ public class MainSimulator {
 
 			renderer.render(light, camera);
 			guiRenderer.render(guis);
+			
 			DisplayManager.updateDisplay();
 
 			// end time
@@ -380,6 +364,7 @@ public class MainSimulator {
 			if (j == 10) {
 				// System.out.println("AVG FPS ----> " + fps_avg/10);
 				Display.setTitle("pfs: " + fps_avg / 10);
+				guiRenderer.setFPS(fps_avg/10);
 				j = 0;
 				fps_avg = 0;
 			}
