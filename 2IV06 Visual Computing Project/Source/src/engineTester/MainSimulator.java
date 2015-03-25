@@ -38,9 +38,13 @@ public class MainSimulator {
 		loadNativeLibrary();
 
 		boolean pause = false;
-		boolean showParticles = true;
+		boolean showParticlesCheck = true;
 		boolean showGrid = true;
 		boolean showGridCollision = true;
+		
+		boolean ObjectGrid = false;
+		boolean HairGrid = false;
+		boolean showParticles = false;
 
 		float friction = 0.5f;
 		float repulsion = -0.05f;
@@ -207,7 +211,7 @@ public class MainSimulator {
 		
 		
 		for (Vector3f vec : wigModel.getVertices()) {
-			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 4, 13));
+			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 5, 10));
 		}
 
 		for (Hair hair : hairs) {
@@ -240,33 +244,32 @@ public class MainSimulator {
 				}
 			}
 
-			if (Keyboard.isKeyDown(Keyboard.KEY_M) || guiRenderer.buttonParticlespressed) {
+			if ((Keyboard.isKeyDown(Keyboard.KEY_M) || guiRenderer.buttonParticlespressed) && showParticlesCheck == false) {
 				showParticles = !showParticles;
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				showParticlesCheck = true;
 			}
-
-			if (Keyboard.isKeyDown(Keyboard.KEY_N) || guiRenderer.buttonObjectHairpressed) {
+			if ((Keyboard.isKeyDown(Keyboard.KEY_N) || guiRenderer.buttonObjectHairpressed) && HairGrid == false) {
 				showGrid = !showGrid;
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				HairGrid = true;
 			}
-
-			if (Keyboard.isKeyDown(Keyboard.KEY_B) || guiRenderer.buttonObjectGridpressed) {
+			if ((Keyboard.isKeyDown(Keyboard.KEY_B) || guiRenderer.buttonObjectGridpressed) && ObjectGrid == false) {
 				showGridCollision = !showGridCollision;
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				ObjectGrid = true;
 			}
 
+			if (!Keyboard.isKeyDown(Keyboard.KEY_M) && !guiRenderer.buttonParticlespressed)
+			{
+				showParticlesCheck = false;
+			}
+			if( !Keyboard.isKeyDown(Keyboard.KEY_N) && !guiRenderer.buttonObjectHairpressed)
+			{
+				HairGrid = false;
+			}
+			if( !Keyboard.isKeyDown(Keyboard.KEY_B) && !guiRenderer.buttonObjectGridpressed)
+			{
+				ObjectGrid = false;
+			}
+			
 			if (!pause) {
 
 				// /////////////////////////

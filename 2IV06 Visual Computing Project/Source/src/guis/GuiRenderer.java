@@ -238,7 +238,7 @@ public class GuiRenderer {
 		}
 
 		//button Object Grid
-		if((( realX >= 218 && realX <= 294 ) && (realY >= 180 && realY <= 252) ))
+		if((( realX >= 218 && realX <= 294 ) && (realY >= 180 && realY <= 252) ) || Keyboard.isKeyDown(Keyboard.KEY_B))
 		{
 			buttonObjectGridpressed = true;
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -258,7 +258,7 @@ public class GuiRenderer {
 		}
 		
 		//button Hair Grid
-		if((( realX >= 218 && realX <= 294 ) && (realY >= 100 && realY <= 172) ))
+		if((( realX >= 218 && realX <= 294 ) && (realY >= 100 && realY <= 172) ) || Keyboard.isKeyDown(Keyboard.KEY_N))
 		{
 			buttonObjectHairpressed = true;
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -278,7 +278,7 @@ public class GuiRenderer {
 		}
 		
 		//button Particles
-		if((( realX >= 218 && realX <= 294 ) && (realY >= 20 && realY <= 92) ))
+		if((( realX >= 218 && realX <= 294 ) && (realY >= 20 && realY <= 92) ) || Keyboard.isKeyDown(Keyboard.KEY_M))
 		{
 			buttonParticlespressed = true;
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
