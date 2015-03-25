@@ -32,6 +32,7 @@ import toolbox.VectorMath;
 public class MainSimulator {
 
 	private ArrayList<Hair> hairs = new ArrayList<Hair>();
+	private Vector3f externalForce;
 	private void run() {
 		// Load native library
 		loadNativeLibrary();
@@ -119,10 +120,29 @@ public class MainSimulator {
 			guis.add(fpsNumber3);
 		}
 		
+		GuiTexture ForceText = new GuiTexture(loader.loadTexture("ApplyForcesText2"), new Vector2f(-0.8f, 0.4f), new Vector2f(0.16f, 0.05f));
+		guis.add(ForceText);
+		GuiTexture GridHairText = new GuiTexture(loader.loadTexture("GridHairText"), new Vector2f(-0.88f, -0.4f), new Vector2f(0.1f, 0.04f));
+		guis.add(GridHairText);
+		GuiTexture GridObjectText = new GuiTexture(loader.loadTexture("GridObjectText"), new Vector2f(-0.85f, -0.62f), new Vector2f(0.13f, 0.05f));
+		guis.add(GridObjectText);
+		GuiTexture ParticlesText = new GuiTexture(loader.loadTexture("ParticlesText"), new Vector2f(-0.88f, -0.82f), new Vector2f(0.1f, 0.04f));
+		guis.add(ParticlesText);
 		
+		GuiTexture ButtonOffGrid = new GuiTexture(loader.loadTexture("ObjectGridNotPressed"), new Vector2f(-0.6f, -0.4f), new Vector2f(0.06f, 0.1f));
+		guis.add(ButtonOffGrid);
+		GuiTexture ButtonOffHair = new GuiTexture(loader.loadTexture("HairGridNotPressed"), new Vector2f(-0.6f, -0.61f), new Vector2f(0.06f, 0.1f));
+		guis.add(ButtonOffHair);
+		GuiTexture ButtonOffParticles = new GuiTexture(loader.loadTexture("ParticlesPressed"), new Vector2f(-0.6f, -0.82f), new Vector2f(0.06f, 0.1f));
+		guis.add(ButtonOffParticles);
 		
+		GuiTexture ButtonOnGrid = new GuiTexture(loader.loadTexture("ObjectGridPressed"), new Vector2f(-0.6f, -0.4f), new Vector2f(0.06f, 0.1f));
+		guis.add(ButtonOnGrid);
+		GuiTexture ButtonOnHair = new GuiTexture(loader.loadTexture("HairGridPressed"), new Vector2f(-0.6f, -0.61f), new Vector2f(0.06f, 0.1f));
+		guis.add(ButtonOnHair);
+		GuiTexture ButtonOnParticles = new GuiTexture(loader.loadTexture("ParticlesNotPressed"), new Vector2f(-0.6f, -0.82f), new Vector2f(0.06f, 0.1f));
+		guis.add(ButtonOnParticles);
 
-		
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
 		TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("haircolorSlow")));
 
@@ -187,7 +207,7 @@ public class MainSimulator {
 		
 		
 		for (Vector3f vec : wigModel.getVertices()) {
-			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 7, 10));
+			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 4, 13));
 		}
 
 		for (Hair hair : hairs) {
@@ -220,7 +240,7 @@ public class MainSimulator {
 				}
 			}
 
-			if (Keyboard.isKeyDown(Keyboard.KEY_M)) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_M) || guiRenderer.buttonParticlespressed) {
 				showParticles = !showParticles;
 				try {
 					Thread.sleep(200);
@@ -229,7 +249,7 @@ public class MainSimulator {
 				}
 			}
 
-			if (Keyboard.isKeyDown(Keyboard.KEY_N)) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_N) || guiRenderer.buttonObjectHairpressed) {
 				showGrid = !showGrid;
 				try {
 					Thread.sleep(200);
@@ -238,7 +258,7 @@ public class MainSimulator {
 				}
 			}
 
-			if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_B) || guiRenderer.buttonObjectGridpressed) {
 				showGridCollision = !showGridCollision;
 				try {
 					Thread.sleep(200);
@@ -253,13 +273,14 @@ public class MainSimulator {
 				// Start simulation loop //
 				// /////////////////////////
 
-				Vector3f externalForce;
-				if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+				if ((Keyboard.isKeyDown(Keyboard.KEY_LEFT)) || guiRenderer.button2pressed) {
 					externalForce = new Vector3f(-8, (float) -9.81f, 0);
-				} else if (Keyboard.isKeyDown(Keyboard.KEY_H)) {
+				} else if ((Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) || guiRenderer.button3pressed) {
 					externalForce = new Vector3f(8, (float) -9.81f, 0);
-				} else if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
+				} else if ((Keyboard.isKeyDown(Keyboard.KEY_DOWN)) || guiRenderer.button4pressed) {
 					externalForce = new Vector3f(0, (float) -9.81f, 8);
+				} else if ((Keyboard.isKeyDown(Keyboard.KEY_UP)) || guiRenderer.button1pressed) {
+					externalForce = new Vector3f(0, (float) -9.81f, -8);
 				} else {
 					externalForce = new Vector3f(0, (float) -9.81f, 0);
 				}
@@ -366,7 +387,6 @@ public class MainSimulator {
 			fps_avg += (fps);
 			j++;
 			if (j == 10) {
-				Display.setTitle("pfs: " + fps_avg / 10);
 				guiRenderer.setFPS(fps_avg/10);
 				j = 0;
 				fps_avg = 0;
@@ -380,7 +400,7 @@ public class MainSimulator {
 		hairLoader.Dispose();
 		DisplayManager.closeDisplay();
 	}
-
+	
 	public static void loadNativeLibrary() {
 		String fileNatives = OperatingSystem.getOSforLWJGLNatives();
 		System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + File.separator + "lib" + File.separator + "lwjgl-2.9.3" + File.separator + "native" + File.separator + fileNatives);

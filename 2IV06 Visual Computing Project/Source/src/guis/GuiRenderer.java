@@ -7,6 +7,7 @@ import java.util.List;
 
 import models.RawModel;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -36,10 +37,13 @@ public class GuiRenderer {
 	private boolean leftButtonDown;
 	private boolean rightButtonDown;
 	
-	private boolean button1pressed = false;
-	private boolean button2pressed = false;
-	private boolean button3pressed = false;
-	private boolean button4pressed = false;
+	public boolean button1pressed = false;
+	public boolean button2pressed = false;
+	public boolean button3pressed = false;
+	public boolean button4pressed = false;
+	public boolean buttonObjectGridpressed = false;
+	public boolean buttonObjectHairpressed = false;
+	public boolean buttonParticlespressed = false;
 	
 	private ArrayList<Hair> hairs = new ArrayList<Hair>();
 	private int[] hairArray = new int[6];
@@ -92,15 +96,11 @@ public class GuiRenderer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
-		for( int i = 0; i < 4; i++ )
-		{
-		}
 		
 		//button 1
-		if(( realX >= 90 && realX <= 166 ) && (realY >= 396 && realY <= 468) )
+		if((( realX >= 90 && realX <= 166 ) && (realY >= 396 && realY <= 468) ) || Keyboard.isKeyDown(Keyboard.KEY_UP))
 		{					
 			button1pressed = true;
-			System.out.println("button " + 1 + " pressed");
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(0).getTexture());
 			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(0).getPosition(), guis.get(0).getScale());
@@ -118,10 +118,9 @@ public class GuiRenderer {
 		}
 		
 		//button 2
-		if(( realX >= 26 && realX <= 102 ) && (realY >= 324 && realY <= 396) )
+		if((( realX >= 26 && realX <= 102 ) && (realY >= 324 && realY <= 396) )|| Keyboard.isKeyDown(Keyboard.KEY_LEFT))
 		{					
 			button2pressed = true;
-			System.out.println("button " + 2 + " pressed");
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(1).getTexture());
 			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(1).getPosition(), guis.get(1).getScale());
@@ -139,10 +138,9 @@ public class GuiRenderer {
 		}
 		
 		//button 3
-		if(( realX >= 154 && realX <= 230 ) && (realY >= 324 && realY <= 396) )
+		if((( realX >= 154 && realX <= 230 ) && (realY >= 324 && realY <= 396) )|| Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
 		{					
 			button3pressed = true;
-			System.out.println("button " + 3 + " pressed");
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(2).getTexture());
 			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(2).getPosition(), guis.get(2).getScale());
@@ -160,10 +158,9 @@ public class GuiRenderer {
 		}
 		
 		//button 4
-		if(( realX >= 90 && realX <= 166 ) && (realY >= 255 && realY <= 324) )
+		if((( realX >= 90 && realX <= 166 ) && (realY >= 255 && realY <= 324)) || Keyboard.isKeyDown(Keyboard.KEY_DOWN))
 		{					
 			button4pressed = true;
-			System.out.println("button " + 4 + " pressed");
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(3).getTexture());
 			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(3).getPosition(), guis.get(3).getScale());
@@ -180,7 +177,7 @@ public class GuiRenderer {
 			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 		}
 		
-		for( int i = 9; i < 13; i++ )
+		for( int i = 8; i < 13; i++ )
 		{
 			//words
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -230,6 +227,77 @@ public class GuiRenderer {
 			}
 		}
 		
+		//apply forces text
+		for( int i = 153; i < 157; i++ )
+		{
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(i).getTexture());
+			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(i).getPosition(), guis.get(i).getScale());
+			shader.loadTransformation(matrix);
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		}
+
+		//button Object Grid
+		if((( realX >= 218 && realX <= 294 ) && (realY >= 180 && realY <= 252) ))
+		{
+			buttonObjectGridpressed = true;
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(157).getTexture());
+			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(157).getPosition(), guis.get(157).getScale());
+			shader.loadTransformation(matrix);
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		}
+		else
+		{
+			buttonObjectGridpressed = false;
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(160).getTexture());
+			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(160).getPosition(), guis.get(160).getScale());
+			shader.loadTransformation(matrix);
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		}
+		
+		//button Hair Grid
+		if((( realX >= 218 && realX <= 294 ) && (realY >= 100 && realY <= 172) ))
+		{
+			buttonObjectHairpressed = true;
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(158).getTexture());
+			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(158).getPosition(), guis.get(158).getScale());
+			shader.loadTransformation(matrix);
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		}
+		else
+		{
+			buttonObjectHairpressed = false;
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(161).getTexture());
+			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(161).getPosition(), guis.get(161).getScale());
+			shader.loadTransformation(matrix);
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		}
+		
+		//button Particles
+		if((( realX >= 218 && realX <= 294 ) && (realY >= 20 && realY <= 92) ))
+		{
+			buttonParticlespressed = true;
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(159).getTexture());
+			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(159).getPosition(), guis.get(159).getScale());
+			shader.loadTransformation(matrix);
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		}
+		else
+		{
+			buttonParticlespressed = false;
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, guis.get(162).getTexture());
+			Matrix4f matrix = Maths.createTransformationMatrix(guis.get(162).getPosition(), guis.get(162).getScale());
+			shader.loadTransformation(matrix);
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		}
+		//System.out.println("size: " + guis.size() );
+		
 		/*
 		for(GuiTexture gui : guis){
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -271,8 +339,6 @@ public class GuiRenderer {
 		{
 			realX = x;
 			realY = y;
-			System.out.println("x: " + realX );
-			System.out.println("y: " + realY );
 		}
 		else
 		{
