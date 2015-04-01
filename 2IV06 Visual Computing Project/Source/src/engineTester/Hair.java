@@ -71,8 +71,8 @@ public class Hair {
 		float[] normals = new float[getParticles().size() * 3];
 		for (int i = 0; i < getParticles().size(); i++) {
 			Particle particle = getParticles().get(i);
-			normals[i * 3] = -1;
-			normals[i * 3 + 1] = 0;
+			normals[i * 3] = 1;
+			normals[i * 3 + 1] = -1;
 			normals[i * 3 + 2] = 1;
 		}
 		return normals;

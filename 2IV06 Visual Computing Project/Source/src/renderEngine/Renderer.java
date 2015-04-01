@@ -15,6 +15,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import shaders.StaticShader;
+import textures.ModelTexture;
 import toolbox.Maths;
 import engineTester.Hair;
 import entities.Entity;
@@ -83,6 +84,7 @@ public class Renderer {
 		GL20.glEnableVertexAttribArray(2);
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotation(), entity.getScale());
 		shader.loadTransformationMatrix(transformationMatrix);
+		
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getID());
 		GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
@@ -114,11 +116,12 @@ public class Renderer {
 			GL30.glBindVertexArray(rawModel.getVaoID());
 			GL20.glEnableVertexAttribArray(0);
 			GL20.glEnableVertexAttribArray(2);
-			GL11.glLineWidth(1.25f);
+			GL11.glLineWidth(1.5f);
 			
 			Matrix4f transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), new Vector3f(
 					0, 0, 0), 1);
 			shader.loadTransformationMatrix(transformationMatrix);
+			shader.loadShineVariables(1.0f, 0.5f);
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, hair.getParticles().get(0).getModel().getTexture().getID());
 			GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
@@ -137,6 +140,9 @@ public class Renderer {
 		GL20.glEnableVertexAttribArray(2);
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getID());
+		
+		ModelTexture texture = model.getTexture();
+		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
 	}
 
 	private void unbindTexturedModel() {
