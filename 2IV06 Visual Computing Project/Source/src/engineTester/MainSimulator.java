@@ -298,23 +298,24 @@ public class MainSimulator {
 						if (!Keyboard.isKeyDown(Keyboard.KEY_C)) {
 							for (Particle particle : hair.getParticles()) {
 								if (volume_collision.getNode(particle.getPredictedPosition()).inside && !particle.isRoot()) {
-									particle.setPredictedPosition(particle.getPosition());
+									
+									// set predicted position to half
+									Vector3f pos = particle.getPosition();
+									Vector3f pred = particle.getPredictedPosition();
+									float dx = pred.x - pos.x;
+									float dy = pred.y - pos.y;
+									float dz = pred.z - pos.z;
+
+									particle.setPredictedPosition( particle.getPosition() );
+									
+									for (int j1 = 2; j1 < 5; j1++) {
+										Vector3f half = new Vector3f(pos.x + 1/j1 * dx, pos.y + 1/j1 * dy, pos.z + 1/j1 * dz);
+										if (!volume_collision.getNode(half).inside) {
+											particle.setPredictedPosition(half);
+											break;
+										}
+									}
 								}
-//						// collision 
-//						for ( Particle particle : hair.getParticles() ) {
-//							if (volume_collision.getNode(particle.getPredictedPosition()).inside && !particle.isRoot()) {
-//								particle.setPredictedPosition( particle.getPosition() );
-								// set predicted position to half
-//								Vector3f pos = particle.getPosition();
-//								Vector3f pred = particle.getPredictedPosition();
-//								float dx = pred.x - pos.x;
-//								float dy = pred.y - pos.y;
-//								float dz = pred.z - pos.z;
-//								if () {
-//
-//								} else {
-//									particle.setPredictedPosition( particle.getPosition() );
-//								}
 							}
 						}
 
