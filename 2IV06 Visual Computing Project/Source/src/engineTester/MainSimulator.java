@@ -151,7 +151,7 @@ public class MainSimulator {
 		// Head obj
 		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
 
-		Light light = new Light(new Vector3f(90, 70, 150), new Vector3f(0.5f, 0.5f, 0.5f));
+		Light light = new Light(new Vector3f(90, 70, 150), new Vector3f(1f, 1f, 1f));
 
 		Camera camera = new Camera();
 		camera.setPosition(new Vector3f(80, 100, 220));

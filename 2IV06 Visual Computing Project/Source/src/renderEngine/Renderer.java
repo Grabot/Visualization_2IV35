@@ -113,6 +113,10 @@ public class Renderer {
 			RawModel rawModel = hair.getRawModel();
 			GL30.glBindVertexArray(rawModel.getVaoID());
 			GL20.glEnableVertexAttribArray(0);
+			GL11.glLineWidth(2);
+			GL11.glEnable( GL11.GL_LINE_SMOOTH );
+			GL11.glEnable( GL11.GL_POLYGON_SMOOTH );
+			
 			Matrix4f transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), new Vector3f(
 					0, 0, 0), 1);
 			shader.loadTransformationMatrix(transformationMatrix);
