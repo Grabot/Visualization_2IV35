@@ -33,6 +33,7 @@ public class MainSimulator {
 
 	private ArrayList<Hair> hairs = new ArrayList<Hair>();
 	private Vector3f externalForce;
+
 	private void run() {
 		// Load native library
 		loadNativeLibrary();
@@ -41,21 +42,22 @@ public class MainSimulator {
 		boolean showParticlesCheck = true;
 		boolean showGrid = true;
 		boolean showGridCollision = true;
-		
+
 		boolean ObjectGrid = false;
 		boolean HairGrid = false;
 		boolean showParticles = false;
 
 		float friction = 0.5f;
 		float repulsion = -0.05f;
-
+		Vector3f externalForce = new Vector3f();
+		
 		DisplayManager.createDisplay();
 		Volume volume = new FixedVolume();
-		Volume volume_collision = new FixedVolume(1);
+		Volume volume_collision = new FixedVolume(2);
 		Loader loader = new Loader();
 		HairLoader hairLoader = new HairLoader();
 		MasterRenderer renderer = new MasterRenderer();
-
+		
 		// Guis
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
@@ -67,7 +69,7 @@ public class MainSimulator {
 		guis.add(Button3Off);
 		GuiTexture Button4Off = new GuiTexture(loader.loadTexture("ArrowDownNotPressed"), new Vector2f(-0.8f, -0.2f), new Vector2f(0.06f, 0.1f));
 		guis.add(Button4Off);
-		
+
 		GuiTexture Button1On = new GuiTexture(loader.loadTexture("ArrowUpPressed"), new Vector2f(-0.8f, 0.2f), new Vector2f(0.06f, 0.1f));
 		guis.add(Button1On);
 		GuiTexture Button2On = new GuiTexture(loader.loadTexture("ArrowLeftPressed"), new Vector2f(-0.9f, 0f), new Vector2f(0.06f, 0.1f));
@@ -79,7 +81,7 @@ public class MainSimulator {
 
 		GuiTexture gui = new GuiTexture(loader.loadTexture("windowTexture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 		guis.add(gui);
-		
+
 		GuiTexture hairText = new GuiTexture(loader.loadTexture("HairWhite2"), new Vector2f(-0.889f, 0.9f), new Vector2f(0.05f, 0.02f));
 		guis.add(hairText);
 		GuiTexture particlesText = new GuiTexture(loader.loadTexture("particlesWhite"), new Vector2f(-0.86f, 0.8f), new Vector2f(0.08f, 0.02f));
@@ -89,41 +91,33 @@ public class MainSimulator {
 		GuiTexture fpsdot = new GuiTexture(loader.loadTexture("dot"), new Vector2f(-0.815f, 0.68f), new Vector2f(0.004f, 0.005f));
 		guis.add(fpsdot);
 
-		
-		for( int i = 0; i < 5; i++ )
-		{
-			for( int j = 0; j < 10; j++ )
-			{
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 10; j++) {
 				GuiTexture HairNumbers = new GuiTexture(loader.loadTexture("white" + j), new Vector2f(-(0.81f - (0.02f * i)), 0.9f), new Vector2f(0.01f, 0.02f));
 				guis.add(HairNumbers);
 			}
 		}
-		
-		for( int i = 0; i < 6; i++ )
-		{
-			for( int j = 0; j < 10; j++ )
-			{
+
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 10; j++) {
 				GuiTexture ParticleNumbers = new GuiTexture(loader.loadTexture("white" + j), new Vector2f(-(0.75f - (0.02f * i)), 0.8f), new Vector2f(0.01f, 0.02f));
 				guis.add(ParticleNumbers);
 			}
 		}
 
-		for( int i = 0; i < 10; i++ )
-		{
+		for (int i = 0; i < 10; i++) {
 			GuiTexture fpsNumber1 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-0.85f, 0.7f), new Vector2f(0.01f, 0.02f));
 			guis.add(fpsNumber1);
 		}
-		for( int i = 0; i < 10; i++ )
-		{
+		for (int i = 0; i < 10; i++) {
 			GuiTexture fpsNumber2 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.85f - 0.02f), 0.7f), new Vector2f(0.01f, 0.02f));
 			guis.add(fpsNumber2);
 		}
-		for( int i = 0; i < 10; i++ )
-		{
+		for (int i = 0; i < 10; i++) {
 			GuiTexture fpsNumber3 = new GuiTexture(loader.loadTexture("white" + i), new Vector2f(-(0.85f - 0.05f), 0.7f), new Vector2f(0.01f, 0.02f));
 			guis.add(fpsNumber3);
 		}
-		
+
 		GuiTexture ForceText = new GuiTexture(loader.loadTexture("ApplyForcesText2"), new Vector2f(-0.8f, 0.4f), new Vector2f(0.16f, 0.05f));
 		guis.add(ForceText);
 		GuiTexture GridHairText = new GuiTexture(loader.loadTexture("GridHairText"), new Vector2f(-0.88f, -0.4f), new Vector2f(0.1f, 0.04f));
@@ -132,14 +126,14 @@ public class MainSimulator {
 		guis.add(GridObjectText);
 		GuiTexture ParticlesText = new GuiTexture(loader.loadTexture("ParticlesText"), new Vector2f(-0.88f, -0.82f), new Vector2f(0.1f, 0.04f));
 		guis.add(ParticlesText);
-		
+
 		GuiTexture ButtonOffGrid = new GuiTexture(loader.loadTexture("ObjectGridNotPressed"), new Vector2f(-0.6f, -0.4f), new Vector2f(0.06f, 0.1f));
 		guis.add(ButtonOffGrid);
 		GuiTexture ButtonOffHair = new GuiTexture(loader.loadTexture("HairGridNotPressed"), new Vector2f(-0.6f, -0.61f), new Vector2f(0.06f, 0.1f));
 		guis.add(ButtonOffHair);
 		GuiTexture ButtonOffParticles = new GuiTexture(loader.loadTexture("ParticlesPressed"), new Vector2f(-0.6f, -0.82f), new Vector2f(0.06f, 0.1f));
 		guis.add(ButtonOffParticles);
-		
+
 		GuiTexture ButtonOnGrid = new GuiTexture(loader.loadTexture("ObjectGridPressed"), new Vector2f(-0.6f, -0.4f), new Vector2f(0.06f, 0.1f));
 		guis.add(ButtonOnGrid);
 		GuiTexture ButtonOnHair = new GuiTexture(loader.loadTexture("HairGridPressed"), new Vector2f(-0.6f, -0.61f), new Vector2f(0.06f, 0.1f));
@@ -157,10 +151,7 @@ public class MainSimulator {
 		// Head obj
 		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
 
-		// Wig obj
-		RawModel wigModel = OBJLoader.loadObjModel("wigd2", loader);
-
-		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
+		Light light = new Light(new Vector3f(90, 70, 150), new Vector3f(0.5f, 0.5f, 0.5f));
 
 		Camera camera = new Camera();
 		camera.setPosition(new Vector3f(80, 100, 220));
@@ -168,21 +159,25 @@ public class MainSimulator {
 		float scale = 1;
 		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
 
+		// Wig obj
+		TexturedModel wigModel = new TexturedModel(OBJLoader.loadObjModel("wigd2", loader), new ModelTexture(loader.loadTexture("haircolor")));
+		Entity wig = new Entity(wigModel, head.getPosition(), VectorMath.Sum(head.getRotation(), new Vector3f(0, 2, 0)), scale);
+
 		// Set grid cell to inside when it contains head
 
-		for ( Vector3f vec : head.getModel().getRawModel().getVertices()) {
+		for (Vector3f vec : head.getModel().getRawModel().getVertices()) {
 			vec = VectorMath.Sum(vec, head.getPosition());
 			volume_collision.getNode(vec).inside = true;
 		}
 		// Set grid cell to inside when it contains head
-		for ( int z = 0; z < volume_collision.getGridSize(); z++ ) {
-			for ( int y = 0; y < volume_collision.getGridSize(); y++ ) {
-				for ( int i = 0; i < volume_collision.getGridSize(); i++) {
-					if (volume_collision.getNode(new Vector3f(i * volume_collision.getSpacing(), y* volume_collision.getSpacing(), z* volume_collision.getSpacing())).inside) {
-						for ( int j = volume_collision.getGridSize()-1; j > i; j--) {
-							if(volume_collision.getNode(new Vector3f(j * volume_collision.getSpacing(), y* volume_collision.getSpacing(),z* volume_collision.getSpacing())).inside) {
-								for ( int k = i; k < j; k++) {
-									volume_collision.getNode(new Vector3f(k * volume_collision.getSpacing(), y* volume_collision.getSpacing(), z* volume_collision.getSpacing())).inside = true;
+		for (int z = 0; z < volume_collision.getGridSize(); z++) {
+			for (int y = 0; y < volume_collision.getGridSize(); y++) {
+				for (int i = 0; i < volume_collision.getGridSize(); i++) {
+					if (volume_collision.getNode(new Vector3f(i * volume_collision.getSpacing(), y * volume_collision.getSpacing(), z * volume_collision.getSpacing())).inside) {
+						for (int j = volume_collision.getGridSize() - 1; j > i; j--) {
+							if (volume_collision.getNode(new Vector3f(j * volume_collision.getSpacing(), y * volume_collision.getSpacing(), z * volume_collision.getSpacing())).inside) {
+								for (int k = i; k < j; k++) {
+									volume_collision.getNode(new Vector3f(k * volume_collision.getSpacing(), y * volume_collision.getSpacing(), z * volume_collision.getSpacing())).inside = true;
 								}
 								break;
 							}
@@ -192,14 +187,14 @@ public class MainSimulator {
 			}
 		}
 		// Set grid cell to inside when it contains head
-		for ( int z2 = 0; z2 < volume_collision.getGridSize(); z2++ ) {
-			for ( int y = 0; y < volume_collision.getGridSize(); y++ ) {
-				for ( int i = 0; i < volume_collision.getGridSize(); i++) {
-					if (volume_collision.getNode(new Vector3f(z2 * volume_collision.getSpacing(), y* volume_collision.getSpacing(), i* volume_collision.getSpacing())).inside) {
-						for ( int j = volume_collision.getGridSize()-1; j > i; j--) {
-							if(volume_collision.getNode(new Vector3f(z2 * volume_collision.getSpacing(), y* volume_collision.getSpacing(),j* volume_collision.getSpacing())).inside) {
-								for ( int k = i; k < j; k++) {
-									volume_collision.getNode(new Vector3f(z2 * volume_collision.getSpacing(), y* volume_collision.getSpacing(), k* volume_collision.getSpacing())).inside = true;
+		for (int z2 = 0; z2 < volume_collision.getGridSize(); z2++) {
+			for (int y = 0; y < volume_collision.getGridSize(); y++) {
+				for (int i = 0; i < volume_collision.getGridSize(); i++) {
+					if (volume_collision.getNode(new Vector3f(z2 * volume_collision.getSpacing(), y * volume_collision.getSpacing(), i * volume_collision.getSpacing())).inside) {
+						for (int j = volume_collision.getGridSize() - 1; j > i; j--) {
+							if (volume_collision.getNode(new Vector3f(z2 * volume_collision.getSpacing(), y * volume_collision.getSpacing(), j * volume_collision.getSpacing())).inside) {
+								for (int k = i; k < j; k++) {
+									volume_collision.getNode(new Vector3f(z2 * volume_collision.getSpacing(), y * volume_collision.getSpacing(), k * volume_collision.getSpacing())).inside = true;
 								}
 								break;
 							}
@@ -208,10 +203,9 @@ public class MainSimulator {
 				}
 			}
 		}
-		
-		
-		for (Vector3f vec : wigModel.getVertices()) {
-			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, head.getPosition()), 5, 10));
+
+		for (Vector3f vec : wig.getModel().getRawModel().getVertices()) {
+			hairs.add(new Hair(texturedModel, VectorMath.Sum(vec, wig.getPosition()), 20, 2));
 		}
 
 		for (Hair hair : hairs) {
@@ -227,7 +221,7 @@ public class MainSimulator {
 		float deltaT = 1.0f / 20.0f;
 		int j = 0;
 		float fps_avg = 0;
-		
+
 		while (!Display.isCloseRequested()) {
 
 			// start time
@@ -257,36 +251,34 @@ public class MainSimulator {
 				ObjectGrid = true;
 			}
 
-			if (!Keyboard.isKeyDown(Keyboard.KEY_M) && !guiRenderer.buttonParticlespressed)
-			{
+			if (!Keyboard.isKeyDown(Keyboard.KEY_M) && !guiRenderer.buttonParticlespressed) {
 				showParticlesCheck = false;
 			}
-			if( !Keyboard.isKeyDown(Keyboard.KEY_N) && !guiRenderer.buttonObjectHairpressed)
-			{
+			if (!Keyboard.isKeyDown(Keyboard.KEY_N) && !guiRenderer.buttonObjectHairpressed) {
 				HairGrid = false;
 			}
-			if( !Keyboard.isKeyDown(Keyboard.KEY_B) && !guiRenderer.buttonObjectGridpressed)
-			{
+			if (!Keyboard.isKeyDown(Keyboard.KEY_B) && !guiRenderer.buttonObjectGridpressed) {
 				ObjectGrid = false;
 			}
-			
+
 			if (!pause) {
 
+				externalForce.x = 0; externalForce.y = -9.81f; externalForce.z = 0;
+				if ((Keyboard.isKeyDown(Keyboard.KEY_LEFT)) || guiRenderer.button2pressed) {
+					externalForce.x += -8;
+				} else if ((Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) || guiRenderer.button3pressed) {
+					externalForce.x += 8;
+				} else if ((Keyboard.isKeyDown(Keyboard.KEY_DOWN)) || guiRenderer.button4pressed) {
+					externalForce.z += 8;
+				} else if ((Keyboard.isKeyDown(Keyboard.KEY_UP)) || guiRenderer.button1pressed) {
+					externalForce.z += -8;
+				} else if ((Keyboard.isKeyDown(Keyboard.KEY_R))) {
+					externalForce.y += 30;
+				}
+				
 				// /////////////////////////
 				// Start simulation loop //
 				// /////////////////////////
-
-				if ((Keyboard.isKeyDown(Keyboard.KEY_LEFT)) || guiRenderer.button2pressed) {
-					externalForce = new Vector3f(-8, (float) -9.81f, 0);
-				} else if ((Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) || guiRenderer.button3pressed) {
-					externalForce = new Vector3f(8, (float) -9.81f, 0);
-				} else if ((Keyboard.isKeyDown(Keyboard.KEY_DOWN)) || guiRenderer.button4pressed) {
-					externalForce = new Vector3f(0, (float) -9.81f, 8);
-				} else if ((Keyboard.isKeyDown(Keyboard.KEY_UP)) || guiRenderer.button1pressed) {
-					externalForce = new Vector3f(0, (float) -9.81f, -8);
-				} else {
-					externalForce = new Vector3f(0, (float) -9.81f, 0);
-				}
 
 				// Calculate gravity on particle
 				volume.Clear();
@@ -295,18 +287,20 @@ public class MainSimulator {
 
 					// Calculate all predicted positions of hair particles
 					Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
-					
+
 					for (int i = 0; i < 1; i++) {
 						// Solve constraints
 						Equations.FixedDistanceContraint(hair);
-						// collision 
-						for ( Particle particle : hair.getParticles() ) {
-							if (volume_collision.getNode(particle.getPredictedPosition()).inside && !particle.isRoot()) {
-								particle.setPredictedPosition( particle.getPosition() );
+
+						// collision
+						if (!Keyboard.isKeyDown(Keyboard.KEY_C)) {
+							for (Particle particle : hair.getParticles()) {
+								if (volume_collision.getNode(particle.getPredictedPosition()).inside && !particle.isRoot()) {
+									particle.setPredictedPosition(particle.getPosition());
+								}
 							}
 						}
 
-						
 					}
 					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
@@ -314,7 +308,7 @@ public class MainSimulator {
 					for (Particle particle : hair.getParticles()) {
 						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
 					}
-					
+
 					Equations.UpdateParticlePositions(hair);
 				}
 
@@ -350,34 +344,35 @@ public class MainSimulator {
 			if (!showGrid) {
 				List<Node> nodes = volume.getGridCells();
 				for (Node node : nodes) {
-					if (node.Weight > 0) {	
+					if (node.Weight > 0) {
 						Entity entity;
 						entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
 						entity.setWireFrame(true);
-						renderer.processEntity(entity);	
+						renderer.processEntity(entity);
 					}
 				}
 			}
-			
+
 			// draw all collision cells
 			if (!showGridCollision) {
 				List<Node> nodes = volume_collision.getGridCells();
 				for (Node node : nodes) {
 					Entity entity;
-					if ( node.inside) {
+					if (node.inside) {
 						entity = new Entity(cellTexturedModel_red, VectorMath.Sum(node.getPosition(), (0.5f * volume_collision.getSpacing())), new Vector3f(0, 0, 0), volume_collision.getSpacing());
 						entity.setWireFrame(true);
 						renderer.processEntity(entity);
-					} 	
+					}
 				}
 			}
 
 			// Draw head model
 			renderer.processEntity(head);
+			renderer.processEntity(wig);
 
 			renderer.render(light, camera);
 			guiRenderer.render(guis);
-			
+
 			DisplayManager.updateDisplay();
 
 			// end time
@@ -390,7 +385,7 @@ public class MainSimulator {
 			fps_avg += (fps);
 			j++;
 			if (j == 10) {
-				guiRenderer.setFPS(fps_avg/10);
+				guiRenderer.setFPS(fps_avg / 10);
 				j = 0;
 				fps_avg = 0;
 			}
@@ -403,7 +398,7 @@ public class MainSimulator {
 		hairLoader.Dispose();
 		DisplayManager.closeDisplay();
 	}
-	
+
 	public static void loadNativeLibrary() {
 		String fileNatives = OperatingSystem.getOSforLWJGLNatives();
 		System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + File.separator + "lib" + File.separator + "lwjgl-2.9.3" + File.separator + "native" + File.separator + fileNatives);

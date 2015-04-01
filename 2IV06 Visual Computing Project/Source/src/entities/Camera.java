@@ -14,19 +14,19 @@ public class Camera {
 
 	public void move() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			pitch -= 0.05f;
+			pitch -= 1.25f;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			pitch += 0.05f;
+			pitch += 1.25f;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			yaw -= 0.05f;
+			yaw -= 1.25f;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			yaw += 0.05f;
+			yaw += 1.25f;
 		}
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_X)) {

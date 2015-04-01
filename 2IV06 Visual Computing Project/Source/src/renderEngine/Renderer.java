@@ -32,8 +32,8 @@ public class Renderer {
 		this.shader = shader;
 
 		// Do not draw vertices away from view
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glCullFace(GL11.GL_BACK);
+		//GL11.glEnable(GL11.GL_CULL_FACE);
+		//GL11.glCullFace(GL11.GL_BACK);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		
 		createProjectionMatrix();
