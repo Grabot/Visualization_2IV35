@@ -48,7 +48,7 @@ public class MainSimulator {
 		boolean showParticles = false;
 
 		float friction = 0.5f;
-		float repulsion = -0.05f;
+		float repulsion = -0.2f;
 		Vector3f externalForce = new Vector3f();
 		
 		DisplayManager.createDisplay();
