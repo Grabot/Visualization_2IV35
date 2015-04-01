@@ -18,14 +18,16 @@ public class HairLoader {
 	private List<Integer> vaos = new ArrayList<Integer>();
 	private List<Integer> vbos = new ArrayList<Integer>();
 
-	public RawModel loadToVao(float[] positions, int[] indices) {
+	public RawModel loadToVao(float[] positions, int[] indices, float[] normals) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 		int vboPositions = storeDataInAttributeList(0, 3, positions);
+		int vboNormals = storeDataInAttributeList(2, 3, normals);
 		unbindVAO();
 		
 		RawModel rawModel =  new RawModel(vaoID, positions.length);
 		rawModel.setPositionsVboID(vboPositions);
+		rawModel.setNormalsVboID(vboNormals);
 		return rawModel;
 	}
 	

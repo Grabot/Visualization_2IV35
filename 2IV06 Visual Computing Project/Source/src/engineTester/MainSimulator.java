@@ -211,7 +211,7 @@ public class MainSimulator {
 		}
 
 		for (Hair hair : hairs) {
-			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
+			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices(), hair.getNormals());
 			hair.setRawModel(hairModel);
 		}
 
@@ -355,6 +355,7 @@ public class MainSimulator {
 				}
 
 				hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
+				hairLoader.updateDataInAttributeList(hair.getRawModel().getNormalsVboID(), 1, 3, hair.getNormals());
 				renderer.processEntity(hair);
 			}
 

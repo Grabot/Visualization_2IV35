@@ -113,9 +113,8 @@ public class Renderer {
 			RawModel rawModel = hair.getRawModel();
 			GL30.glBindVertexArray(rawModel.getVaoID());
 			GL20.glEnableVertexAttribArray(0);
-			GL11.glLineWidth(2);
-			GL11.glEnable( GL11.GL_LINE_SMOOTH );
-			GL11.glEnable( GL11.GL_POLYGON_SMOOTH );
+			GL20.glEnableVertexAttribArray(2);
+			GL11.glLineWidth(1.25f);
 			
 			Matrix4f transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), new Vector3f(
 					0, 0, 0), 1);
@@ -124,7 +123,7 @@ public class Renderer {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, hair.getParticles().get(0).getModel().getTexture().getID());
 			GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 			GL20.glDisableVertexAttribArray(0);
-			// GL20.glDisableVertexAttribArray(1);
+			GL20.glDisableVertexAttribArray(2);
 			// GL20.glDisableVertexAttribArray(2);
 			GL30.glBindVertexArray(0);
 		}

@@ -8,6 +8,7 @@ public class RawModel {
 
 	private int vaoID;
 	private int vboID;
+	private int normalvboID;
 	private int vertexCount;
 	private ArrayList<Vector3f> vertices;
 	
@@ -36,6 +37,14 @@ public class RawModel {
 	
 	public int getPositionsVboID() {
 		return vboID;
+	}
+	
+	public void setNormalsVboID(int value) {
+		normalvboID = value;
+	}
+	
+	public int getNormalsVboID() {
+		return normalvboID;
 	}
 	
 	public int getVertexCount() {
