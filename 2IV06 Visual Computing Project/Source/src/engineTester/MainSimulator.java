@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,8 +33,7 @@ import org.lwjgl.opencl.Util;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
-import Volume.DynamicVolume;
-import Volume.Volume;
+import Volume.FixedVolume;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -80,6 +78,11 @@ public class MainSimulator {
 	static FloatBuffer buf_vel;
 	static FloatBuffer buf_pred_pos;
 
+	static FloatBuffer buf_spacing;
+	static FloatBuffer buf_grid_weight;
+	static FloatBuffer buf_grid_vel;
+	static FloatBuffer buf_grid_grad;
+
 	static CLContext context;
 	static CLCommandQueue queue;
 	static CLProgram program;
@@ -93,27 +96,28 @@ public class MainSimulator {
 	static CLMem deltaTMem;
 	static CLMem posMem;
 	static CLMem velMem;
-	
-	
+
+	static CLMem spacingMem;
+	static CLMem gridWeightMem;
+	static CLMem gridVelMem;
+	static CLMem gridGradMem;
+
 	public static void prepareGPU() throws LWJGLException, IOException {
 
 		CLPlatform platform = CLPlatform.getPlatforms().get(0);
-		// List<CLDevice> devices =
-		// platform.getDevices(CL10.CL_DEVICE_TYPE_GPU);
-		List<CLDevice> devices = platform.getDevices(CL10.CL_DEVICE_TYPE_ALL);
+		List<CLDevice> devices = platform.getDevices(CL10.CL_DEVICE_TYPE_GPU);
 		context = CLContext.create(platform, devices, null, null, null);
 		queue = CL10.clCreateCommandQueue(context, devices.get(0), CL10.CL_QUEUE_PROFILING_ENABLE, null);
 
 		// Load the source from a resource file
-		String source = UtilCL.getResourceAsString("cl/copy.c");
-		String source2 = UtilCL.getResourceAsString("cl/copy.c");
+		String source = UtilCL.getResourceAsString("cl/Calculations.c");
 
 		// Create our program and kernel
 		program = CL10.clCreateProgramWithSource(context, source, null);
 		Util.checkCLError(CL10.clBuildProgram(program, devices.get(0), "", null));
 
 		kernel = CL10.clCreateKernel(program, "HairCalculations", null);
-		kernel2 = CL10.clCreateKernel(program, "HairCalculations", null);
+		kernel2 = CL10.clCreateKernel(program, "GridCalculations", null);
 
 		startindexMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_startindex, null);
 		CL10.clEnqueueWriteBuffer(queue, startindexMem, 1, 0, buf_startindex, null, null);
@@ -130,6 +134,17 @@ public class MainSimulator {
 		CL10.clEnqueueWriteBuffer(queue, posMem, 1, 0, buf_pos, null, null);
 		velMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_vel, null);
 		CL10.clEnqueueWriteBuffer(queue, velMem, 1, 0, buf_vel, null, null);
+
+		// grid
+		spacingMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_spacing, null);
+		CL10.clEnqueueWriteBuffer(queue, spacingMem, 1, 0, buf_spacing, null, null);
+		gridWeightMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_grid_weight, null);
+		CL10.clEnqueueWriteBuffer(queue, gridWeightMem, 1, 0, buf_grid_weight, null, null);
+		gridVelMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_grid_vel, null);
+		CL10.clEnqueueWriteBuffer(queue, gridVelMem, 1, 0, buf_grid_vel, null, null);
+		gridGradMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_grid_grad, null);
+		CL10.clEnqueueWriteBuffer(queue, gridGradMem, 1, 0, buf_grid_grad, null, null);
+
 		CL10.clFinish(queue);
 	}
 
@@ -137,19 +152,22 @@ public class MainSimulator {
 
 		// CL10.clEnqueueWriteBuffer(queue, predPosMem, 1, 0, buf_pred_pos,
 		// null, null);
-		
-//		forceMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_force, null);
-		CL10.clEnqueueWriteBuffer(queue, forceMem, 1, 0, buf_force, null, null);
-	//	deltaTMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_deltaT, null);
-		CL10.clEnqueueWriteBuffer(queue, deltaTMem, 1, 0, buf_deltaT, null, null);
-		//posMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_pos, null);
-		CL10.clEnqueueWriteBuffer(queue, posMem, 1, 0, buf_pos, null, null);
-		//velMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_vel, null);
-		CL10.clEnqueueWriteBuffer(queue, velMem, 1, 0, buf_vel, null, null);
-//		// sum has to match a kernel method name in the OpenCL source
-		CL10.clFinish(queue);		
 
-		
+		// forceMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY |
+		// CL10.CL_MEM_COPY_HOST_PTR, buf_force, null);
+		CL10.clEnqueueWriteBuffer(queue, forceMem, 1, 0, buf_force, null, null);
+		// deltaTMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY |
+		// CL10.CL_MEM_COPY_HOST_PTR, buf_deltaT, null);
+		CL10.clEnqueueWriteBuffer(queue, deltaTMem, 1, 0, buf_deltaT, null, null);
+		// posMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE |
+		// CL10.CL_MEM_COPY_HOST_PTR, buf_pos, null);
+		CL10.clEnqueueWriteBuffer(queue, posMem, 1, 0, buf_pos, null, null);
+		// velMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE |
+		// CL10.CL_MEM_COPY_HOST_PTR, buf_vel, null);
+		// CL10.clEnqueueWriteBuffer(queue, velMem, 1, 0, buf_vel, null, null);
+		// // sum has to match a kernel method name in the OpenCL source
+		CL10.clFinish(queue);
+
 		// Execution our kernel
 		PointerBuffer kernel1DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
 		kernel1DGlobalWorkSize.put(0, buf_startindex.capacity());
@@ -163,47 +181,62 @@ public class MainSimulator {
 		kernel.setArg(4, posMem);
 		kernel.setArg(5, velMem);
 		kernel.setArg(6, predPosMem);
+
+		kernel.setArg(7, spacingMem);
+		kernel.setArg(8, gridWeightMem);
+		kernel.setArg(9, gridVelMem);
 		CL10.clEnqueueNDRangeKernel(queue, kernel, 1, null, kernel1DGlobalWorkSize, null, null, null);
 
-		// Read the results memory back into our result buffer
+		// Execution our kernel
+		PointerBuffer kernel2DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
+		kernel2DGlobalWorkSize.put(0, buf_grid_weight.capacity());
 
+		kernel2.setArg(0, spacingMem);
+		kernel2.setArg(1, gridWeightMem);
+		kernel2.setArg(2, gridVelMem);
+		kernel2.setArg(3, gridGradMem);
+
+		CL10.clEnqueueNDRangeKernel(queue, kernel2, 1, null, kernel2DGlobalWorkSize, null, null, null);
+
+		// Read the results memory back into our result buffer
 		CL10.clEnqueueReadBuffer(queue, posMem, 1, 0, buf_pos, null, null);
 		CL10.clEnqueueReadBuffer(queue, velMem, 1, 0, buf_vel, null, null);
+
+		CL10.clEnqueueReadBuffer(queue, gridWeightMem, 1, 0, buf_grid_weight, null, null);
+		CL10.clEnqueueReadBuffer(queue, gridVelMem, 1, 0, buf_grid_vel, null, null);
+		CL10.clEnqueueReadBuffer(queue, gridGradMem, 1, 0, buf_grid_grad, null, null);
 		CL10.clFinish(queue);
 
 		/*
-		kernel1DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
-		kernel1DGlobalWorkSize.put(0, buf_pos.capacity());
+		 * kernel1DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
+		 * kernel1DGlobalWorkSize.put(0, buf_pos.capacity());
+		 * 
+		 * kernel.setArg(1, posMem); kernel.setArg(2, velMem); kernel.setArg(3,
+		 * predPosMem); CL10.clEnqueueNDRangeKernel(queue, kernel2, 1, null,
+		 * kernel1DGlobalWorkSize, null, null, null);
+		 * 
+		 * // Read the results memory back into our result buffer
+		 * 
+		 * CL10.clEnqueueReadBuffer(queue, posMem, 1, 0, buf_pos, null, null);
+		 * CL10.clEnqueueReadBuffer(queue, velMem, 1, 0, buf_vel, null, null);
+		 * CL10.clFinish(queue);
+		 */
 
-		kernel.setArg(1, posMem);
-		kernel.setArg(2, velMem);
-		kernel.setArg(3, predPosMem);
-		CL10.clEnqueueNDRangeKernel(queue, kernel2, 1, null, kernel1DGlobalWorkSize, null, null, null);
-
-		// Read the results memory back into our result buffer
-
-		CL10.clEnqueueReadBuffer(queue, posMem, 1, 0, buf_pos, null, null);
-		CL10.clEnqueueReadBuffer(queue, velMem, 1, 0, buf_vel, null, null);
-		CL10.clFinish(queue);
-*/
-		
-		
-		
-		//CL10.clReleaseMemObject(posMem);
+		// CL10.clReleaseMemObject(posMem);
 		// Print the result memory
-		// UtilCL.print(buf_vel);
+		// UtilCL.print(buf_grid_weight);
 		// UtilCL.print(buf_pos);
 
 		// buf_pos = buf_pred_pos;
-	
-	 // Clean up OpenCL resources CL10.clReleaseKernel(kernel);
-	 //CL10.clReleaseProgram(program); CL10.clReleaseMemObject(posMem);
-	 //CL10.clReleaseMemObject(velMem); CL10.clReleaseMemObject(forceMem);
-	 ///CL10.clReleaseMemObject(deltaTMem);
-	 //CL10.clReleaseMemObject(newPosMem);
-	 
-	// CL.destroy();
-		
+
+		// Clean up OpenCL resources CL10.clReleaseKernel(kernel);
+		// CL10.clReleaseProgram(program); CL10.clReleaseMemObject(posMem);
+		// CL10.clReleaseMemObject(velMem); CL10.clReleaseMemObject(forceMem);
+		// /CL10.clReleaseMemObject(deltaTMem);
+		// CL10.clReleaseMemObject(newPosMem);
+
+		// CL.destroy();
+
 	}
 
 	public static void main(String[] args) {
@@ -219,7 +252,7 @@ public class MainSimulator {
 			e1.printStackTrace();
 		}
 
-		boolean gpu = false;
+		boolean gpu = true;
 		boolean pause = false;
 		boolean showParticles = true;
 		boolean showGrid = true;
@@ -233,45 +266,27 @@ public class MainSimulator {
 		RawModel model = OBJLoader.loadObjModel("sphere", loader);
 		TexturedModel particleModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("haircolor")));
 
-		RawModel greenCellModel = OBJLoader.loadObjModel("cube", loader);
-		TexturedModel greenCellTexturedModel = new TexturedModel(greenCellModel, new ModelTexture(loader.loadTexture("green")));
-
-		RawModel redCellModel = OBJLoader.loadObjModel("cube", loader);
-		TexturedModel redCellTexturedModel = new TexturedModel(redCellModel, new ModelTexture(loader.loadTexture("red")));
-
 		// Head obj
 		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
 
 		// Wig obj
-		RawModel wigModel = OBJLoader.loadObjModel("wigd4", loader);
+		RawModel wigModel = OBJLoader.loadObjModel("wigd2", loader);
 
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
 		Camera camera = new Camera();
-		camera.setPosition(new Vector3f(125, 125, 500));
+		camera.setPosition(new Vector3f(80, 100, 220));
 
 		float scale = 1;
 		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
 
-		HairFactory hairFactory = new HairFactory(particleModel, 5);
+		HairFactory hairFactory = new HairFactory(particleModel, 1.0f);
 
 		for (Vector3f vec : wigModel.getVertices()) {
-			hairFactory.addHairDescription(new HairDescription(VectorMath.Sum(vec, head.getPosition()), 10));
+			hairFactory.addHairDescription(new HairDescription(VectorMath.Sum(vec, head.getPosition()), 30));
 		}
 
 		final Hairs hairs = hairFactory.Build();
-
-		/*
-		 * for (Hair hair : hairs) { RawModel hairModel =
-		 * hairLoader.loadToVao(hair.getVertices(), hair.getIndices());
-		 * hair.setRawModel(hairModel); }
-		 */
-		// Convert hair to float buffer //
-
-		// Create floatarray
-
-		// Copy data to buffers
-		// buf_size = UtilCL.toIntBuffer(new int[] { hairs.size() });
 
 		buf_force = UtilCL.toFloatBuffer(new float[] { 0, -9.8f, 0, 0 });
 		buf_deltaT = UtilCL.toFloatBuffer(new float[] { 0.25f });
@@ -282,28 +297,28 @@ public class MainSimulator {
 		buf_vel = hairs.getVelocityBuffer();
 		buf_pred_pos = hairs.getPredictedPositionsBuffer();
 
+		buf_spacing = UtilCL.toFloatBuffer(new float[] { volume.getSpacing() });
+		buf_grid_weight = UtilCL.toFloatBuffer(volume.getWeight());
+		buf_grid_vel = UtilCL.toFloatBuffer(volume.getVelocity());
+		buf_grid_grad = UtilCL.toFloatBuffer(volume.getGradients());
+
 		System.out.println("Hairs: " + hairs.size());
 		System.out.println("Particles: " + hairs.size() * hairs.get(0).getParticles().size());
 
 		float deltaT = 1.0f / 20.0f;
-		float friction = 0.02f;
+		float friction = 0.5f;
 		float repulsion = -0.2f;
-
-		// Find all nodes within object
-		for (int i = 0; i < texturedHairyModel.getRawModel().getVertices().size(); i++) {
-			//volume.getNode(texturedHairyModel.getRawModel().getVertices().get(i)).containsObject = true;
-		}
 
 		try {
 			prepareGPU();
 		} catch (LWJGLException | IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		int j = 0;
 		float fps_avg = 0;
 		float time_before = System.nanoTime();
-		
+
 		while (!Display.isCloseRequested()) {
 
 			// start time
@@ -369,6 +384,9 @@ public class MainSimulator {
 				// Start simulation loop //
 				// /////////////////////////
 
+				// Calculate gravity on particle
+				volume.Clear();
+
 				if (gpu) {
 					buf_force.put(0, externalForce.x);
 					buf_force.put(1, externalForce.y);
@@ -376,45 +394,38 @@ public class MainSimulator {
 					OpenCLTest();
 				}
 
-				// Calculate gravity on particle
-				volume.Clear();
-
 				if (!gpu) {
-				for (Hair hair : hairs) {
+					for (Hair hair : hairs) {
 
-					
 						// Calculate all predicted positions of hair particles
 						Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
 
 						// Solve constraints
-						Equations.FixedDistanceContraint(hair, 5);
+						Equations.FixedDistanceContraint(hair, hair.getParticleDistance());
 						Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
 						Equations.UpdateParticlePositions(hair);
 					}
-				}
 
-				// Add particle weight to grid
-				/*
-				for (Hair hair : hairs) {
-					for (Particle particle : hair.getParticles()) {
-						volume.addValues(particle.getPosition(), 1.0f, particle.getVelocity());
+					// Add particle weight to grid
+					for (Hair hair : hairs) {
+						for (Particle particle : hair.getParticles()) {
+							volume.addValues(particle.getPosition(), 1.0f, particle.getVelocity());
 						}
 					}
-							
-				
-				// Apply friction and repulsion
-				volume.calculateAverageVelocityAndGradients();
 
-				for (Hair hair : hairs) {
-					for (Particle particle : hair.getParticles()) {
-						Node nodeValue = volume.getNodeValue(particle.getPosition());
-						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
-						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.getGradient(), repulsion), deltaT)));
+					// Apply friction and repulsion
+					volume.calculateAverageVelocityAndGradients();
+
+					for (Hair hair : hairs) {
+						for (Particle particle : hair.getParticles()) {
+							Node nodeValue = volume.getNodeValue(particle.getPosition());
+							particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
+							particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.Gradient, repulsion), deltaT)));
+						}
 					}
 				}
-			*/
-				
+
 				// ///////////////////////
 				// End simulation loop //
 				// ///////////////////////
@@ -423,16 +434,16 @@ public class MainSimulator {
 			// draw all hair particles
 			int i = 0;
 			if (showParticles) {
-					for (Hair hair : hairs) {
-						if ((i % 17) == 0) {
-						
+				for (Hair hair : hairs) {
+					if ((i % 5) == 0) {
+
 						for (Particle particle : hair.getParticles()) {
 							particle.setWireFrame(true);
 							renderer.processEntity(particle);
 							i++;
 						}
 					}
-						i++;
+					i++;
 				}
 			}
 
@@ -440,27 +451,6 @@ public class MainSimulator {
 			// 0, 3, hair.getVertices());
 			// renderer.processEntity(hair);
 			// }
-
-			/*
-			// draw all grid cells
-			if (showGrid) {
-				List<Node> nodes = volume.getGridCells();
-				for (Node node : nodes) {
-					if(node != null) {
-					Entity entity;
-					if (node.Weight > 0) {
-						entity = new Entity(redCellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
-						entity.setWireFrame(true);
-						renderer.processEntity(entity);
-					} else {
-						//entity = new Entity(greenCellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
-					}
-
-					
-					}
-				}
-			}
-			*/
 
 			// Draw head model
 			renderer.processEntity(head);
@@ -470,19 +460,17 @@ public class MainSimulator {
 
 			// end time
 			long endTime = Sys.getTime();
-			
+
 			deltaT = (endTime - startTime) / 300f;
-			buf_deltaT.put(0,deltaT);
-			// System.out.println(1/deltaT);
+			buf_deltaT.put(0, deltaT);
 			float fps = 1f / ((endTime - startTime) / 1000f);
-			// System.out.println("time: " + fps);
 
 			// Average FPS over the last 10 frames
 			fps_avg += (fps);
 			j++;
 			if (j == 10) {
 				// System.out.println("AVG FPS ----> " + fps_avg/10);
-				Display.setTitle("pfs: " + fps_avg / 10);
+				Display.setTitle("fps: " + fps_avg / 10);
 				j = 0;
 				fps_avg = 0;
 			}
@@ -500,35 +488,4 @@ public class MainSimulator {
 		System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + File.separator + "lib" + File.separator + "lwjgl-2.9.3" + File.separator + "native" + File.separator + fileNatives);
 	}
 
-	static class ParticleThread implements Runnable {
-
-		ArrayList<Hair> hairs;
-		int startindex = 0;
-		int endindex = 0;
-
-		ParticleThread(int startindex, int endindex, ArrayList<Hair> hairs) {
-			this.startindex = startindex;
-			this.endindex = endindex;
-			this.hairs = hairs;
-		}
-
-		@Override
-		public void run() {
-			for (int i = startindex; i < endindex; i++) {
-				Hair hair = hairs.get(i);
-
-				// Calculate all predicted positions of hair particles
-				Equations.CalculatePredictedPositions(hair, new Vector3f(0, -9.81f, 0), 0.05f);
-
-				// Solve constraints
-				Equations.FixedDistanceContraint(hair, 5);
-
-				Equations.CalculateParticleVelocities(hair, 0.05f, 0.9f);
-
-				for (Particle particle : hair.getParticles()) {
-					particle.setPredictedPosition(particle.getPosition());
-				}
-			}
-		}
-	}
 }

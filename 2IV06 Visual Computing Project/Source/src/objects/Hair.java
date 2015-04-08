@@ -4,10 +4,11 @@ import java.util.ArrayList;
 
 public class Hair {
 	
-	public float particledistance;
-	public ArrayList<Particle> particles = new ArrayList<Particle>();
+	private float particleDistance;
+	private ArrayList<Particle> particles = new ArrayList<Particle>();
 		
-	public Hair() {
+	public Hair(float particleDistance) {
+		this.setParticleDistance(particleDistance);
 	}
 	
 	public ArrayList<Particle> getParticles() {
@@ -16,5 +17,13 @@ public class Hair {
 	
 	public void addParticle(Particle particle) {
 		particles.add(particle);
+	}
+
+	public float getParticleDistance() {
+		return particleDistance;
+	}
+
+	public void setParticleDistance(float particleDistance) {
+		this.particleDistance = particleDistance;
 	}
 }

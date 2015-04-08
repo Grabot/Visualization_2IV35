@@ -71,7 +71,7 @@ public class HairFactory {
 		index = 0;
 		for (int h = 0; h < haircount; h++) {
 			
-			Hair hair = new Hair();
+			Hair hair = new Hair(particleDistance);
 			
 			for (int p = 0; p < hairDescriptions.get(h).getSize(); p++) {
 				
