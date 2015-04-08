@@ -160,7 +160,7 @@ public class MainSimulator {
 		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
 
 		// Wig obj
-		TexturedModel wigModel = new TexturedModel(OBJLoader.loadObjModel("wigd2", loader), new ModelTexture(loader.loadTexture("haircolor")));
+		TexturedModel wigModel = new TexturedModel(OBJLoader.loadObjModel("wigd8", loader), new ModelTexture(loader.loadTexture("haircolor")));
 		Entity wig = new Entity(wigModel, head.getPosition(), VectorMath.Sum(head.getRotation(), new Vector3f(0, 2, 0)), scale);
 
 		// Set grid cell to inside when it contains head
@@ -220,7 +220,7 @@ public class MainSimulator {
 		System.out.println("Hairs: " + hairs.size());
 		System.out.println("Particles: " + hairs.size() * hairs.get(0).getParticles().size());
 
-		float deltaT = 1.0f / 20.0f;
+		float deltaT = 1.0f / 4.0f;
 		int j = 0;
 		float fps_avg = 0;
 
@@ -320,6 +320,8 @@ public class MainSimulator {
 						}
 
 					}
+					//Equations.FixedDistanceContraint(hair);
+					
 					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
 					// Add particle weight to grid
@@ -397,7 +399,7 @@ public class MainSimulator {
 			// end time
 			long endTime = Sys.getTime();
 
-			deltaT = (endTime - startTime) / 300f;
+			//deltaT = (endTime - startTime) / 300f;
 			float fps = 1f / ((endTime - startTime) / 1000f);
 
 			// Average FPS over the last 10 frames
