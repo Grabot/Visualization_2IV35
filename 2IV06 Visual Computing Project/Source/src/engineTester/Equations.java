@@ -1,5 +1,8 @@
 package engineTester;
 
+import objects.Hair;
+import objects.Particle;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import toolbox.VectorMath;
@@ -48,10 +51,6 @@ public class Equations {
 			Particle parent = hair.getParticles().get(i - 1);
 			Particle particle = hair.getParticles().get(i);
 
-			if(parent.isRoot()) {
-				continue;
-			}
-			
 			Vector3f firstPart = VectorMath.Divide(VectorMath.Subtract(parent.getPredictedPosition(), parent.getPosition()), deltaT);
 			
 			parent.setVelocity(VectorMath.Sum(firstPart, VectorMath.Product(VectorMath.Divide(particle.getFTLCorrectionVector(), deltaT), correctionScale)));
@@ -66,7 +65,8 @@ public class Equations {
 	}
 
 	public static void UpdateParticlePositions(Hair hair) {
-		for (Particle particle: hair.getParticles()) {
+		for (int i = 0; i < hair.getParticles().size(); i++) {
+			Particle particle = hair.getParticles().get(i);
 			particle.setPosition(particle.getPredictedPosition());
 		}
 	}

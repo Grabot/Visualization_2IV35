@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.RawModel;
+import objects.Hair;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -18,7 +19,6 @@ import org.newdawn.slick.TrueTypeFont;
 
 import renderEngine.Loader;
 import toolbox.Maths;
-import engineTester.Hair;
 
 public class GuiRenderer {
 

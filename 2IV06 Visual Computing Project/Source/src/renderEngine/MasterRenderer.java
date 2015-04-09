@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import engineTester.Hair;
+import objects.Hair;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -27,7 +27,7 @@ public class MasterRenderer {
 		shader.loadViewMatrix(camera);
 		
 		renderer.render(entities);
-		renderer.render(hairs);
+		//renderer.render(hairs);
 		
 		shader.stop();
 		entities.clear();

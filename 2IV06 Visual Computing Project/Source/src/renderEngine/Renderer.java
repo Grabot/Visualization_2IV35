@@ -5,6 +5,7 @@ import java.util.Map;
 
 import models.RawModel;
 import models.TexturedModel;
+import objects.Hair;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -17,7 +18,6 @@ import org.lwjgl.util.vector.Vector3f;
 import shaders.StaticShader;
 import textures.ModelTexture;
 import toolbox.Maths;
-import engineTester.Hair;
 import entities.Entity;
 
 public class Renderer {
@@ -110,6 +110,7 @@ public class Renderer {
 		}
 	}
 
+	/*
 	public void render(List<Hair> hairs) {
 		for (Hair hair : hairs) {
 			RawModel rawModel = hair.getRawModel();
@@ -131,6 +132,7 @@ public class Renderer {
 			GL30.glBindVertexArray(0);
 		}
 	}
+	*/
 
 	private void prepareTexturedModel(TexturedModel model) {
 		RawModel rawModel = model.getRawModel();
