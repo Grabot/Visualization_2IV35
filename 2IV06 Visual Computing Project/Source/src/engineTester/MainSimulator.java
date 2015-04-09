@@ -46,18 +46,19 @@ public class MainSimulator {
 		boolean ObjectGrid = false;
 		boolean HairGrid = false;
 		boolean showParticles = false;
+		boolean rendering = true;
 
 		float friction = 0.5f;
 		float repulsion = -0.2f;
 		Vector3f externalForce = new Vector3f();
-		
+
 		DisplayManager.createDisplay();
 		Volume volume = new FixedVolume();
 		Volume volume_collision = new FixedVolume(2);
 		Loader loader = new Loader();
 		HairLoader hairLoader = new HairLoader();
 		MasterRenderer renderer = new MasterRenderer();
-		
+
 		// Guis
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
@@ -160,7 +161,7 @@ public class MainSimulator {
 		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
 
 		// Wig obj
-		TexturedModel wigModel = new TexturedModel(OBJLoader.loadObjModel("wigd8", loader), new ModelTexture(loader.loadTexture("haircolor")));
+		TexturedModel wigModel = new TexturedModel(OBJLoader.loadObjModel("wigd2", loader), new ModelTexture(loader.loadTexture("haircolor")));
 		Entity wig = new Entity(wigModel, head.getPosition(), VectorMath.Sum(head.getRotation(), new Vector3f(0, 2, 0)), scale);
 
 		// Set grid cell to inside when it contains head
@@ -240,6 +241,15 @@ public class MainSimulator {
 				}
 			}
 
+			if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
+				rendering = !rendering;
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
 			if ((Keyboard.isKeyDown(Keyboard.KEY_M) || guiRenderer.buttonParticlespressed) && showParticlesCheck == false) {
 				showParticles = !showParticles;
 				showParticlesCheck = true;
@@ -265,7 +275,9 @@ public class MainSimulator {
 
 			if (!pause) {
 
-				externalForce.x = 0; externalForce.y = -9.81f; externalForce.z = 0;
+				externalForce.x = 0;
+				externalForce.y = -9.81f;
+				externalForce.z = 0;
 				if ((Keyboard.isKeyDown(Keyboard.KEY_LEFT)) || guiRenderer.button2pressed) {
 					externalForce.x += -8;
 				} else if ((Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) || guiRenderer.button3pressed) {
@@ -277,7 +289,7 @@ public class MainSimulator {
 				} else if ((Keyboard.isKeyDown(Keyboard.KEY_R))) {
 					externalForce.y += 30;
 				}
-				
+
 				// /////////////////////////
 				// Start simulation loop //
 				// /////////////////////////
@@ -298,7 +310,7 @@ public class MainSimulator {
 						if (!Keyboard.isKeyDown(Keyboard.KEY_C)) {
 							for (Particle particle : hair.getParticles()) {
 								if (volume_collision.getNode(particle.getPredictedPosition()).inside && !particle.isRoot()) {
-									
+
 									// set predicted position to half
 									Vector3f pos = particle.getPosition();
 									Vector3f pred = particle.getPredictedPosition();
@@ -306,10 +318,10 @@ public class MainSimulator {
 									float dy = pred.y - pos.y;
 									float dz = pred.z - pos.z;
 
-									particle.setPredictedPosition( particle.getPosition() );
-									
+									particle.setPredictedPosition(particle.getPosition());
+
 									for (int j1 = 2; j1 < 5; j1++) {
-										Vector3f half = new Vector3f(pos.x + 1/j1 * dx, pos.y + 1/j1 * dy, pos.z + 1/j1 * dz);
+										Vector3f half = new Vector3f(pos.x + 1 / j1 * dx, pos.y + 1 / j1 * dy, pos.z + 1 / j1 * dz);
 										if (!volume_collision.getNode(half).inside) {
 											particle.setPredictedPosition(half);
 											break;
@@ -320,8 +332,7 @@ public class MainSimulator {
 						}
 
 					}
-					//Equations.FixedDistanceContraint(hair);
-					
+
 					Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
 					// Add particle weight to grid
@@ -349,40 +360,42 @@ public class MainSimulator {
 			}
 
 			// draw all hair particles
-			for (Hair hair : hairs) {
-				if (showParticles) {
-					for (Particle particle : hair.getParticles()) {
-						renderer.processEntity(particle);
+			if (rendering) {
+				for (Hair hair : hairs) {
+					if (showParticles) {
+						for (Particle particle : hair.getParticles()) {
+							renderer.processEntity(particle);
+						}
+					}
+
+					hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
+					hairLoader.updateDataInAttributeList(hair.getRawModel().getNormalsVboID(), 1, 3, hair.getNormals());
+					renderer.processEntity(hair);
+				}
+
+				// draw all grid cells
+				if (!showGrid) {
+					List<Node> nodes = volume.getGridCells();
+					for (Node node : nodes) {
+						if (node.Weight > 0) {
+							Entity entity;
+							entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
+							entity.setWireFrame(true);
+							renderer.processEntity(entity);
+						}
 					}
 				}
 
-				hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
-				hairLoader.updateDataInAttributeList(hair.getRawModel().getNormalsVboID(), 1, 3, hair.getNormals());
-				renderer.processEntity(hair);
-			}
-
-			// draw all grid cells
-			if (!showGrid) {
-				List<Node> nodes = volume.getGridCells();
-				for (Node node : nodes) {
-					if (node.Weight > 0) {
+				// draw all collision cells
+				if (!showGridCollision) {
+					List<Node> nodes = volume_collision.getGridCells();
+					for (Node node : nodes) {
 						Entity entity;
-						entity = new Entity(cellTexturedModel, VectorMath.Sum(node.getPosition(), (0.5f * volume.getSpacing())), new Vector3f(0, 0, 0), volume.getSpacing());
-						entity.setWireFrame(true);
-						renderer.processEntity(entity);
-					}
-				}
-			}
-
-			// draw all collision cells
-			if (!showGridCollision) {
-				List<Node> nodes = volume_collision.getGridCells();
-				for (Node node : nodes) {
-					Entity entity;
-					if (node.inside) {
-						entity = new Entity(cellTexturedModel_red, VectorMath.Sum(node.getPosition(), (0.5f * volume_collision.getSpacing())), new Vector3f(0, 0, 0), volume_collision.getSpacing());
-						entity.setWireFrame(true);
-						renderer.processEntity(entity);
+						if (node.inside) {
+							entity = new Entity(cellTexturedModel_red, VectorMath.Sum(node.getPosition(), (0.5f * volume_collision.getSpacing())), new Vector3f(0, 0, 0), volume_collision.getSpacing());
+							entity.setWireFrame(true);
+							renderer.processEntity(entity);
+						}
 					}
 				}
 			}
@@ -399,7 +412,7 @@ public class MainSimulator {
 			// end time
 			long endTime = Sys.getTime();
 
-			//deltaT = (endTime - startTime) / 300f;
+			// deltaT = (endTime - startTime) / 300f;
 			float fps = 1f / ((endTime - startTime) / 1000f);
 
 			// Average FPS over the last 10 frames
