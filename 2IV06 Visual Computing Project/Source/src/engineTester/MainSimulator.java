@@ -189,7 +189,6 @@ public class MainSimulator {
 		kernel.setArg(9, gridVelMem);
 		CL10.clEnqueueNDRangeKernel(queue, kernel, 1, null, kernel1DGlobalWorkSize, null, null, null);
 		
-		/*
 		// Execution our kernel
 		PointerBuffer kernel2DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
 		kernel2DGlobalWorkSize.put(0, buf_grid_weight.capacity());
@@ -217,7 +216,6 @@ public class MainSimulator {
 		kernel3.setArg(6, gridGradMem);
 		
 		CL10.clEnqueueNDRangeKernel(queue, kernel3, 1, null, kernel3DGlobalWorkSize, null, null, null);
-		*/
 		
 		// Read the results memory back into our result buffer
 		CL10.clEnqueueReadBuffer(queue, posMem, 1, 0, buf_pos, null, null);
@@ -293,7 +291,7 @@ public class MainSimulator {
 		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
 
 		// Wig obj
-		RawModel wigModel = OBJLoader.loadObjModel("wigd8", loader);
+		RawModel wigModel = OBJLoader.loadObjModel("wigd4", loader);
 
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
@@ -458,7 +456,7 @@ public class MainSimulator {
 			int i = 0;
 			if (showParticles) {
 				for (Hair hair : hairs) {
-					if ((i % 100) == 0) {
+					if ((i % 5) == 0) {
 
 						for (Particle particle : hair.getParticles()) {
 							renderer.processEntity(particle);
