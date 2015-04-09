@@ -14,16 +14,4 @@ public class Node {
 		Gradient = new Vector3f(0,0,0);
 	}
 	
-	public float getWeight() {
-		return Weight;
-	}
-	public void setWeight(float weight) {
-		Weight = weight;
-	}
-	public Vector3f getVelocity() {
-		return Velocity;
-	}
-	public void setVelocity(Vector3f velocity) {
-		Velocity = velocity;
-	}
 }

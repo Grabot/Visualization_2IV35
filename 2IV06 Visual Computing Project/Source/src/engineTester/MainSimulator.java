@@ -291,7 +291,7 @@ public class MainSimulator {
 		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
 
 		// Wig obj
-		RawModel wigModel = OBJLoader.loadObjModel("wigd4", loader);
+		RawModel wigModel = OBJLoader.loadObjModel("wigd2", loader);
 
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
@@ -421,26 +421,24 @@ public class MainSimulator {
 						// Calculate all predicted positions of hair particles
 						Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
 
-						// Solve constraints
-						Equations.FixedDistanceContraint(hair, hair.getParticleDistance());
+    					Equations.FixedDistanceContraint(hair, hair.getParticleDistance());
+
 						Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
+
+						// Add particle weight to grid
+						for (Particle particle : hair.getParticles()) {
+							volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
+						}
 
 						Equations.UpdateParticlePositions(hair);
 					}
-
-					// Add particle weight to grid
-					for (Hair hair : hairs) {
-						for (Particle particle : hair.getParticles()) {
-							volume.addValues(particle.getPosition(), 1.0f, particle.getVelocity());
-						}
-					}
-
+					
 					// Apply friction and repulsion
 					volume.calculateAverageVelocityAndGradients();
 
 					for (Hair hair : hairs) {
 						for (Particle particle : hair.getParticles()) {
-							Node nodeValue = volume.getNodeValue(particle.getPosition());
+							Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
 							particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
 							particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.Gradient, repulsion), deltaT)));
 						}
@@ -456,7 +454,7 @@ public class MainSimulator {
 			int i = 0;
 			if (showParticles) {
 				for (Hair hair : hairs) {
-					if ((i % 5) == 0) {
+					if ((i % 1) == 0) {
 
 						for (Particle particle : hair.getParticles()) {
 							renderer.processEntity(particle);
