@@ -88,6 +88,7 @@ public class MainSimulator {
 	static CLProgram program;
 	static CLKernel kernel;
 	static CLKernel kernel2;
+	static CLKernel kernel3;
 
 	static CLMem startindexMem;
 	static CLMem endindexMem;
@@ -118,6 +119,7 @@ public class MainSimulator {
 
 		kernel = CL10.clCreateKernel(program, "HairCalculations", null);
 		kernel2 = CL10.clCreateKernel(program, "GridCalculations", null);
+		kernel3 = CL10.clCreateKernel(program, "ParticleCalculations", null);
 
 		startindexMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_startindex, null);
 		CL10.clEnqueueWriteBuffer(queue, startindexMem, 1, 0, buf_startindex, null, null);
@@ -136,14 +138,14 @@ public class MainSimulator {
 		CL10.clEnqueueWriteBuffer(queue, velMem, 1, 0, buf_vel, null, null);
 
 		// grid
-		spacingMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_spacing, null);
-		CL10.clEnqueueWriteBuffer(queue, spacingMem, 1, 0, buf_spacing, null, null);
-		gridWeightMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_grid_weight, null);
-		CL10.clEnqueueWriteBuffer(queue, gridWeightMem, 1, 0, buf_grid_weight, null, null);
-		gridVelMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_grid_vel, null);
-		CL10.clEnqueueWriteBuffer(queue, gridVelMem, 1, 0, buf_grid_vel, null, null);
-		gridGradMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_grid_grad, null);
-		CL10.clEnqueueWriteBuffer(queue, gridGradMem, 1, 0, buf_grid_grad, null, null);
+		//spacingMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_spacing, null);
+		//CL10.clEnqueueWriteBuffer(queue, spacingMem, 1, 0, buf_spacing, null, null);
+		//gridWeightMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_grid_weight, null);
+		//CL10.clEnqueueWriteBuffer(queue, gridWeightMem, 1, 0, buf_grid_weight, null, null);
+		//gridVelMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_grid_vel, null);
+		//CL10.clEnqueueWriteBuffer(queue, gridVelMem, 1, 0, buf_grid_vel, null, null);
+		//gridGradMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_WRITE | CL10.CL_MEM_COPY_HOST_PTR, buf_grid_grad, null);
+		//CL10.clEnqueueWriteBuffer(queue, gridGradMem, 1, 0, buf_grid_grad, null, null);
 
 		CL10.clFinish(queue);
 	}
@@ -186,7 +188,8 @@ public class MainSimulator {
 		kernel.setArg(8, gridWeightMem);
 		kernel.setArg(9, gridVelMem);
 		CL10.clEnqueueNDRangeKernel(queue, kernel, 1, null, kernel1DGlobalWorkSize, null, null, null);
-
+		
+		/*
 		// Execution our kernel
 		PointerBuffer kernel2DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
 		kernel2DGlobalWorkSize.put(0, buf_grid_weight.capacity());
@@ -198,13 +201,32 @@ public class MainSimulator {
 
 		CL10.clEnqueueNDRangeKernel(queue, kernel2, 1, null, kernel2DGlobalWorkSize, null, null, null);
 
+		// Execution our kernel
+		
+		PointerBuffer kernel3DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
+		kernel3DGlobalWorkSize.put(0, buf_pos.capacity() / 4);
+		
+		kernel3.setArg(0, spacingMem);
+		kernel3.setArg(1, deltaTMem);
+		
+		kernel3.setArg(2, posMem);
+		kernel3.setArg(3, velMem);
+		
+		kernel3.setArg(4, gridWeightMem);
+		kernel3.setArg(5, gridVelMem);
+		kernel3.setArg(6, gridGradMem);
+		
+		CL10.clEnqueueNDRangeKernel(queue, kernel3, 1, null, kernel3DGlobalWorkSize, null, null, null);
+		*/
+		
 		// Read the results memory back into our result buffer
 		CL10.clEnqueueReadBuffer(queue, posMem, 1, 0, buf_pos, null, null);
+		CL10.clEnqueueReadBuffer(queue, predPosMem, 1, 0, buf_pred_pos, null, null);
 		CL10.clEnqueueReadBuffer(queue, velMem, 1, 0, buf_vel, null, null);
 
-		CL10.clEnqueueReadBuffer(queue, gridWeightMem, 1, 0, buf_grid_weight, null, null);
-		CL10.clEnqueueReadBuffer(queue, gridVelMem, 1, 0, buf_grid_vel, null, null);
-		CL10.clEnqueueReadBuffer(queue, gridGradMem, 1, 0, buf_grid_grad, null, null);
+		//CL10.clEnqueueReadBuffer(queue, gridWeightMem, 1, 0, buf_grid_weight, null, null);
+		//CL10.clEnqueueReadBuffer(queue, gridVelMem, 1, 0, buf_grid_vel, null, null);
+		//CL10.clEnqueueReadBuffer(queue, gridGradMem, 1, 0, buf_grid_grad, null, null);
 		CL10.clFinish(queue);
 
 		/*
@@ -257,6 +279,7 @@ public class MainSimulator {
 		boolean showParticles = true;
 		boolean showGrid = true;
 
+		
 		DisplayManager.createDisplay();
 		FixedVolume volume = new FixedVolume();
 		Loader loader = new Loader();
@@ -270,7 +293,7 @@ public class MainSimulator {
 		TexturedModel texturedHairyModel = new TexturedModel(OBJLoader.loadObjModel("head", loader), new ModelTexture(loader.loadTexture("white")));
 
 		// Wig obj
-		RawModel wigModel = OBJLoader.loadObjModel("wigd2", loader);
+		RawModel wigModel = OBJLoader.loadObjModel("wigd8", loader);
 
 		Light light = new Light(new Vector3f(0, 0, 20), new Vector3f(1, 1, 1));
 
@@ -435,10 +458,9 @@ public class MainSimulator {
 			int i = 0;
 			if (showParticles) {
 				for (Hair hair : hairs) {
-					if ((i % 5) == 0) {
+					if ((i % 100) == 0) {
 
 						for (Particle particle : hair.getParticles()) {
-							particle.setWireFrame(true);
 							renderer.processEntity(particle);
 							i++;
 						}
