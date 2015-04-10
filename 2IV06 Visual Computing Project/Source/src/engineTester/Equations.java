@@ -13,8 +13,10 @@ public class Equations {
 	// Verlet integration to calculate predicted position
 	public static void CalculatePredictedPositions(Hair hair, Vector3f force,
 			float deltaT) {
-		for (Particle particle : hair.getParticles()) {
-
+		hair.getParticles().get(0).setPredictedPosition(hair.getParticles().get(0).getPosition());
+		
+		for (int i = 1; i < hair.getParticles().size(); i++) {
+			Particle particle = hair.getParticles().get(i);
 			particle.setPredictedPosition(new Vector3f(
 					particle.getPosition().x + deltaT * particle.getVelocity().x * time_damping + deltaT * deltaT * force.x,
 					particle.getPosition().y + deltaT * particle.getVelocity().y * time_damping + deltaT * deltaT * force.y,
