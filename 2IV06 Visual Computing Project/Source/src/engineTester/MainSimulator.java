@@ -208,7 +208,7 @@ public class MainSimulator {
 			fps_avg += (fps);
 			j++;
 			if (j == 10) {
-				//guiRenderer.setFPS(fps_avg / 10);
+				Display.setTitle("fps: " + fps_avg / 10);
 				j = 0;
 				fps_avg = 0;
 			}
