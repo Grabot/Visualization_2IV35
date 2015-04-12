@@ -75,7 +75,7 @@ public class HairFactory {
 			
 			for (int p = 0; p < hairDescriptions.get(h).getSize(); p++) {
 				
-				Particle particle = new Particle(model, index, buf_pos, buf_vel);
+				Particle particle = new Particle(model, index, buf_pos, buf_vel, buf_pred_pos);
 				hair.addParticle(particle);
 				index++;
 			}

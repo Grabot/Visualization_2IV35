@@ -1,15 +1,18 @@
 package Volume;
 
+import java.nio.FloatBuffer;
+
 import org.lwjgl.util.vector.Vector3f;
 
+import toolbox.UtilCL;
 import toolbox.VectorMath;
 import engineTester.Node;
 
 public class FixedVolume extends Volume {
 
-	private float[] grid_weight;
-	private float[] grid_velocity;
-	private float[] grid_gradient;
+	private FloatBuffer buf_grid_weight;
+	private FloatBuffer buf_grid_velocity;
+	private FloatBuffer buf_grid_gradient;
 
 	private int size = 0;
 	private int width = 32;
@@ -31,25 +34,25 @@ public class FixedVolume extends Volume {
 
 	private void init() {
 		size = width * height * depth;
-		grid_weight = new float[width * height * depth];
-		grid_velocity = new float[width * height * depth * 4];
-		grid_gradient = new float[width * height * depth * 4];
+		buf_grid_weight = UtilCL.toFloatBuffer(new float[width * height * depth]);
+		buf_grid_velocity = UtilCL.toFloatBuffer(new float[width * height * depth * 4]);
+		buf_grid_gradient = UtilCL.toFloatBuffer(new float[width * height * depth * 4]);
 	}
 	
 	public int getGridSize() {
 		return size;
 	}
 	
-	public float[] getWeight() {
-		return grid_weight;
+	public FloatBuffer getWeight() {
+		return buf_grid_weight;
 	}
 
-	public float[] getVelocity() {
-		return grid_velocity;
+	public FloatBuffer getVelocity() {
+		return buf_grid_velocity;
 	}
 
-	public float[] getGradients() {
-		return grid_gradient;
+	public FloatBuffer getGradients() {
+		return buf_grid_gradient;
 	}
 
 	public int getKey(Vector3f position) {
@@ -69,17 +72,17 @@ public class FixedVolume extends Volume {
 	public void Clear() {
 		for (int i = 0; i < size; i++) {
 
-			grid_weight[i] = 0;
+			buf_grid_weight.put(i, 0);
 
-			grid_velocity[i * 4] = 0;
-			grid_velocity[i * 4 + 1] = 0;
-			grid_velocity[i * 4 + 2] = 0;
-			grid_velocity[i * 4 + 3] = 0;
+			buf_grid_velocity.put(i * 4, 0);
+			buf_grid_velocity.put(i * 4 + 1, 0);
+			buf_grid_velocity.put(i * 4 + 2, 0);
+			buf_grid_velocity.put(i * 4 + 3, 0);
 
-			grid_gradient[i * 4] = 0;
-			grid_gradient[i * 4 + 1] = 0;
-			grid_gradient[i * 4 + 2] = 0;
-			grid_gradient[i * 4 + 3] = 0;
+			buf_grid_gradient.put(i * 4, 0);
+			buf_grid_gradient.put(i * 4 + 1, 0);
+			buf_grid_gradient.put(i * 4 + 2, 0);
+			buf_grid_gradient.put(i * 4 + 3, 0);
 		}
 	}
 
@@ -99,79 +102,79 @@ public class FixedVolume extends Volume {
 		float w7 = weight * xd * (1 - yd) * (1 - zd);
 		float w8 = weight * (1 - xd) * (1 - yd) * (1 - zd);
 		
-		Vector3f x1 = nodePosition;
-		Vector3f x2 = VectorMath.Sum(nodePosition, new Vector3f(spacing, 0, 0));
-		Vector3f x3 = VectorMath.Sum(nodePosition, new Vector3f(0, spacing, 0));
-		Vector3f x4 = VectorMath.Sum(nodePosition, new Vector3f(spacing, spacing, 0));
-		Vector3f x5 = VectorMath.Sum(nodePosition, new Vector3f(0, 0, spacing));
-		Vector3f x6 = VectorMath.Sum(nodePosition, new Vector3f(spacing, 0, spacing));
-		Vector3f x7 = VectorMath.Sum(nodePosition, new Vector3f(0, spacing, spacing));
-		Vector3f x8 = VectorMath.Sum(nodePosition, new Vector3f(spacing, spacing, spacing));
+		int x1 = getKey(nodePosition);
+		int x2 = getKey(VectorMath.Sum(nodePosition, new Vector3f(spacing, 0, 0)));
+		int x3 = getKey(VectorMath.Sum(nodePosition, new Vector3f(0, spacing, 0)));
+		int x4 = getKey(VectorMath.Sum(nodePosition, new Vector3f(spacing, spacing, 0)));
+		int x5 = getKey(VectorMath.Sum(nodePosition, new Vector3f(0, 0, spacing)));
+		int x6 = getKey(VectorMath.Sum(nodePosition, new Vector3f(spacing, 0, spacing)));
+		int x7 = getKey(VectorMath.Sum(nodePosition, new Vector3f(0, spacing, spacing)));
+		int x8 = getKey(VectorMath.Sum(nodePosition, new Vector3f(spacing, spacing, spacing)));
 		
-		grid_weight[getKey(x1)] += w1;
-		grid_weight[getKey(x2)] += w2;
-		grid_weight[getKey(x3)] += w3;
-		grid_weight[getKey(x4)] += w4;
-		grid_weight[getKey(x5)] += w5;
-		grid_weight[getKey(x6)] += w6;
-		grid_weight[getKey(x7)] += w7;
-		grid_weight[getKey(x8)] += w8;
+		buf_grid_weight.put(x1, buf_grid_weight.get(x1) + w1);
+		buf_grid_weight.put(x2, buf_grid_weight.get(x2) + w2);
+		buf_grid_weight.put(x3, buf_grid_weight.get(x3) + w3);
+		buf_grid_weight.put(x4, buf_grid_weight.get(x4) + w4);
+		buf_grid_weight.put(x5, buf_grid_weight.get(x5) + w5);
+		buf_grid_weight.put(x6, buf_grid_weight.get(x6) + w6);
+		buf_grid_weight.put(x7, buf_grid_weight.get(x7) + w7);
+		buf_grid_weight.put(x8, buf_grid_weight.get(x8) + w8);
 		
-		grid_velocity[getKey(x1) * 4] += velocity.x * w1;
-		grid_velocity[getKey(x1) * 4 + 1] += velocity.y * w1;
-		grid_velocity[getKey(x1) * 4 + 2] += velocity.z * w1;
+		buf_grid_velocity.put(x1 * 4, buf_grid_velocity.get(x1 * 4) + velocity.x * w1);
+		buf_grid_velocity.put(x1 * 4 + 1, buf_grid_velocity.get(x1 * 4 + 1) + velocity.y * w1);
+		buf_grid_velocity.put(x1 * 4 + 2, buf_grid_velocity.get(x1 * 4 + 2) + velocity.z * w1);
 		
-		grid_velocity[getKey(x2) * 4] += velocity.x * w2;
-		grid_velocity[getKey(x2) * 4 + 1] += velocity.y * w2;
-		grid_velocity[getKey(x2) * 4 + 2] += velocity.z * w2;	
-				
-		grid_velocity[getKey(x3) * 4] += velocity.x * w3;
-		grid_velocity[getKey(x3) * 4 + 1] += velocity.y * w3;
-		grid_velocity[getKey(x3) * 4 + 2] += velocity.z * w3;	
-				
-		grid_velocity[getKey(x4) * 4] += velocity.x * w4;
-		grid_velocity[getKey(x4) * 4 + 1] += velocity.y * w4;
-		grid_velocity[getKey(x4) * 4 + 2] += velocity.z * w4;
+		buf_grid_velocity.put(x2 * 4, buf_grid_velocity.get(x2 * 4) + velocity.x * w2);
+		buf_grid_velocity.put(x2 * 4 + 1, buf_grid_velocity.get(x2 * 4 + 1) + velocity.y * w2);
+		buf_grid_velocity.put(x2 * 4 + 2, buf_grid_velocity.get(x2 * 4 + 2) + velocity.z * w2);
 		
-		grid_velocity[getKey(x5) * 4] += velocity.x * w5;
-		grid_velocity[getKey(x5) * 4 + 1] += velocity.y * w5;
-		grid_velocity[getKey(x5) * 4 + 2] += velocity.z * w5;	
-				
-		grid_velocity[getKey(x6) * 4] += velocity.x * w6;
-		grid_velocity[getKey(x6) * 4 + 1] += velocity.y * w6;
-		grid_velocity[getKey(x6) * 4 + 2] += velocity.z * w6;
+		buf_grid_velocity.put(x3 * 4, buf_grid_velocity.get(x3 * 4) + velocity.x * w3);
+		buf_grid_velocity.put(x3 * 4 + 1, buf_grid_velocity.get(x2 * 4 + 1) + velocity.y * w3);
+		buf_grid_velocity.put(x3 * 4 + 2, buf_grid_velocity.get(x2 * 4 + 2) + velocity.z * w3);
 		
-		grid_velocity[getKey(x7) * 4] += velocity.x * w5;
-		grid_velocity[getKey(x7) * 4 + 1] += velocity.y * w5;
-		grid_velocity[getKey(x7) * 4 + 2] += velocity.z * w5;	
-				
-		grid_velocity[getKey(x8) * 4] += velocity.x * w6;
-		grid_velocity[getKey(x8) * 4 + 1] += velocity.y * w6;
-		grid_velocity[getKey(x8) * 4 + 2] += velocity.z * w6;
+		buf_grid_velocity.put(x4 * 4, buf_grid_velocity.get(x4 * 4) + velocity.x * w4);
+		buf_grid_velocity.put(x4 * 4 + 1, buf_grid_velocity.get(x4 * 4 + 1) + velocity.y * w4);
+		buf_grid_velocity.put(x4 * 4 + 2, buf_grid_velocity.get(x4 * 4 + 2) + velocity.z * w4);
+		
+		buf_grid_velocity.put(x5 * 4, buf_grid_velocity.get(x5 * 4) + velocity.x * w5);
+		buf_grid_velocity.put(x5 * 4 + 1, buf_grid_velocity.get(x5 * 4 + 1) + velocity.y * w5);
+		buf_grid_velocity.put(x5 * 4 + 2, buf_grid_velocity.get(x5 * 4 + 2) + velocity.z * w5);
+		
+		buf_grid_velocity.put(x6 * 4, buf_grid_velocity.get(x6 * 4) + velocity.x * w6);
+		buf_grid_velocity.put(x6 * 4 + 1, buf_grid_velocity.get(x6 * 4 + 1) + velocity.y * w6);
+		buf_grid_velocity.put(x6 * 4 + 2, buf_grid_velocity.get(x6 * 4 + 2) + velocity.z * w6);
+		
+		buf_grid_velocity.put(x7 * 4, buf_grid_velocity.get(x7 * 4) + velocity.x * w7);
+		buf_grid_velocity.put(x7 * 4 + 1, buf_grid_velocity.get(x7 * 4 + 1) + velocity.y * w7);
+		buf_grid_velocity.put(x7 * 4 + 2, buf_grid_velocity.get(x7 * 4 + 2) + velocity.z * w7);
+	
+		buf_grid_velocity.put(x8 * 4, buf_grid_velocity.get(x8 * 4) + velocity.x * w8);
+		buf_grid_velocity.put(x8 * 4 + 1, buf_grid_velocity.get(x8 * 4 + 1) + velocity.y * w8);
+		buf_grid_velocity.put(x8 * 4 + 2, buf_grid_velocity.get(x8 * 4 + 2) + velocity.z * w8);
 	}
 
 	public void calculateAverageVelocityAndGradients() {
 		for (int i = 0; i < size; i++) {
-			if (grid_weight[i] > 0) {
+			if (buf_grid_weight.get(i) > 0) {
 				
 				// Gradient
-				float x1 = grid_weight[i + 1];
-				float x2 = grid_weight[i - 1];
-				float y1 = grid_weight[i + width];
-				float y2 = grid_weight[i - width];
-				float z1 = grid_weight[i + width * height];
-				float z2 = grid_weight[i - width * height];
+				float x1 = buf_grid_weight.get(i + 1);
+				float x2 = buf_grid_weight.get(i - 1);
+				float y1 = buf_grid_weight.get(i + width);
+				float y2 = buf_grid_weight.get(i - width);
+				float z1 = buf_grid_weight.get(i + width * height);
+				float z2 = buf_grid_weight.get(i - width * height);
 
 				Vector3f gradient = new Vector3f((x1 - x2) / (2 * spacing), (y1 - y2) / (2 * spacing), (z1 - z2) / (2 * spacing));
 				gradient = normalizeGradient(gradient);
-				grid_gradient[i * 4] = gradient.x;
-				grid_gradient[i * 4 + 1] = gradient.y;
-				grid_gradient[i * 4 + 2] = gradient.z;
+				buf_grid_gradient.put(i * 4, gradient.x);
+				buf_grid_gradient.put(i * 4 + 1, gradient.y);
+				buf_grid_gradient.put(i * 4 + 2, gradient.z);
 
 				// Velocity
-				grid_velocity[i * 4] /= grid_weight[i];
-				grid_velocity[i * 4 + 1] /= grid_weight[i];
-				grid_velocity[i * 4 + 2] /= grid_weight[i];
+				buf_grid_velocity.put(i * 4, buf_grid_velocity.get(i * 4) / buf_grid_weight.get(i));
+				buf_grid_velocity.put(i * 4 + 1, buf_grid_velocity.get(i * 4 + 1) / buf_grid_weight.get(i));
+				buf_grid_velocity.put(i * 4 + 2, buf_grid_velocity.get(i * 4 + 2) / buf_grid_weight.get(i));
 			}
 		}
 	}
@@ -182,9 +185,9 @@ public class FixedVolume extends Volume {
 
 		if (key > 0) {
 			Node node = new Node();
-			node.Weight = grid_weight[key];
-			node.Velocity = new Vector3f(grid_velocity[key * 4], grid_velocity[key * 4 + 1], grid_velocity[key * 4 + 2]);
-			node.Gradient = new Vector3f(grid_gradient[key * 4], grid_gradient[key * 4 + 1], grid_gradient[key * 4 + 2]);
+			node.Weight = buf_grid_weight.get(key);
+			node.Velocity = new Vector3f(buf_grid_velocity.get(key * 4), buf_grid_velocity.get(key * 4 + 1), buf_grid_velocity.get(key * 4 + 2));
+			node.Gradient = new Vector3f(buf_grid_gradient.get(key * 4), buf_grid_gradient.get(key * 4 + 1), buf_grid_gradient.get(key * 4 + 2));
 		
 			return node;
 		}

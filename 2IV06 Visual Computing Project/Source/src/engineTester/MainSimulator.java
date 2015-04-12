@@ -6,6 +6,7 @@ import entities.Light;
 import guis.GuiRenderer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import models.RawModel;
@@ -16,8 +17,10 @@ import objects.HairFactory;
 import objects.Hairs;
 import objects.Particle;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opencl.CL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -30,6 +33,7 @@ import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
 import textures.ModelTexture;
 import toolbox.OperatingSystem;
+import toolbox.UtilCL;
 import toolbox.VectorMath;
 
 public class MainSimulator {
@@ -41,11 +45,20 @@ public class MainSimulator {
 		// Load native library
 		loadNativeLibrary();
 
-		boolean pause = false;
+		// Print openCl information
+		try {
+			CL.create();
+			OpenCL.displayInfo();
+		} catch (LWJGLException e1) {
+			e1.printStackTrace();
+		}
 
+		boolean gpu = true;
+		boolean pause = false;
 		boolean showParticles = true;
 		boolean rendering = true;
 
+		float deltaT = 1.0f / 4.0f;
 		float friction = 0.5f;
 		float repulsion = -0.2f;
 		Vector3f externalForce = new Vector3f();
@@ -71,9 +84,9 @@ public class MainSimulator {
 
 		// Wig obj
 		TexturedModel wigModel = new TexturedModel(OBJLoader.loadObjModel("wigd2", loader), new ModelTexture(loader.loadTexture("haircolor")));
-		Entity wig = new Entity(wigModel, head.getPosition(), VectorMath.Sum(head.getRotation(), new Vector3f(0, 2, 0)), scale);
+		Entity wig = new Entity(wigModel, VectorMath.Sum(head.getPosition(), new Vector3f(0, 2, 0)), head.getRotation(), scale);
 
-		HairFactory hairFactory = new HairFactory(particleModel, 1.0f);
+		HairFactory hairFactory = new HairFactory(particleModel, 0.5f);
 
 		for (Vector3f vec : wig.getModel().getRawModel().getVertices()) {
 			hairFactory.addHairDescription(new HairDescription(VectorMath.Sum(vec, head.getPosition()), 30));
@@ -81,10 +94,33 @@ public class MainSimulator {
 
 		final Hairs hairs = hairFactory.Build();
 
+		// Copy array to buffers
+		OpenCL.buf_force = UtilCL.toFloatBuffer(new float[] { 0, -9.8f, 0, 0 });
+		OpenCL.buf_deltaT = UtilCL.toFloatBuffer(new float[] { deltaT });
+
+		OpenCL.buf_startindex = hairs.getStartIndexesBuffer();
+		OpenCL.buf_endindex = hairs.getEndIndexesBuffer();
+		OpenCL.buf_pos = hairs.getPositionsBuffer();
+		OpenCL.buf_vel = hairs.getVelocityBuffer();
+		OpenCL.buf_pred_pos = hairs.getPredictedPositionsBuffer();
+
+		OpenCL.buf_spacing = UtilCL.toFloatBuffer(new float[] { volume.getSpacing() });
+		OpenCL.buf_grid_weight = volume.getWeight();
+		OpenCL.buf_grid_vel = volume.getVelocity();
+		OpenCL.buf_grid_grad = volume.getGradients();
+
+		// Prepare gpu for computations
+		try {
+			OpenCL.prepareGPU();
+		} catch (LWJGLException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		// Show number of hairs and particles
 		System.out.println("Hairs: " + hairs.size());
 		System.out.println("Particles: " + hairs.size() * hairs.get(0).getParticles().size());
 
-		float deltaT = 1.0f / 4.0f;
 		int j = 0;
 		float fps_avg = 0;
 
@@ -97,6 +133,20 @@ public class MainSimulator {
 
 			if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
 				pause = !pause;
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (Keyboard.isKeyDown(Keyboard.KEY_Y)) {
+				gpu = !gpu;
+				if (gpu) {
+					System.out.println("GPU Computation Enabled");
+				} else {
+					System.out.println("GPU Computation Disabled");
+				}
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -138,34 +188,47 @@ public class MainSimulator {
 				// Start simulation loop //
 				// /////////////////////////
 
-				// Calculate gravity on particle
 				volume.Clear();
 
-				for (Hair hair : hairs) {
+				if (gpu) {
+					OpenCL.buf_force.put(0, externalForce.x);
+					OpenCL.buf_force.put(1, externalForce.y);
+					OpenCL.buf_force.put(2, externalForce.z);
 
-					// Calculate all predicted positions of hair particles
-					Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
+					OpenCL.OpenCLTest();
+				}
+
+				for (Hair hair : hairs) {
+					if (!gpu) {
+						// Calculate all predicted positions of hair particles
+						Equations.CalculatePredictedPositions(hair, externalForce, deltaT);
 
 						Equations.FixedDistanceContraint(hair);
 
 						Equations.CalculateParticleVelocities(hair, deltaT, 0.9f);
 
-					// Add particle weight to grid
-					for (Particle particle : hair.getParticles()) {
-						volume.addValues(particle.getPredictedPosition(), 1.0f, particle.getVelocity());
+						Equations.UpdateParticlePositions(hair);
+
+						// Add particle weight to grid
+						for (Particle particle : hair.getParticles()) {
+							volume.addValues(particle.getPosition(), 1.0f, particle.getVelocity());
+						}
 					}
 
-					Equations.UpdateParticlePositions(hair);
 				}
 
 				// Apply friction and repulsion
-				volume.calculateAverageVelocityAndGradients();
+				if (!gpu) {
+					volume.calculateAverageVelocityAndGradients();
+				}
 
-				for (Hair hair : hairs) {
-					for (Particle particle : hair.getParticles()) {
-						Node nodeValue = volume.getNodeValue(particle.getPredictedPosition());
-						particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
-						particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.Gradient, repulsion), deltaT)));
+				if (!gpu) {
+					for (Hair hair : hairs) {
+						for (Particle particle : hair.getParticles()) {
+							Node nodeValue = volume.getNodeValue(particle.getPosition());
+							particle.setVelocity(VectorMath.Sum(VectorMath.Product(particle.getVelocity(), (1 - friction)), VectorMath.Product(nodeValue.Velocity, friction)));
+							particle.setVelocity(VectorMath.Sum(particle.getVelocity(), VectorMath.Divide(VectorMath.Product(nodeValue.Gradient, repulsion), deltaT)));
+						}
 					}
 				}
 
@@ -183,16 +246,18 @@ public class MainSimulator {
 						}
 					}
 
-					//hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
-					//hairLoader.updateDataInAttributeList(hair.getRawModel().getNormalsVboID(), 1, 3, hair.getNormals());
-					//renderer.processEntity(hair);
+					// hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(),
+					// 0, 3, hair.getVertices());
+					// hairLoader.updateDataInAttributeList(hair.getRawModel().getNormalsVboID(),
+					// 1, 3, hair.getNormals());
+					// renderer.processEntity(hair);
 				}
 
 			}
 
 			// Draw head model
 			renderer.processEntity(head);
-			renderer.processEntity(wig);
+			//renderer.processEntity(wig);
 
 			renderer.render(light, camera);
 
@@ -200,7 +265,6 @@ public class MainSimulator {
 
 			// end time
 			long endTime = Sys.getTime();
-
 			// deltaT = (endTime - startTime) / 300f;
 			float fps = 1f / ((endTime - startTime) / 1000f);
 

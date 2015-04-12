@@ -99,6 +99,7 @@ public class UtilCL {
      */
     public static void print(FloatBuffer buffer) {
         for (int i = 0; i < buffer.capacity(); i++) {
+        	if (buffer.get(i) > 0)
             System.out.print(buffer.get(i) + " ");
         }
          System.out.println(""); 

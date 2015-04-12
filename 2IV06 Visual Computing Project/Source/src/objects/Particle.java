@@ -12,16 +12,17 @@ public class Particle extends Entity implements IParticle {
 
 	private int index;
 	private FloatBuffer buf_positions;
+	private FloatBuffer buf_pred_posistions;
 	private FloatBuffer buf_velocities;
-	private Vector3f position = new Vector3f(0,0,0);
-	private Vector3f predictedPosition = new Vector3f(0,0,0);
+	
 	private Vector3f FTLCorrectionVector = new Vector3f(0,0,0);
 
-	public Particle(TexturedModel model, int index, FloatBuffer positions, FloatBuffer velocities) {
+	public Particle(TexturedModel model, int index, FloatBuffer positions, FloatBuffer velocities, FloatBuffer predictedPositions) {
 		super(model, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 0.25f);
 		this.index = index;
 		this.buf_positions = positions;
-		this.position = getPosition();
+		this.buf_pred_posistions = predictedPositions;
+		
 		this.buf_velocities = velocities;
 	}
 
@@ -58,11 +59,17 @@ public class Particle extends Entity implements IParticle {
 	}
 
 	public Vector3f getPredictedPosition() {
-		return predictedPosition;
+		float x = buf_pred_posistions.get(index * 4);
+		float y = buf_pred_posistions.get(index * 4 + 1);
+		float z = buf_pred_posistions.get(index * 4 + 2);
+
+		return new Vector3f(x, y, z);
 	}
 
 	public void setPredictedPosition(Vector3f predictedPosition) {
-		this.predictedPosition = predictedPosition;
+		buf_pred_posistions.put(index * 4, predictedPosition.x);
+		buf_pred_posistions.put(index * 4 + 1, predictedPosition.y);
+		buf_pred_posistions.put(index * 4 + 2, predictedPosition.z);
 	}
 
 	public Vector3f getFTLCorrectionVector() {
