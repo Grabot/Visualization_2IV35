@@ -3,11 +3,9 @@ package engineTester;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
-import guis.GuiRenderer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import models.RawModel;
 import models.TexturedModel;
@@ -25,7 +23,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
 import Volume.FixedVolume;
-import Volume.Volume;
 import renderEngine.DisplayManager;
 import renderEngine.HairLoader;
 import renderEngine.Loader;
@@ -37,9 +34,6 @@ import toolbox.UtilCL;
 import toolbox.VectorMath;
 
 public class MainSimulator {
-
-	private ArrayList<Hair> hairs = new ArrayList<Hair>();
-	private Vector3f externalForce;
 
 	private void run() {
 		// Load native library
@@ -55,12 +49,12 @@ public class MainSimulator {
 
 		boolean gpu = true;
 		boolean pause = false;
-		boolean showParticles = true;
+		boolean showParticles = false;
 		boolean rendering = true;
 
 		float deltaT = 1.0f / 4.0f;
 		float friction = 0.5f;
-		float repulsion = -0.2f;
+		float repulsion = -0.05f;
 		Vector3f externalForce = new Vector3f();
 
 		DisplayManager.createDisplay();
@@ -83,16 +77,16 @@ public class MainSimulator {
 		Entity head = new Entity(texturedHairyModel, new Vector3f(90, 70, 80), new Vector3f(0, 0, 0), scale);
 
 		// Wig obj
-		TexturedModel wigModel = new TexturedModel(OBJLoader.loadObjModel("wigd2", loader), new ModelTexture(loader.loadTexture("haircolor")));
+		TexturedModel wigModel = new TexturedModel(OBJLoader.loadObjModel("wigd4", loader), new ModelTexture(loader.loadTexture("haircolor")));
 		Entity wig = new Entity(wigModel, VectorMath.Sum(head.getPosition(), new Vector3f(0, 2, 0)), head.getRotation(), scale);
 
 		HairFactory hairFactory = new HairFactory(particleModel, 0.5f);
 
 		for (Vector3f vec : wig.getModel().getRawModel().getVertices()) {
-			hairFactory.addHairDescription(new HairDescription(VectorMath.Sum(vec, head.getPosition()), 30));
+			hairFactory.addHairDescription(new HairDescription(VectorMath.Sum(vec, head.getPosition()), 40));
 		}
 
-		final Hairs hairs = hairFactory.Build();
+		final Hairs hairs = hairFactory.Build(hairLoader);
 
 		// Copy array to buffers
 		OpenCL.buf_force = UtilCL.toFloatBuffer(new float[] { 0, -9.8f, 0, 0 });
@@ -134,7 +128,7 @@ public class MainSimulator {
 			if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
 				pause = !pause;
 				try {
-					Thread.sleep(200);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -148,7 +142,7 @@ public class MainSimulator {
 					System.out.println("GPU Computation Disabled");
 				}
 				try {
-					Thread.sleep(200);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -156,6 +150,12 @@ public class MainSimulator {
 
 			if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
 				rendering = !rendering;
+				if (rendering) {
+					System.out.println("Rendering Enabled");
+				} else {
+					System.out.println("Rendering Disabled");
+				}
+				
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -187,8 +187,9 @@ public class MainSimulator {
 				// /////////////////////////
 				// Start simulation loop //
 				// /////////////////////////
-
-				volume.Clear();
+				if (!gpu) {
+					volume.Clear();
+				}
 
 				if (gpu) {
 					OpenCL.buf_force.put(0, externalForce.x);
@@ -237,8 +238,8 @@ public class MainSimulator {
 				// ///////////////////////
 			}
 
-			// draw all hair particles
 			if (rendering) {
+				// draw all hair particles
 				for (Hair hair : hairs) {
 					if (showParticles) {
 						for (Particle particle : hair.getParticles()) {
@@ -246,22 +247,18 @@ public class MainSimulator {
 						}
 					}
 
-					// hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(),
-					// 0, 3, hair.getVertices());
-					// hairLoader.updateDataInAttributeList(hair.getRawModel().getNormalsVboID(),
-					// 1, 3, hair.getNormals());
-					// renderer.processEntity(hair);
+					hairLoader.updateDataInAttributeList(hair.getRawModel().getPositionsVboID(), 0, 3, hair.getVertices());
+					hairLoader.updateDataInAttributeList(hair.getRawModel().getNormalsVboID(), 1, 3, hair.getNormals());
+					renderer.processEntity(hair);
 				}
 
+				// Draw head model
+				renderer.processEntity(head);
+
+				renderer.render(light, camera);
 			}
 
-			// Draw head model
-			renderer.processEntity(head);
-			//renderer.processEntity(wig);
-
-			renderer.render(light, camera);
-
-			DisplayManager.updateDisplay();
+				DisplayManager.updateDisplay();
 
 			// end time
 			long endTime = Sys.getTime();

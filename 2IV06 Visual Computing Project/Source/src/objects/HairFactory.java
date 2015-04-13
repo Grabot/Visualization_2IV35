@@ -4,7 +4,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
+import models.RawModel;
 import models.TexturedModel;
+import renderEngine.HairLoader;
 import toolbox.UtilCL;
 
 public class HairFactory {
@@ -22,7 +24,7 @@ public class HairFactory {
 		hairDescriptions.add(hairDescription);
 	}
 
-	public Hairs Build() {
+	public Hairs Build(HairLoader hairLoader) {
 
 		// Memory size required
 		int size = 0;
@@ -80,6 +82,9 @@ public class HairFactory {
 				index++;
 			}
 
+			RawModel hairModel = hairLoader.loadToVao(hair.getVertices(), hair.getIndices(), hair.getNormals());
+			hair.setRawModel(hairModel);
+			
 			hairs.add(hair);
 		}
 		

@@ -5,6 +5,9 @@ constant int depth = 32;
 constant float friction = 0.5f;
 constant float repulsion = -0.05f;
 constant float time_damping = 0.95f;
+
+constant float particledistance = 0.5f;
+constant float correctionScale = 0.9;
 		
 unsigned int getKey(float spacing, float4 position) {
 	int x = (int) floor(position.x / spacing);
@@ -62,15 +65,29 @@ void addValues(float spacing, float **grid_weight, float4 **grid_vel, float4 pos
 	(*grid_vel)[x8] += velocity * w8;
 }
 
+kernel void ClearGrid(global float *grid_weight, global float4 *grid_vel, global float4 *grid_grad)
+{
+	unsigned int xid = get_global_id(0);
+	
+	grid_weight[xid] = 0;
+	
+	grid_grad[xid].x = 0;
+	grid_grad[xid].y = 0;
+	grid_grad[xid].z = 0;
+	grid_grad[xid].w = 0;
+	
+	grid_vel[xid].x = 0;
+	grid_vel[xid].y = 0;
+	grid_vel[xid].z = 0;
+	grid_vel[xid].w = 0;
+}
+
 kernel void HairCalculations(constant const int *startindex, constant const int *endindex, 
 							 global float4 *force, global float *deltaT,
 							 global float4 *pos, global float4 *vel, global float4 *pred_pos,
 							 global const float *spacing, global float *grid_weight, global float4 *grid_vel)
 {
 	unsigned int xid = get_global_id(0);
-
-	float particledistance = 0.5f;
-	float correctionScale = 0.9;
 
 	pred_pos[startindex[xid]] = pos[startindex[xid]];
 	
@@ -152,5 +169,15 @@ kernel void ParticleCalculations(global const float *spacing, global float *delt
 
 	float4 v = v0 * (1 - zd) + v1 * zd;
 	
+	float4 g00 = grid_grad[n000] * (1 - xd) + grid_grad[n100] * xd;
+	float4 g10 = grid_grad[n010] * (1 - xd) + grid_grad[n110] * xd;
+	float4 g01 = grid_grad[n001] * (1 - xd) + grid_grad[n101] * xd;
+	float4 g11 = grid_grad[n011] * (1 - xd) + grid_grad[n111] * xd;
+
+	float4 g0 = g00 * (1 - yd) + g10 * yd;
+	float4 g1 = g01 * (1 - yd) + g11 * yd;
+
+	float4 g = g0 * (1 - zd) + g1 * zd;
+	
 	vel[xid] = vel[xid] * (1 - friction) + v * friction;
-	vel[xid] += (grid_grad[n000] * repulsion) / deltaT[0];}
+	vel[xid] += (g * repulsion) / deltaT[0];}

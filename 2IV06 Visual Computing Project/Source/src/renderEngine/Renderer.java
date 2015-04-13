@@ -110,7 +110,6 @@ public class Renderer {
 		}
 	}
 
-	/*
 	public void render(List<Hair> hairs) {
 		for (Hair hair : hairs) {
 			RawModel rawModel = hair.getRawModel();
@@ -132,7 +131,6 @@ public class Renderer {
 			GL30.glBindVertexArray(0);
 		}
 	}
-	*/
 
 	private void prepareTexturedModel(TexturedModel model) {
 		RawModel rawModel = model.getRawModel();

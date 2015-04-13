@@ -46,7 +46,8 @@ public class OpenCL {
 	static CLKernel kernel;
 	static CLKernel kernel2;
 	static CLKernel kernel3;
-
+	static CLKernel kernel4;
+	
 	static CLMem startindexMem;
 	static CLMem endindexMem;
 	static CLMem predPosMem;
@@ -94,6 +95,7 @@ public class OpenCL {
 		kernel = CL10.clCreateKernel(program, "HairCalculations", null);
 		kernel2 = CL10.clCreateKernel(program, "GridCalculations", null);
 		kernel3 = CL10.clCreateKernel(program, "ParticleCalculations", null);
+		kernel4 = CL10.clCreateKernel(program, "ClearGrid", null);
 
 		startindexMem = CL10.clCreateBuffer(context, CL10.CL_MEM_READ_ONLY | CL10.CL_MEM_COPY_HOST_PTR, buf_startindex, null);
 		CL10.clEnqueueWriteBuffer(queue, startindexMem, 1, 0, buf_startindex, null, null);
@@ -149,6 +151,16 @@ public class OpenCL {
 		// // sum has to match a kernel method name in the OpenCL source
 		CL10.clFinish(queue);
 
+		// Execution our kernel
+		PointerBuffer kernel4DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
+		kernel4DGlobalWorkSize.put(0, buf_grid_weight.capacity());
+
+		kernel4.setArg(0, gridWeightMem);
+		kernel4.setArg(1, gridVelMem);
+		kernel4.setArg(2, gridGradMem);
+
+		CL10.clEnqueueNDRangeKernel(queue, kernel4, 1, null, kernel4DGlobalWorkSize, null, null, null);
+		
 		// Execution our kernel
 		PointerBuffer kernel1DGlobalWorkSize = BufferUtils.createPointerBuffer(1);
 		kernel1DGlobalWorkSize.put(0, buf_startindex.capacity());

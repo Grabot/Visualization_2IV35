@@ -1,6 +1,5 @@
 package Volume;
 
-import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import engineTester.Node;
@@ -8,7 +7,6 @@ import toolbox.VectorMath;
 
 public abstract class Volume {
 	protected float spacing = 5f;
-	private float epsilon = 0.1f;
 
 	public Volume() {
 	}
@@ -72,18 +70,26 @@ public abstract class Volume {
 
 		Vector3f v = VectorMath.Sum(VectorMath.Product(v0, (1 - zd)), VectorMath.Product(v1, zd));
 
+		Vector3f g00 = VectorMath.Sum(VectorMath.Product(n000.Gradient, (1 - xd)), VectorMath.Product(n100.Gradient, xd));
+		Vector3f g10 = VectorMath.Sum(VectorMath.Product(n010.Gradient, (1 - xd)), VectorMath.Product(n110.Gradient, xd));
+		Vector3f g01 = VectorMath.Sum(VectorMath.Product(n001.Gradient, (1 - xd)), VectorMath.Product(n101.Gradient, xd));
+		Vector3f g11 = VectorMath.Sum(VectorMath.Product(n011.Gradient, (1 - xd)), VectorMath.Product(n111.Gradient, xd));
+
+		Vector3f g0 = VectorMath.Sum(VectorMath.Product(g00, (1 - yd)), VectorMath.Product(g10, yd));
+		Vector3f g1 = VectorMath.Sum(VectorMath.Product(g01, (1 - yd)), VectorMath.Product(g11, yd));
+
+		Vector3f g = VectorMath.Sum(VectorMath.Product(g0, (1 - zd)), VectorMath.Product(g1, zd));
+
 		Node new_node = new Node();
-		if (n000.Weight != 0) {
 			new_node.Velocity = v;
-			new_node.Gradient = n000.Gradient;
-		}
+			new_node.Gradient = g;
 		
 		return new_node;
 	}
 	
 	public Vector3f normalizeGradient(Vector3f gradient) {
 		float length = gradient.length();
-		return VectorMath.Divide(gradient, length + epsilon);
+		return VectorMath.Divide(gradient, length);
 	}
 
 }

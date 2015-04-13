@@ -27,7 +27,7 @@ public class MasterRenderer {
 		shader.loadViewMatrix(camera);
 		
 		renderer.render(entities);
-		//renderer.render(hairs);
+		renderer.render(hairs);
 		
 		shader.stop();
 		entities.clear();
