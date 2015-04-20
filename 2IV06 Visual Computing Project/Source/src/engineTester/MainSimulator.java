@@ -1,5 +1,6 @@
 package engineTester;
 
+
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -18,6 +19,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+
 import Volume.FixedVolume;
 import Volume.Volume;
 import renderEngine.DisplayManager;
@@ -32,7 +34,6 @@ import toolbox.VectorMath;
 public class MainSimulator {
 
 	private ArrayList<Hair> hairs = new ArrayList<Hair>();
-	private Vector3f externalForce;
 
 	private void run() {
 		// Load native library

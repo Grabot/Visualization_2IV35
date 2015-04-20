@@ -1,6 +1,5 @@
 package guis;
 
-import java.awt.Font;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
-import org.newdawn.slick.TrueTypeFont;
 
 import renderEngine.Loader;
 import toolbox.Maths;
@@ -24,9 +22,6 @@ public class GuiRenderer {
 
 	public final RawModel quad;
 	private GuiShader shader;
-	
-	private Font font;
-	private TrueTypeFont ttf;
 	
 	private int x;
 	private int y;
@@ -50,8 +45,6 @@ public class GuiRenderer {
 	private int[] particleArray = new int[6];
 	private int[] fpsArray = new int[6];
 	
-	private String fpsValue = "60,0";
-	
 	public GuiRenderer(Loader loader, ArrayList<Hair> hairs ) 
 	{
 		for( int i = 0; i < fpsArray.length; i++ )
@@ -68,8 +61,6 @@ public class GuiRenderer {
 		}
 		
 		this.hairs = hairs;
-		font = new Font("Verdana", Font.BOLD, 20);
-	    ttf = new TrueTypeFont(font, true);
 	    
 		float[] positions = {-1, 1, -1, -1, 1, 1, 1, -1};
 		quad = loader.loadToVao(positions);
