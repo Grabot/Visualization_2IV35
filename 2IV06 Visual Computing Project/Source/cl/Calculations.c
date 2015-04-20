@@ -3,7 +3,7 @@ constant int height = 32;
 constant int depth = 32;
 
 constant float friction = 0.5f;
-constant float repulsion = -0.05f;
+constant float repulsion = -0.4f;
 constant float time_damping = 0.95f;
 
 constant float particledistance = 0.5f;
@@ -125,7 +125,7 @@ kernel void GridCalculations(global const float *spacing, global float *grid_wei
 		float z1 = grid_weight[xid + width * height];
 		float z2 = grid_weight[xid - width * height];
 		
-		grid_grad[xid] = ((float4)((x1 - x2), (y1 - y2), (z1 - z2), 0)) / (2 * spacing[0]);
+		grid_grad[xid] = normalize(((float4)((x1 - x2), (y1 - y2), (z1 - z2), 0)) / (2 * spacing[0]));
 		grid_vel[xid] /= grid_weight[xid];
 	}
 }

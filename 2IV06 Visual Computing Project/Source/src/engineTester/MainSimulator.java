@@ -54,7 +54,7 @@ public class MainSimulator {
 
 		float deltaT = 1.0f / 4.0f;
 		float friction = 0.5f;
-		float repulsion = -0.05f;
+		float repulsion = -0.4f;
 		Vector3f externalForce = new Vector3f();
 
 		DisplayManager.createDisplay();
