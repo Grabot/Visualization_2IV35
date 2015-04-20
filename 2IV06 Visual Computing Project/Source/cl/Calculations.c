@@ -6,7 +6,7 @@ constant float friction = 0.5f;
 constant float repulsion = -0.4f;
 constant float time_damping = 0.95f;
 
-constant float particledistance = 0.5f;
+constant float particledistance = 0.1f;
 constant float correctionScale = 0.9;
 		
 unsigned int getKey(float spacing, float4 position) {

@@ -66,7 +66,7 @@ public class OpenCL {
 		for (int platformIndex = 0; platformIndex < 1; platformIndex++) {
 			CLPlatform platform = CLPlatform.getPlatforms().get(platformIndex);
 			System.out.println("Platform #" + platformIndex + ":" + platform.getInfoString(CL10.CL_PLATFORM_NAME));
-			List<CLDevice> devices = platform.getDevices(CL10.CL_DEVICE_TYPE_GPU);
+			List<CLDevice> devices = platform.getDevices(CL10.CL_DEVICE_TYPE_ALL);
 			for (int deviceIndex = 0; deviceIndex < devices.size(); deviceIndex++) {
 				CLDevice device = devices.get(deviceIndex);
 				System.out.printf(Locale.ENGLISH, "Device #%d(%s):%s\n", deviceIndex, UtilCL.getDeviceType(device.getInfoInt(CL10.CL_DEVICE_TYPE)), device.getInfoString(CL10.CL_DEVICE_NAME));

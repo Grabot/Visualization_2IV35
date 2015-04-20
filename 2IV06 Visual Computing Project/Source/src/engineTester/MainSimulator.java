@@ -80,10 +80,10 @@ public class MainSimulator {
 		TexturedModel wigModel = new TexturedModel(OBJLoader.loadObjModel("wigd4", loader), new ModelTexture(loader.loadTexture("haircolor")));
 		Entity wig = new Entity(wigModel, VectorMath.Sum(head.getPosition(), new Vector3f(0, 2, 0)), head.getRotation(), scale);
 
-		HairFactory hairFactory = new HairFactory(particleModel, 0.5f);
+		HairFactory hairFactory = new HairFactory(particleModel, 0.1f);
 
 		for (Vector3f vec : wig.getModel().getRawModel().getVertices()) {
-			hairFactory.addHairDescription(new HairDescription(VectorMath.Sum(vec, head.getPosition()), 40));
+			hairFactory.addHairDescription(new HairDescription(VectorMath.Sum(vec, head.getPosition()), 200));
 		}
 
 		final Hairs hairs = hairFactory.Build(hairLoader);
@@ -155,7 +155,7 @@ public class MainSimulator {
 				} else {
 					System.out.println("Rendering Disabled");
 				}
-				
+
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -240,7 +240,8 @@ public class MainSimulator {
 
 			if (rendering) {
 				// draw all hair particles
-				for (Hair hair : hairs) {
+				for (int i = 0; i < hairs.size(); i += 2) {
+					Hair hair = hairs.get(i);
 					if (showParticles) {
 						for (Particle particle : hair.getParticles()) {
 							renderer.processEntity(particle);
@@ -254,11 +255,11 @@ public class MainSimulator {
 
 				// Draw head model
 				renderer.processEntity(head);
-
-				renderer.render(light, camera);
 			}
 
-				DisplayManager.updateDisplay();
+			renderer.render(light, camera);
+
+			DisplayManager.updateDisplay();
 
 			// end time
 			long endTime = Sys.getTime();
